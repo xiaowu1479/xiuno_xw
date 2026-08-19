@@ -123,6 +123,7 @@ return array(
 	'username_not_exists' => '用户名不存在',
 	'user_not_exists' => '用户不存在',
 	'password_incorrect' => '密码错误',
+	'login_too_many_tries' => '登录失败次数过多，请 {minute} 分钟后再试',
 	'edit_user'=>'编辑用户',
 	'create_user'=>'创建用户',
 	'user_group'=>'用户组',

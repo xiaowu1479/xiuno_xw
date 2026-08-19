@@ -120,6 +120,7 @@ return array(
 	'username_not_exists' => 'ไม่พบชื่อผู้ใช้',
 	'user_not_exists' => 'ไม่พบผู้ใช้',
 	'password_incorrect' => 'รหัสผ่านไม่ถูกต้อง',
+	'login_too_many_tries' => 'เข้าสู่ระบบล้มเหลวหลายครั้ง โปรดลองอีกครั้งใน {minute} นาที',
 	'edit_user'=>'แก้ไขผู้ใช้',
 	'create_user'=>'สร้างผู้ใช้',
 	'user_group'=>'กลุ่มผู้ใช้',

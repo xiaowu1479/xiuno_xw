@@ -1352,6 +1352,9 @@ class HTML_White {
         	 	return true;
         	}
 		foreach($attrs as $name => $value) {
+			// 实体解码提前，防止 &#x3A; 等编码绕过白名单校验 (fixed by xiuno_xw)
+			$value = preg_replace_callback('/&#(\d+);?/m', array($this, 'chr_callback'), $value);
+			$value = preg_replace_callback('/&#x([0-9a-f]+);?/mi', array($this, 'chr_hexdec_callback'), $value);
 	               if($name == 'style') {
 				// removes insignificant backslahes
 				$value = str_replace("\\", '', $value);
@@ -1462,9 +1465,6 @@ class HTML_White {
 	        	if (($value === TRUE) || (is_null($value))) {
 				$value = $name;
 	                }
-
-			$tempval = preg_replace_callback('/&#(\d+);?/m', array($this, 'chr_callback'), $value); //"'
-			$tempval = preg_replace_callback('/&#x([0-9a-f]+);?/mi', array($this, 'chr_hexdec_callback'), $tempval);
 
 			$value = str_replace("\"", "&quot;", $value);
 			if($value == '' && $name == 'style') {

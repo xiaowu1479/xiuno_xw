@@ -56,6 +56,16 @@
 	var fid = <?php echo $fid;?>;
 	var csrf_token = '<?php echo csrf_token(); ?>';
 	</script>
+	<script>
+	// 自动为后台所有表单注入 csrf_token (fixed by xiuno_xw)
+	$(function() {
+		$('form').each(function() {
+			if(!$(this).find('input[name="csrf_token"]').length) {
+				$(this).append('<input type="hidden" name="csrf_token" value="' + csrf_token + '">');
+			}
+		});
+	});
+	</script>
 	<script src="../view/js/bbs.js<?php echo $static_version;?>"></script>
 	
 	<!--{hook admin_footer_js_after.htm}-->

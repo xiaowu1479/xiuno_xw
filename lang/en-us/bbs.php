@@ -123,6 +123,7 @@ return array(
 	'username_not_exists' => 'User does not exists',
 	'user_not_exists' => 'User does not exists',
 	'password_incorrect' => 'Password Incorrect',
+	'login_too_many_tries' => 'Too many failed login attempts, please try again in {minute} minute(s)',
 	'edit_user'=>'Edit User',
 	'create_user'=>'Create User',
 	'user_group'=>'User Group',

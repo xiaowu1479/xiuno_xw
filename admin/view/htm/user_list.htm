@@ -12,7 +12,7 @@
 
 <div class="row">
 	<div class="col-md-2 mb-3">
-		<select id="srchtype" value="<?php echo $srchtype; ?>" class="form-control">
+		<select id="srchtype" value="<?php echo _e($srchtype); ?>" class="form-control">
 			<option value=""><?php echo lang('search_type');?></option>
 			<option value="uid"><?php echo lang('uid');?>：</option>
 			<option value="username" selected><?php echo lang('username');?>：</option>
@@ -23,7 +23,7 @@
 		</select>
 	</div>
 	<div class="col-md-3 mb-3">
-		<input type="text" id="keyword" placeholder="<?php echo lang('keyword');?>" value="<?php echo $keyword; ?>"  class="form-control" />
+		<input type="text" id="keyword" placeholder="<?php echo lang('keyword');?>" value="<?php echo _e($keyword); ?>"  class="form-control" />
 	</div>
 	<div class="col-md-2 mb-3">
 		<button id="search" class="form-control btn btn-primary"><?php echo lang('search');?></button>

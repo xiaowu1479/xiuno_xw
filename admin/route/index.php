@@ -22,13 +22,28 @@ if($action == 'login') {
 
 		// hook admin_index_login_post_start.php
 		
+		// 登录限速：15 分钟内失败 5 次锁定 (fixed by xiuno_xw)
+		$lock_key = 'admin_login_fail_'.$ip;
+		$fail = cache_get($lock_key);
+		if(!empty($fail)) {
+			list($fail_count, $fail_time) = $fail;
+			if($fail_count >= 5 && $time - $fail_time < 900) {
+				message(-1, lang('login_too_many_tries', array('minute' => ceil((900 - ($time - $fail_time)) / 60))));
+			}
+		}
+		
 		$password = param('password');
 
 		if(!user_password_verify($password, $user)) {
-			xn_log('password error. uid:'.$user['uid'].' - ******'.substr($password, -6), 'admin_login_error');
+			xn_log('password error. uid:'.$user['uid'].' ip:'.$ip, 'admin_login_error');
+			$fail_count = empty($fail) ? 0 : $fail[0];
+			$fail_time = empty($fail) ? $time : $fail[1];
+			$fail_count++;
+			cache_set($lock_key, array($fail_count, $fail_time), 900);
 			message('password', lang('password_incorrect'));
 		}
 
+		cache_delete($lock_key);
 		admin_token_set();
 
 		xn_log('login successed. uid:'.$user['uid'], 'admin_login');

@@ -122,6 +122,7 @@ return array(
 	'username_not_exists' => 'Имя пользователя не существует',
 	'user_not_exists' => 'Пользователь не существует',
 	'password_incorrect' => 'Некорректный пароль',
+	'login_too_many_tries' => 'Слишком много неудачных попыток входа, попробуйте через {minute} мин.',
 	'edit_user'=>'Редактировать',
 	'create_user'=>'Добавить',
 	'user_group'=>'Группа',

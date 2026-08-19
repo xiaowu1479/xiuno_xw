@@ -356,14 +356,16 @@ function user_token_set($uid) {
 	if(empty($uid)) return;
 	$token = user_token_gen($uid);
 	$token_expire = empty($conf['token_expire']) ? 604800 : $conf['token_expire'];
-	setcookie('bbs_token', $token, $time + $token_expire, $conf['cookie_path']);
+	$secure = !empty($conf['cookie_secure']);
+	setcookie('bbs_token', $token, $time + $token_expire, $conf['cookie_path'], '', $secure, TRUE);
 	
 	// hook model_user_token_set_end.php
 }
 
 function user_token_clear() {
 	global $time, $conf;
-	setcookie('bbs_token', '', $time - 8640000, $conf['cookie_path']);
+	$secure = !empty($conf['cookie_secure']);
+	setcookie('bbs_token', '', $time - 8640000, $conf['cookie_path'], '', $secure, TRUE);
 	
 	// hook model_user_token_clear_end.php
 }

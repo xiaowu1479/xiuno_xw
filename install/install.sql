@@ -1,4 +1,4 @@
-# xiuno_xw 1.0.0 数据库结构 (基于 Xiuno BBS 4.0)
+﻿# xiuno_xw 1.0.0 数据库结构 (基于 Xiuno BBS 4.0)
 
 ### 用户表 ###
 DROP TABLE IF EXISTS `bbs_user`;
@@ -29,7 +29,7 @@ CREATE TABLE `bbs_user` (
   UNIQUE KEY username (username),
   UNIQUE KEY email (email),						# 升级的时候可能为空
   KEY gid (gid)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
 INSERT INTO `bbs_user` SET uid=1, gid=1, email='admin@admin.com', username='admin',`password`='',salt='';
 
 # 用户组
@@ -52,7 +52,7 @@ CREATE TABLE `bbs_group` (
   allowdeleteuser int(11) NOT NULL default '0',		# 允许删除用户
   allowviewip int(11) unsigned NOT NULL default '0',	# 允许查看用户敏感信息
   PRIMARY KEY (gid)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 INSERT INTO `bbs_group` SET gid='0', name="游客组", creditsfrom='0', creditsto='0', allowread='1', allowthread='0', allowpost='1', allowattach='0', allowdown='1', allowtop='0', allowupdate='0', allowdelete='0', allowmove='0', allowbanuser='0', allowdeleteuser='0', allowviewip='0';
 
 INSERT INTO `bbs_group` SET gid='1', name="管理员组", creditsfrom='0', creditsto='0', allowread='1', allowthread='1', allowpost='1', allowattach='1', allowdown='1', allowtop='1', allowupdate='1', allowdelete='1', allowmove='1', allowbanuser='1', allowdeleteuser='1', allowviewip='1';
@@ -89,7 +89,7 @@ CREATE TABLE bbs_forum (
   seo_title char(64) NOT NULL default '',		# SEO 标题，如果设置会代替版块名称
   seo_keywords char(64) NOT NULL default '',		# SEO keyword
   PRIMARY KEY (fid)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 INSERT INTO bbs_forum SET fid='1', name='默认版块', brief='默认版块介绍';
 #  cache_date int(11) NOT NULL default '0',		# 最后 threadlist 缓存的时间，6种排序前10页结果缓存。如果是前10页，先读缓存，并依据此字段过期。更新条件：发贴
   
@@ -104,7 +104,7 @@ CREATE TABLE bbs_forum_access (				# 字段中文名
   allowattach tinyint(1) unsigned NOT NULL default '0',	# 允许上传附件
   allowdown tinyint(1) unsigned NOT NULL default '0',	# 允许下载附件
   PRIMARY KEY (fid, gid)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 # 论坛主题
 DROP TABLE IF EXISTS bbs_thread;
@@ -132,7 +132,7 @@ CREATE TABLE bbs_thread (
   KEY (fid, tid),					# 发帖时间排序，正序。数据量大时可以考虑建立小表，对小表进行分区优化，只有数据量达到千万级以上时才需要。
   KEY (fid, lastpid),					# 顶贴时间排序，倒序
   KEY (uid)					# 用户主题列表
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 # 置顶主题
 DROP TABLE IF EXISTS bbs_thread_top;
@@ -143,7 +143,7 @@ CREATE TABLE bbs_thread_top (
   PRIMARY KEY (tid),					#
   KEY (top, tid),					# 最新贴：top=0 order by tid desc / 全局置顶： top=3
   KEY (fid, top)					# 版块置顶的贴 fid=1 and top=1
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 # 论坛帖子数据
 DROP TABLE IF EXISTS bbs_post;
@@ -165,7 +165,7 @@ CREATE TABLE bbs_post (
   KEY (tid, pid),
   KEY (uid),						# 我的回帖，清理数据需要
   KEY (uid, tid)					# 查用户在某主题的回帖
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 # 编辑历史
 
 #论坛附件表  只能按照从上往下的方式查找和删除！ 此表如果大，可以考虑通过 aid 分区。
@@ -191,7 +191,7 @@ CREATE TABLE bbs_attach (
   PRIMARY KEY (aid),					# aid
   KEY pid (pid),					# 每个帖子下多个附件
   KEY uid (uid)						# 我的附件，清理数据需要。
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 # 我的主题，每个主题不管回复多少次，只记录一次。大表，需要分区。
 DROP TABLE IF EXISTS bbs_mythread;
@@ -199,7 +199,7 @@ CREATE TABLE bbs_mythread (
   uid int(11) unsigned NOT NULL default '0',		# uid
   tid int(11) unsigned NOT NULL default '0',		# 用来清理，删除板块的时候需要
   PRIMARY KEY (uid, tid)				# 每一个帖子只能插入一次 unique
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 # 我的回帖。大表，需要分区。
 DROP TABLE IF EXISTS bbs_mypost;
@@ -209,7 +209,7 @@ CREATE TABLE bbs_mypost (
   pid int(11) unsigned NOT NULL default '0',		#
   KEY (tid),						#
   PRIMARY KEY (uid, pid)				#
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 # session 表
 # 缓存到 runtime 表。 online_0 全局 online_fid 版块。提高遍历效率。
@@ -228,7 +228,7 @@ CREATE TABLE bbs_session (
   KEY ip (ip),
   KEY fid (fid),
   KEY uid_last_date (uid, last_date)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
 DROP TABLE IF EXISTS bbs_session_data;
@@ -237,7 +237,7 @@ CREATE TABLE bbs_session_data (
   last_date int(11) unsigned NOT NULL default '0',	# 上次活动时间
   data text NOT NULL,					# 存超大数据
   PRIMARY KEY (sid)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 # 版主操作日志
 DROP TABLE IF EXISTS bbs_modlog;
@@ -254,7 +254,7 @@ CREATE TABLE bbs_modlog (
   PRIMARY KEY (logid),
   KEY (uid, logid),
   KEY (tid)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 # 持久的 key value 数据存储, ttserver, mysql
 DROP TABLE IF EXISTS bbs_kv;
@@ -263,7 +263,7 @@ CREATE TABLE bbs_kv (
   v mediumtext NOT NULL,
   expiry int(11) unsigned NOT NULL default '0',		# 过期时间
   PRIMARY KEY(k)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 # 缓存表，用来保存临时数据。
 DROP TABLE IF EXISTS bbs_cache;
@@ -272,7 +272,7 @@ CREATE TABLE bbs_cache (
   v mediumtext NOT NULL,
   expiry int(11) unsigned NOT NULL default '0',		# 过期时间
   PRIMARY KEY(k)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 # 临时队列，用来保存临时数据。
 DROP TABLE IF EXISTS bbs_queue;
@@ -282,7 +282,7 @@ CREATE TABLE bbs_queue (
   expiry int(11) unsigned NOT NULL default '0',		# 过期时间，默认 0，不过期
   UNIQUE KEY(queueid, v),
   KEY(expiry)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
 # 系统表, id
@@ -300,7 +300,7 @@ CREATE TABLE `bbs_table_day` (
   `maxid` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '最大ID', 	#
   `count` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '总数', 		#
   PRIMARY KEY (`year`, `month`, `day`, `table`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 # 插件相关表清理（重装时清空旧数据）
 DROP TABLE IF EXISTS bbs_notice;
