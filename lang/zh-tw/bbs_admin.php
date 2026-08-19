@@ -17,6 +17,9 @@ return array(
 	
 	'admin_index_page'=>'後臺',
 	'front_index_page'=>'前臺',
+	
+	'online_hold_time'=>'在線保持時間（秒）',
+	'online_hold_time_tips'=>'在線人數統計的時間範圍：在此時間內活躍過的訪客計入在線，預設 3600（1小時），小站建議 600（10分鐘）',
 	'admin_site_setting'=>'站點設置',
 	'admin_setting_base'=>'基本設置',
 	'admin_setting_smtp'=>'SMTP 設置',

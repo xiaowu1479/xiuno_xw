@@ -34,6 +34,11 @@ return array(
 	'delete'=>'删除',
 	'register'=>'注册',
 	'setting'=>'设置',
+	
+	'readp_title'=>'阅读权限',
+	'readp_tips'=>'启用后，低于所选用户组的会员无法查看本帖内容',
+	'readp_level'=>'权限等级',
+	'readp_none'=>'无限制',
 	'confirm'=>'确定',
 	'save'=>'保存',
 	'close'=>'关闭',

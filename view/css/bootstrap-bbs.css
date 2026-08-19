@@ -149,6 +149,47 @@ body { background: var(--xc-bg); }
   border-color: var(--xc-primary);
 }
 
+/* 次要按钮 / 后台 tab：标准深灰底白字，保持正常按钮观感 (Xiuno_xw) */
+.btn-secondary,
+.btn-secondary:focus {
+  background-color: #6c757d;
+  border-color: #6c757d;
+  color: #fff;
+}
+
+/* 无 href 的按钮（role="button"）不被 Bootstrap a:not([href]) 覆盖成继承色 (Xiuno_xw) */
+a.btn-secondary:not([href]) {
+  color: #fff;
+}
+
+.btn-secondary:hover {
+  background-color: #5a6268;
+  border-color: #5a6268;
+  color: #fff;
+}
+
+.btn-secondary:not(:disabled):not(.disabled):active,
+.btn-secondary.active {
+  background-color: #545b62;
+  border-color: #4e555b;
+  color: #fff;
+}
+
+/* 黑色按钮统一为主题蓝 */
+.btn-dark,
+.btn-dark:focus {
+  background-color: var(--xc-primary);
+  border-color: var(--xc-primary);
+  color: #fff;
+}
+
+.btn-dark:hover,
+.btn-dark:not(:disabled):not(.disabled):active {
+  background-color: var(--xc-primary-hover);
+  border-color: var(--xc-primary-hover);
+  color: #fff;
+}
+
 /* ---------- 面包屑 ---------- */
 .breadcrumb {
   background-color: #fff !important;

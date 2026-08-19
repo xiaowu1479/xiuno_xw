@@ -13,7 +13,7 @@
 						<option value="<?php echo $_fid;?>"><?php echo htmlspecialchars($_forum['name'], ENT_QUOTES);?></option>
 						<?php } ?>
 					</select>
-					<a role="button" class="btn btn-success" id="quick_add">[+] <?php echo lang('nav_quick_add');?></a>
+					<a role="button" class="btn btn-secondary" id="quick_add">[+] <?php echo lang('nav_quick_add');?></a>
 				</div>
 				<form action="<?php echo url('nav-list');?>" method="post" id="form">
 					<?php echo csrf_token_hidden();?>

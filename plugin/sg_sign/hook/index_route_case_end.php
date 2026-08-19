@@ -1,0 +1,1 @@
+case 'sg_sign': include _include(APP_PATH.'plugin/sg_sign/route/sg_sign.php'); break;

@@ -80,6 +80,27 @@
 					
 					<!--{hook post_message_after.htm}-->
 
+					<?php if(isset($input['readp_status'])) { ?>
+					<div class="form-group row">
+						<label class="col-sm-3 form-control-label"><?php echo lang('readp_title');?>：</label>
+						<div class="col-sm-9">
+							<?php echo $input['readp_status'];?>
+							<p class="mt-2 text-grey small"><?php echo lang('readp_tips');?></p>
+						</div>
+					</div>
+					<div class="form-group row" id="readp_level_row" style="display:none;">
+						<label class="col-sm-3 form-control-label"><?php echo lang('readp_level');?>：</label>
+						<div class="col-sm-9">
+							<select class="form-control" name="readp">
+								<option value="0"><?php echo lang('readp_none');?></option>
+								<?php foreach($grouplist as $_gid=>$_g) { if($_gid > 0 && $_gid < 100 && isset($_g['readp'])) { ?>
+								<option value="<?php echo intval($_g['readp']);?>"><?php echo htmlspecialchars($_g['name'], ENT_QUOTES);?></option>
+								<?php } } ?>
+							</select>
+						</div>
+					</div>
+					<?php } ?>
+
 					<?php if(!empty($conf['captcha_on']) && !empty($conf['captcha_post_on'])) { ?>
 					<div class="form-group input-group">
 						<div class="input-group-prepend">
@@ -204,6 +225,18 @@ jattachparent.on('click', 'a.delete', function() {
 jform.find('[name="fid"]').checked(<?php echo $fid;?>);
 
 $('li[data-active="fid-<?php echo $fid;?>"]').addClass('active');
+
+<?php if(isset($input['readp_status'])) { ?>
+// 阅读权限：启用开关时显示权限等级选择 (Xiuno_xw)
+var jreadpStatus = $('input[name="readp_status"]');
+var jreadpRow = $('#readp_level_row');
+function toggle_readp_row() {
+	var v = jreadpStatus.filter(':checked').val();
+	jreadpRow.toggle(v == '1');
+}
+jreadpStatus.on('change', toggle_readp_row);
+toggle_readp_row();
+<?php } ?>
 
 </script>
 

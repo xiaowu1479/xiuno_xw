@@ -28,6 +28,7 @@ if($action == 'base') {
 		$input['captcha_reg_on'] = form_radio_yes_no('captcha_reg_on', $conf['captcha_reg_on']);
 		$input['captcha_post_on'] = form_radio_yes_no('captcha_post_on', $conf['captcha_post_on']);
 		$input['cookie_secure'] = form_radio_yes_no('cookie_secure', $conf['cookie_secure'], lang('cookie_secure_tips'));
+		$input['online_hold_time'] = form_text('online_hold_time', $conf['online_hold_time'], 100);
 		$input['lang'] = form_select('lang', array('zh-cn'=>lang('lang_zh_cn'), 'zh-tw'=>lang('lang_zh_tw'), 'en-us'=>lang('lang_en_us'), 'ru-ru'=>lang('lang_ru_ru'), 'th-th'=>lang('lang_th_th')), $conf['lang']);
 		
 		$header['title'] = lang('admin_site_setting');
@@ -50,6 +51,7 @@ if($action == 'base') {
 		$captcha_reg_on = param('captcha_reg_on', 0);
 		$captcha_post_on = param('captcha_post_on', 0);
 		$cookie_secure = param('cookie_secure', 0);
+		$online_hold_time = param('online_hold_time', 3600);
 		
 		$_lang = param('lang');
 		
@@ -67,6 +69,7 @@ if($action == 'base') {
 		$replace['captcha_reg_on'] = $captcha_reg_on;
 		$replace['captcha_post_on'] = $captcha_post_on;
 		$replace['cookie_secure'] = $cookie_secure;
+		$replace['online_hold_time'] = max(60, min(86400, intval($online_hold_time)));
 		$replace['lang'] = $_lang;
 		
 		file_replace_var(APP_PATH.'conf/conf.php', $replace);

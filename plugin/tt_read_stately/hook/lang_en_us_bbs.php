@@ -1,0 +1,5 @@
+    'dear_guest2'=>'The thread have special content that you need to log in first.',
+    'dear_reply'=> 'The thread have special content that you need to reply first.',
+    'dear_p'=> 'The thread have special content that you cannot see it.',
+    'permission'=>'Permission',
+    'or_'=>'OR',

@@ -1,0 +1,35 @@
+<?php if($uid&&$need_refresh==1) {?>
+<script>
+jform.off('submit');//重载submit事件
+jform.on('submit', function() {
+jform.reset();
+jsubmit.button('loading');
+var postdata = jform.serialize();
+$.xpost(jform.attr('action'), postdata, function(code, message) {
+if(code == 0) {
+var s = '<ul>'+message+'</ul>';
+var jli = $(s).find('li');
+jli.insertBefore($('.postlist > .post').last());
+jsubmit.button('reset');
+$('#message').val('');
+location.reload();
+// 楼层 +1
+var jfloor = $('#newfloor');
+jfloor.html(xn.intval(jfloor.html()) + 1);
+
+// 回复数 +1
+var jposts = $('.posts');
+jposts.html(xn.intval(jposts.html()) + 1);
+
+} else if(code < 0) {
+$.alert(message);
+jsubmit.button('reset');
+} else {
+jform.find('[name="'+code+'"]').alert(message).focus();
+jsubmit.button('reset');
+}
+});
+return false;
+});
+</script>
+<?php } ?>

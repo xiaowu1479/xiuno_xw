@@ -95,6 +95,9 @@ return array(
 	'captcha_tips'=>'图形验证码设置：登录/注册/发帖时需输入图片中的字符',
 	'user_create_email_on'=>'开启注册邮箱验证',
 	'user_resetpw_on'=>'开启找回密码',
+	
+	'online_hold_time'=>'在线保持时间（秒）',
+	'online_hold_time_tips'=>'在线人数统计的时间范围：在此时间内活跃过的访客计入在线，默认 3600（1小时），小站建议 600（10分钟）',
 	'cookie_secure'=>'启用 Cookie Secure（仅 HTTPS 下传输）',
 	'cookie_secure_tips'=>'注意：启用后 HTTP 访问将无法正常登录，请确保站点已配置 HTTPS 后再开启',
 	'lang'=>'语言',

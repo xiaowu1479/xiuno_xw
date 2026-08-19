@@ -1,0 +1,3 @@
+<?php $show=1; if($_post['isfirst']=='1')
+    if(strpos($_post['message_fmt'],'[reply]',0)||strpos($_post['message_fmt'],'[ttreply]',0)||strpos($_post['message_fmt'],'[ttlogin]',0)) $show=0;
+    if($show){?>

@@ -17,6 +17,9 @@ return array(
 	
 	'admin_index_page'=>'Management',
 	'front_index_page'=>'Foreground ',
+	
+	'online_hold_time'=>'Online Hold Time (seconds)',
+	'online_hold_time_tips'=>'Time range for online count: visitors active within this period are counted as online. Default 3600 (1 hour); 600 (10 min) recommended for small sites',
 	'admin_site_setting'=>'Site Setting',
 	'admin_setting_base'=>'Base Setting',
 	'admin_setting_smtp'=>'SMTP Setting',

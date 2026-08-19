@@ -34,6 +34,11 @@ return array(
 	'delete'=>'刪除',
 	'register'=>'註冊',
 	'setting'=>'設置',
+	
+	'readp_title'=>'閱讀權限',
+	'readp_tips'=>'啟用後，低於所選用戶組的會員無法查看本帖內容',
+	'readp_level'=>'權限等級',
+	'readp_none'=>'無限制',
 	'confirm'=>'確定',
 	'save'=>'保存',
 	'close'=>'關閉',

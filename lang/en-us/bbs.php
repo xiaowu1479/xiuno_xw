@@ -34,6 +34,11 @@ return array(
 	'delete'=>'Delete',
 	'register'=>'Register',
 	'setting'=>'Setting',
+	
+	'readp_title'=>'Read Permission',
+	'readp_tips'=>'When enabled, members below the selected group cannot view this thread',
+	'readp_level'=>'Permission Level',
+	'readp_none'=>'Unlimited',
 	'confirm'=>'Confirm',
 	'save'=>'Save',
 	'close'=>'Close',
