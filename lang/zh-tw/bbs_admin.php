@@ -88,11 +88,13 @@ return array(
 	'smtp_host'=>'SMTP 主機',
 	
 	// 版塊
+	'forum_threads'=>'主題數',
 	'forum_list'=>'版塊列表',
 	'forum_id'=>'版塊 ID',
 	'forum_icon'=>'圖標',
 	'forum_name'=>'名稱',
 	'forum_rank'=>'排序',
+	'forum_view'=>'查看',
 	'forum_edit'=>'編輯',
 	'forum_delete'=>'刪除',
 	'forum_brief'=>'簡介',
@@ -111,6 +113,17 @@ return array(
 	'forum_delete_thread_before_delete_forum'=>'请先通过批量主题管理删除版块主题。',
 	'forum_please_delete_sub_forum'=>'请删除子版块。',
 	'forum_delete_successfully'=>'删除成功。',
+	
+	// 導航選單 (Xiuno_xw)
+	'nav_admin'=>'導航選單',
+	'nav_name'=>'選單名稱',
+	'nav_url'=>'連結網址',
+	'nav_target'=>'新視窗',
+	'nav_rank'=>'排序',
+	'nav_tip'=>'選單項目顯示在前台頂部導航（首頁之後、版塊之前）。連結可以是站內位址（如 ?forum-2.htm）或外部網址（如 https://example.com）。',
+	'nav_quick_add'=>'快速新增版塊',
+	'nav_quick_add_select'=>'選擇版塊...',
+	'nav_already_added'=>'該版塊已在導航選單中。',
 	
 	'thread_queue_not_exists'=>'隊列不存在',
 	'search_condition'=>'搜索條件',
@@ -166,7 +179,7 @@ return array(
 	'plugin_detail'=>'插件詳情',
 	'plugin_brief_url'=>'插件介紹網址',
 	'plugin_not_exists'=>'插件不存在',
-	'plugin_versio_not_match'=>'此插件依賴的 Xiuno BBS 最低版本為 {bbs_version} ，您當前的版本：{version}',
+	'plugin_versio_not_match'=>'此插件依賴的 Xiuno_xw 最低版本為 {bbs_version} ，您當前的版本：{version}',
 	'plugin_download_sucessfully'=>'下載插件 ({dir}) 成功，請點擊進行安裝',
 	'plugin_install_sucessfully'=>'安裝插件 ( {name} ) 成功',
 	'plugin_unstall_sucessfully'=>'卸載插件 ( {name} ) 成功，要徹底刪除插件，請手工刪除 {dir} 目錄',

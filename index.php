@@ -1,7 +1,7 @@
 <?php
 /*
  * Copyright (C) xiuno.com
- * xiuno_xw: 基于 Xiuno BBS 4.1.1 二次开发的分支版本
+ * Xiuno_xw: 基于 Xiuno BBS 4.1.1 二次开发的分支版本
  */
 
 //xhprof_enable();

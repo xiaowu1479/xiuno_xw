@@ -1,4 +1,4 @@
-﻿# xiuno_xw 1.0.0 数据库结构 (基于 Xiuno BBS 4.0)
+# Xiuno_xw 1.0.0 数据库结构 (基于 Xiuno BBS 4.0)
 
 ### 用户表 ###
 DROP TABLE IF EXISTS `bbs_user`;
@@ -92,6 +92,17 @@ CREATE TABLE bbs_forum (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 INSERT INTO bbs_forum SET fid='1', name='默认版块', brief='默认版块介绍';
 #  cache_date int(11) NOT NULL default '0',		# 最后 threadlist 缓存的时间，6种排序前10页结果缓存。如果是前10页，先读缓存，并依据此字段过期。更新条件：发贴
+  
+# 自定义导航菜单（Xiuno_xw 新增）
+DROP TABLE IF EXISTS bbs_nav;
+CREATE TABLE bbs_nav (
+  id int(11) unsigned NOT NULL auto_increment,		# 菜单项 ID
+  name char(32) NOT NULL default '',			# 菜单名称
+  url char(255) NOT NULL default '',			# 链接地址，站内或外部 URL
+  target tinyint(1) unsigned NOT NULL default '0',	# 1: 新窗口打开
+  `rank` tinyint(3) unsigned NOT NULL default '0',	# 排序，越大越靠前
+  PRIMARY KEY (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
   
 # 版块访问规则, forum.accesson 开启时生效, 记录行数： fid * gid
 DROP TABLE IF EXISTS bbs_forum_access;

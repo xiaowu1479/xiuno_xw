@@ -88,11 +88,13 @@ return array(
 	'smtp_host'=>'โฮสต์ SMTP',
 	
 	// forum
+	'forum_threads'=>'หัวข้อ',
 	'forum_list'=>'รายชื่อฟอรัม',
 	'forum_id'=>'ไอดีฟอรัม',
 	'forum_icon'=>'ไอคอน',
 	'forum_name'=>'ชื่อ',
 	'forum_rank'=>'อันดับ',
+	'forum_view'=>'ดู',
 	'forum_edit'=>'แก้ไข',
 	'forum_delete'=>'ลบ',
 	'forum_brief'=>'ข้อมูลโดยย่อ',
@@ -111,6 +113,17 @@ return array(
 	'forum_delete_thread_before_delete_forum'=>'กรุณาลบโพสต์ก่อน ถึงจะลบฟอรัมได้',
 	'forum_please_delete_sub_forum'=>'กรุณาลบฟอรัมย่อย',
 	'forum_delete_successfully'=>'ลบเรียบร้อยแล้ว',
+	
+	// เมนูนำทาง (Xiuno_xw)
+	'nav_admin'=>'เมนูนำทาง',
+	'nav_name'=>'ชื่อเมนู',
+	'nav_url'=>'URL ลิงก์',
+	'nav_target'=>'หน้าต่างใหม่',
+	'nav_rank'=>'ลำดับ',
+	'nav_tip'=>'รายการเมนูจะแสดงในแถบนำทางด้านบน (หลังหน้าแรก ก่อนฟอรั่ม) ลิงก์อาจเป็นภายใน (เช่น ?forum-2.htm) หรือภายนอก (เช่น https://example.com)',
+	'nav_quick_add'=>'เพิ่มฟอรั่มอย่างรวดเร็ว',
+	'nav_quick_add_select'=>'เลือกฟอรั่ม...',
+	'nav_already_added'=>'ฟอรั่มนี้อยู่ในเมนูแล้ว',
 	
 	'thread_queue_not_exists'=>'ยังไม่มีคิวตอนนี้',
 	'search_condition'=>'เงื่อนไขการค้นหา',
@@ -165,7 +178,7 @@ return array(
 	'plugin_detail'=>'ข้อมูลปลั๊กอิน',
 	'plugin_brief_url'=>'URL ของปลั๊กอิน',
 	'plugin_not_exists'=>'ไม่พบปลั๊กอิน',
-	'plugin_versio_not_match'=>'ปลั๊กอินนี้ต้องการ Xiuno BBS เวอร์ชัน {bbs_version} เป็นอย่างต่ำ เวอร์ชันปัจจุบันคือ: {version}',
+	'plugin_versio_not_match'=>'ปลั๊กอินนี้ต้องการ Xiuno_xw เวอร์ชัน {bbs_version} เป็นอย่างต่ำ เวอร์ชันปัจจุบันคือ: {version}',
 	'plugin_download_sucessfully'=>'ดาวน์โหลดปลั๊กอิน ({dir}) เรียบร้อยแล้ว กรุณาคลิกเพื่อติดตั้ง',
 	'plugin_install_sucessfully'=>'ติดตั้งปลั๊กอิน ( {name} ) เรียบร้อยแล้ว',
 	'plugin_unstall_sucessfully'=>'ถอนการติดตั้งปลั๊กอิน ( {name} ) เรียบร้อยแล้ว กรุณาลบไดเรกทอรี {dir} เพื่อลบออกอย่างสมบูรณ์',

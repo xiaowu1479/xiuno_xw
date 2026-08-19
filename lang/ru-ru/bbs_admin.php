@@ -87,11 +87,13 @@ return array(
 	'lang_ru-ru'=>'Русский',
 	
 	// forum
+	'forum_threads'=>'Темы',
 	'forum_list'=>'Список форумов',
 	'forum_id'=>'ID форума',
 	'forum_icon'=>'Иконка',
 	'forum_name'=>'Название',
 	'forum_rank'=>'Сортировка',
+	'forum_view'=>'Просмотр',
 	'forum_edit'=>'Редактировать',
 	'forum_delete'=>'Удалить',
 	'forum_brief'=>'Описание',
@@ -110,6 +112,17 @@ return array(
 	'forum_delete_thread_before_delete_forum'=>'Пожалуйста, сначала удалите темы, а потом форум.',
 	'forum_please_delete_sub_forum'=>'Пожалуйста, сначала удалите под-форум.',
 	'forum_delete_successfully'=>'Успешно удалено',
+	
+	// Навигация (Xiuno_xw)
+	'nav_admin'=>'Навигация',
+	'nav_name'=>'Название меню',
+	'nav_url'=>'URL ссылки',
+	'nav_target'=>'Новое окно',
+	'nav_rank'=>'Порядок',
+	'nav_tip'=>'Элементы меню отображаются в верхней навигации (после главной, перед форумами). Ссылка может быть внутренней (например ?forum-2.htm) или внешней (например https://example.com).',
+	'nav_quick_add'=>'Быстрое добавление форума',
+	'nav_quick_add_select'=>'Выберите форум...',
+	'nav_already_added'=>'Этот форум уже в навигации.',
 	
 	'thread_queue_not_exists'=>'Очередь не существует',
 	'search_condition'=>'Условия поиска',
@@ -168,7 +181,7 @@ return array(
 	'plugin_detail'=>'Описание',
 	'plugin_not_exists'=>'Плагин не существует',
 	'plugin_brief_url'=>'URL-адрес плагина',
-	'plugin_versio_not_match'=>'Этот плагин предназначен для Xiuno BBS  {bbs_version}, Ваша версия: {version}',
+	'plugin_versio_not_match'=>'Этот плагин предназначен для Xiuno_xw  {bbs_version}, Ваша версия: {version}',
 	'plugin_download_sucessfully'=>'Загрузка плагина ({dir}) успешна, нажмите для установки',
 	'plugin_install_sucessfully'=>'Плагин Plugin ( {name} ) успешно установлен',
 	'plugin_unstall_sucessfully'=>'Плагин ( {name} ) успешно удален, toдля полного удаления удалите директорию плагинва {dir} ',

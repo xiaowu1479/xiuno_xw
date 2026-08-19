@@ -1,7 +1,7 @@
-xiuno_xw 1.0.0 (2026-08-19)
+Xiuno_xw 1.0.0 (2026-08-19)
 ===========================
 
-1. 品牌重命名：xiuno_xw（站点名 / 安装协议 / 语言包 / README）
+1. 品牌重命名：Xiuno_xw（站点名 / 安装协议 / 语言包 / README）
 2. 安全修复：loco.php 密码配置化、登录 Token IP 绑定 + 过期、安装器移除 mysql_* 死代码、附件移除 exe/bin/swf 危险后缀
 3. 存储引擎：全部数据表 MyISAM → InnoDB
 4. 配置优化：session_delay_update=1、缓存引擎 innodb

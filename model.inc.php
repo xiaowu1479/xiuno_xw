@@ -26,6 +26,7 @@ $include_model_files = array (
 	APP_PATH.'model/form.func.php',
 	APP_PATH.'model/misc.func.php',
 	APP_PATH.'model/session.func.php',
+	APP_PATH.'model/nav.func.php',
 	
 	// hook model_inc_file.php
 	

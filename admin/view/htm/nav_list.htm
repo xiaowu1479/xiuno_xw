@@ -1,0 +1,160 @@
+<?php include _include(ADMIN_PATH.'view/htm/header.inc.htm');?>
+
+<!--{hook admin_nav_list_start.htm}-->
+
+<div class="row">
+	<div class="col-12">
+		<div class="card">
+			<div class="card-body">
+				<div class="mb-3">
+					<select id="forum_quick" class="form-control" style="display:inline-block;width:auto;max-width:240px;">
+						<option value=""><?php echo lang('nav_quick_add_select');?></option>
+						<?php foreach($forumlist as $_fid=>$_forum) { ?>
+						<option value="<?php echo $_fid;?>"><?php echo htmlspecialchars($_forum['name'], ENT_QUOTES);?></option>
+						<?php } ?>
+					</select>
+					<a role="button" class="btn btn-success" id="quick_add">[+] <?php echo lang('nav_quick_add');?></a>
+				</div>
+				<form action="<?php echo url('nav-list');?>" method="post" id="form">
+					<?php echo csrf_token_hidden();?>
+					<div class="table-responsive arrlist">
+						<table class="table" style="min-width: 800px">
+							<thead>
+								<tr align="center">
+									<th width="60">ID</th>
+									<th width="160"><?php echo lang('nav_name');?></th>
+									<th><?php echo lang('nav_url');?></th>
+									<th width="90"><?php echo lang('nav_target');?></th>
+									<th width="90"><?php echo lang('nav_rank');?></th>
+									<th width="100" class="text-center"><?php echo lang('forum_delete');?></th>
+								</tr>
+							<thead>
+							<tbody>
+								<?php foreach($navlist as $_id=>$_nav) { ?>
+								<tr align="center" rowid="<?php echo $_id; ?>">
+									<td class="50"><input type="text" class="form-control" name="id[<?php echo $_id;?>]" value="<?php echo $_nav['id']; ?>" readonly /></td>
+									<td><input type="text" class="form-control" name="name[<?php echo $_id;?>]" value="<?php echo htmlspecialchars($_nav['name'], ENT_QUOTES); ?>" placeholder="<?php echo lang('nav_name');?>" /></td>
+									<td><input type="text" class="form-control" name="url[<?php echo $_id;?>]" value="<?php echo htmlspecialchars($_nav['url'], ENT_QUOTES); ?>" placeholder="https://..." /></td>
+									<td><input type="checkbox" name="target[<?php echo $_id;?>]" value="1" <?php echo $_nav['target'] ? 'checked' : ''; ?> /></td>
+									<td><input type="text" class="form-control" name="rank[<?php echo $_id;?>]" value="<?php echo $_nav['rank']; ?>" placeholder="<?php echo lang('nav_rank');?>" /></td>
+									<td><a class="btn row_delete" role="button" tabindex="0"><?php echo lang('forum_delete');?></a></td>
+								</tr>
+								<?php } ?>
+							</tbody>
+						</table>
+					</div>
+					<p><a role="button" class="btn row_add">[+]<?php echo lang('add_new_line');?></a></p>
+					<p class="text-center">
+						<button type="submit" class="btn btn-primary" id="submit" data-loading-text="<?php echo lang('submiting');?>..." style="width: 10rem;"><?php echo lang('confirm');?></button>
+					</p>
+				</form>
+				<p class="small text-grey"><?php echo lang('nav_tip');?></p>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<!--{hook admin_nav_list_end.htm}-->
+
+
+
+<?php include _include(ADMIN_PATH.'view/htm/footer.inc.htm');?>
+
+<script>
+
+var maxid = <?php echo $maxid;?>;
+
+var jform = $("#form");
+var jsubmit = $("#submit");
+
+jform.on('submit', function(){
+	jform.reset();
+	var postdata = jform.serialize();
+	jsubmit.button('loading');
+	$.xpost(jform.attr('action'), postdata, function(code, message) {
+		if(code == 0) {
+			$.alert(message);
+			jsubmit.text(message).delay(3000).location();
+			return;
+		} else {
+			alert(message);
+			jsubmit.button('reset');
+		}
+	});
+	return false;
+});
+
+// 删除
+var jarrlist = $('.arrlist');
+var jdelete = $('a.row_delete');
+jarrlist.on('click', 'a.row_delete', function() {
+	var jthis = $(this);
+	var jtr = jthis.parents('tr');
+	var rowid = jtr.attr('rowid');
+	jtr.remove();
+	return false;
+});
+
+// 增加一行（空表时直接构造 HTML）
+function nav_add_row(rowid, name, url) {
+	var esc = function(s) { return (s || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;'); };
+	var jlast = jarrlist.find('tbody tr').last();
+	if(jlast.length) {
+		var jclone = jlast.clone();
+		jclone.insertAfter(jlast);
+		var jid = jclone.find('input[name^="id"]');
+		jid.val(rowid);
+		jclone.attr('rowid', rowid);
+		// 清空值
+		jclone.find('input').not('[name^="id"]').val('');
+		// 修改 [] 中的值为 rowid
+		jclone.find('input').attr_name_index(rowid);
+		if(name !== undefined) jclone.find('input[name^="name"]').val(name);
+		if(url !== undefined) jclone.find('input[name^="url"]').val(url);
+	} else {
+		jarrlist.find('tbody').append(
+			'<tr align="center" rowid="' + rowid + '">' +
+			'<td><input type="text" class="form-control" name="id[' + rowid + ']" value="' + rowid + '" readonly /></td>' +
+			'<td><input type="text" class="form-control" name="name[' + rowid + ']" value="' + esc(name) + '" placeholder="' + '<?php echo lang('nav_name');?>' + '" /></td>' +
+			'<td><input type="text" class="form-control" name="url[' + rowid + ']" value="' + esc(url) + '" placeholder="https://..." /></td>' +
+			'<td><input type="checkbox" name="target[' + rowid + ']" value="1" /></td>' +
+			'<td><input type="text" class="form-control" name="rank[' + rowid + ']" placeholder="' + '<?php echo lang('nav_rank');?>' + '" /></td>' +
+			'<td><a class="btn row_delete" role="button" tabindex="0"><?php echo lang('forum_delete');?></a></td>' +
+			'</tr>'
+		);
+	}
+}
+
+// 快捷添加版块
+$('#quick_add').on('click', function() {
+	var fid = $('#forum_quick').val();
+	if(!fid) {
+		alert('<?php echo lang('nav_quick_add_select');?>');
+		return;
+	}
+	if(jarrlist.find('input[name^="url"]').filter(function() {
+		return $(this).val() == '?forum-' + fid + '.htm';
+	}).length) {
+		alert('<?php echo lang('nav_already_added');?>');
+		return;
+	}
+	var name = $('#forum_quick option:selected').text();
+	nav_add_row(++maxid, name, '?forum-' + fid + '.htm');
+	$('#forum_quick').val('');
+	return false;
+});
+
+// 增加
+var jadd = $('a.row_add');
+jadd.on('click', function() {
+	nav_add_row(++maxid);
+	return false;
+});
+
+
+$('#nav li.nav-item-nav').addClass('active');
+
+</script>
+
+<!--{hook admin_nav_list_js.htm}-->

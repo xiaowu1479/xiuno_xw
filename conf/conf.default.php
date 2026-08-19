@@ -2,7 +2,7 @@
 
 /*
 
-	xiuno_xw 1.0.0 配置文件 (基于 Xiuno BBS 4.0 二开)
+	Xiuno_xw 1.0.0 配置文件 (基于 Xiuno BBS 4.0 二开)
 	支持多台 DB，主从配置好以后，xn 会自动根据 SQL 读写分离。
 	支持各种 cache，本机 apc/xcache, 网络: redis/memcached/mysql
 	支持 CDN，如果前端开启了 CDN 请设置 cdn_on=>1, 否则获取 IP 会不准确 
@@ -72,7 +72,7 @@ return array (
 	'tmp_path' => './tmp/',		// 可以配置为 linux 下的 /dev/shm ，通过内存缓存临时文件
 	'log_path' => './log/',		// 日志目录
 	
-	// -------------------> xiuno_xw 配置
+	// -------------------> Xiuno_xw 配置
 
 	'view_url' => 'view/',		// 可以配置单独的 CDN 域名：比如：http://static.domain.com/view/
 	'upload_url' => 'upload/',	// 可以配置单独的 CDN 域名：比如：http://upload.domain.com/upload/
@@ -82,7 +82,7 @@ return array (
 	'logo_pc_url' => 'view/img/logo.png',			// PC 的 LOGO URL
 	'logo_water_url' => 'view/img/water-small.png',		// 水印的 LOGO URL
 	
-	'sitename' => 'xiuno_xw',
+	'sitename' => 'Xiuno_xw',
 	'sitebrief' => 'Site Brief',
 	'timezone' => 'Asia/Shanghai',	// 时区，默认中国
 	'lang' => 'zh-cn',
@@ -98,7 +98,7 @@ return array (
 	'cache_thread_list_pages' => 10,
 	'online_update_span' => 120,	// 在线更新频度，大站设置的长一些
 	'online_hold_time' => 3600,	// 在线的时间
-	'session_delay_update' => 0,
+	'session_delay_update' => 1,
 	'upload_image_width' => 927,	// 上传图片自动缩略的最大宽度
 	'order_default' => 'lastpid',
 	'attach_dir_save_rule' => 'Ym',	// 附件存放规则，附件多用：Ymd，附件少：Ym
@@ -111,6 +111,10 @@ return array (
 	'admin_bind_ip' => 0,		// 后台是否绑定 IP
 	
 	'cdn_on' => 0,
+	
+	'loco_pass' => '',		// 火车头采集接口密码，留空则禁用 loco.php
+	'token_bind_ip' => 1,		// Token 是否绑定 IP（移动网络下可关闭）
+	'token_expire' => 604800,	// Token 有效期（秒），默认 7 天
 	
 	/* 支持多种 URL 格式：
 		0: ?thread-create-1.htm

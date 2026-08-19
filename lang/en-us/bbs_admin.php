@@ -85,11 +85,13 @@ return array(
 	'smtp_host'=>'SMTP Host',
 	
 	// forum
+	'forum_threads'=>'Threads',
 	'forum_list'=>'Forum List',
 	'forum_id'=>'Forum ID',
 	'forum_icon'=>'Icon',
 	'forum_name'=>'Name',
 	'forum_rank'=>'Rank',
+	'forum_view'=>'View',
 	'forum_edit'=>'Edit',
 	'forum_delete'=>'Delete',
 	'forum_brief'=>'Brief',
@@ -108,6 +110,17 @@ return array(
 	'forum_delete_thread_before_delete_forum'=>'Please delete thread before delete forum.',
 	'forum_please_delete_sub_forum'=>'Please delete sub forum.',
 	'forum_delete_successfully'=>'Deleted successfully',
+	
+	// Navigation (Xiuno_xw)
+	'nav_admin'=>'Navigation',
+	'nav_name'=>'Menu Name',
+	'nav_url'=>'Link URL',
+	'nav_target'=>'New Window',
+	'nav_rank'=>'Order',
+	'nav_tip'=>'Menu items are shown in the top navigation (after Home, before Forums). Links can be internal (e.g. ?forum-2.htm) or external (e.g. https://example.com).',
+	'nav_quick_add'=>'Quick Add Forum',
+	'nav_quick_add_select'=>'Select forum...',
+	'nav_already_added'=>'This forum is already in the navigation.',
 	
 	'thread_queue_not_exists'=>'Queue does not exist',
 	'search_condition'=>'Search Condition',
@@ -162,7 +175,7 @@ return array(
 	'plugin_detail'=>'Plugin Detail',
 	'plugin_brief_url'=>'Plugin Brief URL',
 	'plugin_not_exists'=>'Plugin does not exists',
-	'plugin_versio_not_match'=>'This plugin is dependent on Xiuno BBS Minimum version {bbs_version}, current version：{version}',
+	'plugin_versio_not_match'=>'This plugin is dependent on Xiuno_xw Minimum version {bbs_version}, current version：{version}',
 	'plugin_download_sucessfully'=>'Download plugin ({dir}) sucessfully, please click to install',
 	'plugin_install_sucessfully'=>'Install Plugin ( {name} ) sucessfully',
 	'plugin_unstall_sucessfully'=>'Unstall Plugin ( {name} ) sucessfully, to completely remove the plugin, please manually delete the {dir} directory',

@@ -22,7 +22,7 @@
 			<div class="row">
 				<div class="col">
 					<!--{hook footer_footer_left_start.htm}-->
-					Powered by <b>Xiuno BBS <span><?php echo $conf['version'];?></span></b>
+					Powered by <b>Xiuno_xw <span><?php echo $conf['version'];?></span></b>
 					<!--{hook footer_footer_left_end.htm}-->
 				</div>
 				<div class="col text-right">
@@ -57,7 +57,7 @@
 	var csrf_token = '<?php echo csrf_token(); ?>';
 	</script>
 	<script>
-	// 自动为后台所有表单注入 csrf_token (fixed by xiuno_xw)
+	// 自动为后台所有表单注入 csrf_token (fixed by Xiuno_xw)
 	$(function() {
 		$('form').each(function() {
 			if(!$(this).find('input[name="csrf_token"]').length) {

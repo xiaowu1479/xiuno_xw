@@ -17,6 +17,14 @@ return array(
 		'tab'=> array (
 		)
 	),
+	'nav' => array(
+		'url'=>url('nav-list'), 
+		'text'=>lang('nav_admin'), 
+		'icon'=>'icon-navicon',
+		'tab'=> array (
+			'list'=>array('url'=>url('nav-list'), 'text'=>lang('nav_admin')),
+		)
+	),
 	'thread' => array(
 		'url'=>url('thread-list'), 
 		'text'=>lang('thread'), 
