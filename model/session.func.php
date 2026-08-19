@@ -229,7 +229,12 @@ function sess_start() {
 }
 
 function online_count() {
-	return db_count('session');
+	global $conf, $time;
+	// 只统计在线保持时间内的活跃会话（含游客），避免历史 session 累积导致在线人数虚高 (fixed by Xiuno_xw)
+	$hold_time = empty($conf['online_hold_time']) ? 3600 : intval($conf['online_hold_time']);
+	$cond = array('last_date'=>array('>'=>$time - $hold_time));
+	// 游客会话的 last_date 不更新（sess_write 访客无数据跳过），超过保持时间自然过期不计数
+	return db_count('session', $cond);
 }
 
 function online_find_cache() {
@@ -237,9 +242,12 @@ function online_find_cache() {
 }
 
 function online_list_cache() {
+	global $time, $conf;
 	$onlinelist = cache_get('online_list');
 	if($onlinelist === NULL) {
-		$onlinelist = db_find('session', array('uid'=>array('>'=>0)), array('last_date'=>-1), 1, 500);
+		// 仅统计在线保持时间内的登录用户，避免过期会话残留 (fixed by Xiuno_xw)
+		$hold_time = empty($conf['online_hold_time']) ? 3600 : intval($conf['online_hold_time']);
+		$onlinelist = db_find('session', array('uid'=>array('>'=>0), 'last_date'=>array('>'=>$time - $hold_time)), array('last_date'=>-1), 1, 500);
 		foreach($onlinelist as &$online) {
 			$user = user_read_cache($online['uid']);
 			$online['username'] = $user['username'];

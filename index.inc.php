@@ -44,6 +44,9 @@ $header = array(
 // 运行时数据，存放于 cache_set() / runtime data
 $runtime = runtime_init();
 
+// 定时任务：5 分钟清理过期会话并刷新在线数，每日重置统计 (fixed by Xiuno_xw)
+cron_run();
+
 // 检测站点运行级别 / restricted access
 check_runlevel();
 
