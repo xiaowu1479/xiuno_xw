@@ -79,6 +79,20 @@
 					
 					<!--{hook post_message_after.htm}-->
 
+					<?php if(!empty($conf['captcha_on']) && !empty($conf['captcha_post_on'])) { ?>
+					<div class="form-group input-group">
+						<div class="input-group-prepend">
+							<span class="input-group-text"><i class="icon icon-barcode icon-fw"></i></span>
+						</div>
+						<input type="text" class="form-control" placeholder="<?php echo lang('captcha');?>" name="captcha" id="captcha" autocomplete="off" style="max-width:200px;">
+						<div class="input-group-append">
+							<img src="?captcha.htm" class="rounded captcha-img" alt="<?php echo lang('captcha');?>" title="<?php echo lang('captcha_refresh');?>" style="cursor:pointer;height:38px;">
+						</div>
+						<div class="invalid-feedback"></div>
+					</div>
+					<!--{hook post_captcha_after.htm}-->
+					<?php } ?>
+
 					<div class="d-flex justify-content-between">
 						<div class="attachlist_parent">
 							<a class="small text-left" href="javascript:void(0)">
@@ -112,6 +126,9 @@
 var jform = $('#form');
 var jsubmit = $('#submit');
 var jfid = jform.find('select[name="fid"]');
+jform.find('.captcha-img').on('click', function() {
+	$(this).attr('src', '?captcha.htm&r=' + Math.random());
+});
 jform.on('submit', function() {
 	jform.reset();
 	jsubmit.button('loading');
@@ -125,6 +142,7 @@ jform.on('submit', function() {
 			jsubmit.button('reset');
 		} else {
 			$.alert(message);
+			jform.find('.captcha-img').attr('src', '?captcha.htm&r=' + Math.random());
 			//jform.find('[name="'+code+'"]').alert(message).focus();
 			jsubmit.button('reset');
 		}

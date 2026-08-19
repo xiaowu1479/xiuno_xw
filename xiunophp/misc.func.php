@@ -181,6 +181,7 @@ function jump($message, $url = '', $delay = 3) {
 	if($ajax) return $message;
 	if(!$url) return $message;
 	$url == 'back' AND $url = 'javascript:history.back()';
+	$url = htmlspecialchars($url, ENT_QUOTES);
 	$htmladd = '<script>setTimeout(function() {window.location=\''.$url.'\'}, '.($delay * 1000).');</script>';
 	return '<a href="'.$url.'">'.$message.'</a>'.$htmladd;
 }
@@ -1056,18 +1057,24 @@ function xn_url_parse($request_url) {
 	$arr = parse_url($request_url);
 	
 	$q = array_value($arr, 'path');
+	// 兼容: ?xxx.htm&key=value 这种 & 残留在路径中的 URL（如 referer=./）
+	$behind = '';
+	$pos2 = strpos($q, '&');
+	if($pos2 !== FALSE) {
+		$behind = substr($q, $pos2 + 1);
+		$q = substr($q, 0, $pos2);
+	}
 	$pos = strrpos($q, '/');
 	$pos === FALSE && $pos = -1;
 	$q = substr($q, $pos + 1); // 截取最后一个 / 后面的内容
-	// 查找第一个 ? & 进行分割
-	$sep = strpos($q, '?') === FALSE ? strpos($q, '&') : FALSE;
+	// 查找第一个 ? 进行分割
+	$sep = strpos($q, '?');
 	if($sep !== FALSE) {
 		// 对后半部分截取，并且分析
 		$front = substr($q, 0, $sep);
 		$behind = substr($q, $sep + 1);
 	} else {
 		$front = $q;
-		$behind = '';
 	}
 	
 	if(substr($front, -4) == '.htm') $front = substr($front, 0, -4);
@@ -1092,7 +1099,12 @@ function xn_url_parse($request_url) {
 	}
 	$r += $arr3;
 	
-	$_SERVER['REQUEST_URI_NO_PATH'] = substr($_SERVER['REQUEST_URI'], strrpos($_SERVER['REQUEST_URI'], '/') + 1);
+	$uri_np = $_SERVER['REQUEST_URI'];
+	$pos2 = strpos($uri_np, '?');
+	$pos2 !== FALSE AND $uri_np = substr($uri_np, 0, $pos2);
+	$pos2 = strpos($uri_np, '&');
+	$pos2 !== FALSE AND $uri_np = substr($uri_np, 0, $pos2);
+	$_SERVER['REQUEST_URI_NO_PATH'] = substr($uri_np, strrpos($uri_np, '/') + 1);
 	
 	// 是否开启 /user/login 这种格式的 URL
 	$conf = _SERVER('conf');

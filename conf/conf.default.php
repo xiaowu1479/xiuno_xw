@@ -107,6 +107,10 @@ return array (
 	'user_create_email_on' => 0,
 	'user_create_on' => 1,
 	'user_resetpw_on' => 0,
+	'captcha_on' => 1,
+	'captcha_login_on' => 1,
+	'captcha_reg_on' => 1,
+	'captcha_post_on' => 0,
 	
 	'admin_bind_ip' => 0,		// 后台是否绑定 IP
 	

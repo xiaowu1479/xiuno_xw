@@ -28,6 +28,19 @@
 						<div class="invalid-feedback"></div>
 					</div>
 					<!--{hook user_login_password_after.htm}-->
+					<?php if(!empty($conf['captcha_on']) && !empty($conf['captcha_login_on'])) { ?>
+					<div class="form-group input-group">
+						<div class="input-group-prepend">
+							<span class="input-group-text"><i class="icon icon-barcode icon-fw"></i></span>
+						</div>
+						<input type="text" class="form-control" placeholder="<?php echo lang('captcha');?>" name="captcha" id="captcha" autocomplete="off">
+						<div class="input-group-append">
+							<img src="?captcha.htm" class="rounded captcha-img" alt="<?php echo lang('captcha');?>" title="<?php echo lang('captcha_refresh');?>" style="cursor:pointer;height:38px;">
+						</div>
+						<div class="invalid-feedback"></div>
+					</div>
+					<!--{hook user_login_captcha_after.htm}-->
+					<?php } ?>
 					<div class="form-group">
 						<button type="submit" class="btn btn-primary btn-block" id="submit" data-loading-text="<?php echo lang('submiting');?>..."><?php echo lang('login');?></button>
 					</div>
@@ -63,6 +76,9 @@ var jsubmit = $('#submit');
 var jemail = $('#email');
 var jpassword = $('#password');
 var referer = '<?php echo htmlspecialchars($referer, ENT_QUOTES);?>';
+jform.find('.captcha-img').on('click', function() {
+	$(this).attr('src', '?captcha.htm&r=' + Math.random());
+});
 jform.on('submit', function() {
 	jform.reset();
 	jsubmit.button('loading');
@@ -75,6 +91,7 @@ jform.on('submit', function() {
 			jsubmit.button('reset');
 		} else {
 			jform.find('[name="'+code+'"]').alert(message).focus();
+			if(code == 'captcha') jform.find('.captcha-img').attr('src', '?captcha.htm&r=' + Math.random());
 			jsubmit.button('reset');
 		}
 		/*

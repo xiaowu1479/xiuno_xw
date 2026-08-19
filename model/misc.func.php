@@ -123,6 +123,14 @@ function message($code, $message, $extra = array()) {
 	exit;
 }
 
+// 图形验证码校验 (Xiuno_xw)
+function captcha_check($name = 'captcha') {
+	$code = param($name, '', FALSE);
+	$sess = isset($_SESSION['captcha_code']) ? $_SESSION['captcha_code'] : '';
+	unset($_SESSION['captcha_code']);
+	(empty($sess) || empty($code) || strcasecmp($code, $sess) != 0) AND message($name, lang('captcha_incorrect'));
+}
+
 // 上锁
 function xn_lock_start($lockname = '', $life = 10) {
 	global $conf, $time;

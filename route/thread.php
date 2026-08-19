@@ -40,6 +40,8 @@ if($action == 'create') {
 		
 		csrf_check();
 		
+		!empty($conf['captcha_on']) && !empty($conf['captcha_post_on']) AND captcha_check();
+		
 		$fid = param('fid', 0);
 		$forum = forum_read($fid);
 		empty($forum) AND message('fid', lang('forum_not_exists'));

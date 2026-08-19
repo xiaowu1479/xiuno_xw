@@ -69,6 +69,7 @@ if(!defined('SKIP_ROUTE')) {
 		case 'post': 	include _include(APP_PATH.'route/post.php'); 	break;
 		case 'mod': 	include _include(APP_PATH.'route/mod.php'); 	break;
 		case 'browser': include _include(APP_PATH.'route/browser.php'); break;
+		case 'captcha': include _include(APP_PATH.'route/captcha.php'); break;
 		// hook index_route_case_end.php
 		default: 
 			// hook index_route_case_default.php

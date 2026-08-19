@@ -23,6 +23,10 @@ if($action == 'base') {
 		$input['user_create_on'] = form_radio_yes_no('user_create_on', $conf['user_create_on']);
 		$input['user_create_email_on'] = form_radio_yes_no('user_create_email_on', $conf['user_create_email_on']);
 		$input['user_resetpw_on'] = form_radio_yes_no('user_resetpw_on', $conf['user_resetpw_on']);
+		$input['captcha_on'] = form_radio_yes_no('captcha_on', $conf['captcha_on'], lang('captcha_tips'));
+		$input['captcha_login_on'] = form_radio_yes_no('captcha_login_on', $conf['captcha_login_on']);
+		$input['captcha_reg_on'] = form_radio_yes_no('captcha_reg_on', $conf['captcha_reg_on']);
+		$input['captcha_post_on'] = form_radio_yes_no('captcha_post_on', $conf['captcha_post_on']);
 		$input['cookie_secure'] = form_radio_yes_no('cookie_secure', $conf['cookie_secure'], lang('cookie_secure_tips'));
 		$input['lang'] = form_select('lang', array('zh-cn'=>lang('lang_zh_cn'), 'zh-tw'=>lang('lang_zh_tw'), 'en-us'=>lang('lang_en_us'), 'ru-ru'=>lang('lang_ru_ru'), 'th-th'=>lang('lang_th_th')), $conf['lang']);
 		
@@ -41,6 +45,10 @@ if($action == 'base') {
 		$user_create_on = param('user_create_on', 0);
 		$user_create_email_on = param('user_create_email_on', 0);
 		$user_resetpw_on = param('user_resetpw_on', 0);
+		$captcha_on = param('captcha_on', 0);
+		$captcha_login_on = param('captcha_login_on', 0);
+		$captcha_reg_on = param('captcha_reg_on', 0);
+		$captcha_post_on = param('captcha_post_on', 0);
 		$cookie_secure = param('cookie_secure', 0);
 		
 		$_lang = param('lang');
@@ -54,6 +62,10 @@ if($action == 'base') {
 		$replace['user_create_on'] = $user_create_on;
 		$replace['user_create_email_on'] = $user_create_email_on;
 		$replace['user_resetpw_on'] = $user_resetpw_on;
+		$replace['captcha_on'] = $captcha_on;
+		$replace['captcha_login_on'] = $captcha_login_on;
+		$replace['captcha_reg_on'] = $captcha_reg_on;
+		$replace['captcha_post_on'] = $captcha_post_on;
 		$replace['cookie_secure'] = $cookie_secure;
 		$replace['lang'] = $_lang;
 		

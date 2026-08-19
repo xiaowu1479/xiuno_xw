@@ -72,6 +72,8 @@ if(empty($action)) {
 		
 		csrf_check();
 		
+		!empty($conf['captcha_on']) && !empty($conf['captcha_login_on']) AND captcha_check();
+		
 		$email = param('email');			// 邮箱或者手机号 / email or mobile
 		$password = param('password');
 		empty($email) AND message('email', lang('email_is_empty'));
@@ -130,6 +132,8 @@ if(empty($action)) {
 		// hook user_create_post_start.php
 		
 		csrf_check();
+		
+		!empty($conf['captcha_on']) && !empty($conf['captcha_reg_on']) AND captcha_check();
 		
 		$email = param('email');
 		$username = param('username');

@@ -68,7 +68,8 @@ function sess_new($sid) {
 		$cookie_test = xn_encrypt(md5($agent.$longip), $conf['auth_key']);
 		setcookie('cookie_test', $cookie_test, $time + 86400, '');
 		$g_session_invalid = FALSE;
-		return;
+		// 原版在此 return，首次访问不建立 session 记录（sess_write 仅 UPDATE 不 INSERT），
+		// 导致首次访问的 session 数据丢失，CSRF/验证码在首次提交时必然失败。改为继续建记录。
 	}
 	
 	// 可能会暴涨

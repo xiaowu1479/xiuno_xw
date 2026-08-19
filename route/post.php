@@ -47,6 +47,8 @@ if($action == 'create') {
 		
 		csrf_check();
 		
+		!empty($conf['captcha_on']) && !empty($conf['captcha_post_on']) AND captcha_check();
+		
 		$message = param('message', '', FALSE);
 		empty($message) AND message('message', lang('please_input_message'));
 		
