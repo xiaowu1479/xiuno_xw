@@ -1,0 +1,285 @@
+<?php include _include(APP_PATH.'view/htm/header.inc.htm');?>
+
+<!--{hook user_create_start.htm}-->
+<style>
+    body {
+        background-color: #f0f4f8;
+        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 60 60"><path fill="%23e2e8f0" d="M30 10c-5.5 0-10 4.5-10 10s4.5 10 10 10 10-4.5 10-10-4.5-10-10-10zm0 16c-3.3 0-6-2.7-6-6s2.7-6 6-6 6 2.7 6 6-2.7 6-6 6zm-8 4c-4.4 0-8 3.6-8 8v4h16v-4c0-4.4-3.6-8-8-8zm8 12c-2.2 0-4-1.8-4-4v-2h8v2c0 2.2-1.8 4-4 4z"/></svg>');
+        background-size: 80px;
+    }
+    #body {
+        padding-top: 0;
+    }
+    .navbar, .bottom-nav, #footer, .card, .row, .col-lg-8, .col-6 {
+        display: none !important;
+    }
+    /* 核心注册容器（和登录页完全一致） */
+    .login-container {
+        max-width: 500px;
+        margin: 2rem auto;
+        background: #ffffff;
+        border-radius: 16px;
+        padding: 2rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+    /* 顶部注册图标（用户+加号） */
+    .login-avatar {
+        width: 56px;
+        height: 56px;
+        background-color: #eff6ff;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+    }
+    .login-avatar i {
+        font-size: 1.5rem;
+        color: #3b82f6;
+    }
+    .login-title {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+    .login-title h1 {
+        font-size: 2rem;
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+    }
+    .login-title p {
+        color: #6b7280;
+        font-size: 1.125rem;
+    }
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    /* 输入框与左侧图标（和登录页完全一致） */
+    .input-icon {
+        position: relative;
+    }
+    .input-icon i {
+        position: absolute;
+        left: 0.5rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #6b7280;
+        font-size: 0.95rem;
+        background-color: #f3f4f6;
+        padding: 0.65rem 0.65rem;
+        border-radius: 10px 0 0 10px;
+        width: 40px;
+        text-align: center;
+    }
+    .form-control {
+        border-radius: 10px;
+        padding: 0.85rem 1rem 0.85rem 3.5rem;
+        border: 1px solid #e5e7eb;
+        font-size: 1rem;
+        width: 100%;
+        height: calc(2.8rem + 2px);
+        line-height: 1.2;
+    }
+    .form-control::placeholder {
+        color: #9ca3af;
+        transform: translateY(1px);
+    }
+    .form-control:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+    /* 发送验证码按钮 */
+    .btn-code {
+        background-color: #f8fafc;
+        border-color: #e2e8f0;
+        color: #374151;
+        border-radius: 10px;
+        padding: 0.85rem 1rem;
+        font-size: 1rem;
+        width: 100%;
+        margin-bottom: 1.5rem;
+    }
+    .btn-code:hover {
+        background-color: #f1f5f9;
+        border-color: #cbd5e1;
+    }
+    .btn-primary {
+        background-color: #2563eb;
+        border-color: #2563eb;
+        border-radius: 12px;
+        padding: 0.875rem;
+        font-size: 1.25rem;
+        font-weight: 500;
+        width: 100%;
+        margin: 0.5rem 0 1.5rem;
+    }
+    .btn-primary:hover {
+        background-color: #1d4ed8;
+        border-color: #1d4ed8;
+    }
+    /* 底部链接容器组（和登录页完全一致） */
+    .link-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    .link-item {
+        padding: 0.875rem;
+        background-color: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        text-align: center;
+        font-size: 1rem;
+    }
+    .link-item a {
+        text-decoration: none;
+    }
+    .link-item.user-login a {
+        color: #2563eb;
+        font-weight: 500;
+    }
+    .link-item.forgot-pw a {
+        color: #6b7280;
+    }
+    .link-item i {
+        margin-right: 0.5rem;
+    }
+</style>
+
+<div class="login-container">
+    <div class="login-avatar">
+        <i class="fas fa-user-plus"></i>
+    </div>
+    <div class="login-title">
+        <h1>用户注册</h1>
+        <p>填写基础信息，快速创建一个新账号</p>
+    </div>
+
+    <form action="<?php echo url('user-create');?>" method="post" id="form">
+        <?php echo csrf_token_hidden();?>
+        <div class="form-group">
+            <div class="input-icon">
+                <i class="fas fa-envelope"></i>
+                <input type="email" class="form-control" placeholder="邮箱" name="email" id="email" required>
+            </div>
+            <div class="invalid-feedback"></div>
+        </div>
+        <!--{hook user_create_email_after.htm}-->
+
+        <div class="form-group">
+            <div class="input-icon">
+                <i class="fas fa-user"></i>
+                <input type="text" class="form-control" placeholder="用户名" name="username" id="username">
+            </div>
+            <div class="invalid-feedback"></div>
+        </div>
+        <!--{hook user_create_username_after.htm}-->
+
+        <div class="form-group">
+            <div class="input-icon">
+                <i class="fas fa-lock"></i>
+                <input type="password" class="form-control" placeholder="密码" name="password" id="password">
+            </div>
+            <div class="invalid-feedback"></div>
+        </div>
+        <!--{hook user_create_password_after.htm}-->
+
+        <?php if(!empty($conf['captcha_on']) && !empty($conf['captcha_reg_on'])) { ?>
+        <div class="form-group">
+            <div class="input-icon">
+                <i class="fas fa-barcode"></i>
+                <input type="text" class="form-control" placeholder="<?php echo lang('captcha');?>" name="captcha" id="captcha" autocomplete="off">
+                <img src="?captcha.htm" class="rounded captcha-img" alt="<?php echo lang('captcha');?>" title="<?php echo lang('captcha_refresh');?>" style="cursor:pointer;height:38px;position:absolute;right:0.5rem;top:50%;transform:translateY(-50%);border-radius:10px;">
+            </div>
+            <div class="invalid-feedback"></div>
+        </div>
+        <!--{hook user_create_captcha_after.htm}-->
+        <?php } ?>
+
+        <?php if($conf['user_create_email_on']) { ?>
+        <div class="form-group">
+            <div class="input-icon">
+                <i class="fas fa-barcode"></i>
+                <input type="text" class="form-control" placeholder="验证码" name="code" id="code">
+            </div>
+            <div class="invalid-feedback"></div>
+        </div>
+        <button type="button" class="btn btn-code" id="sendcode" data-loading-text="<?php echo lang('sending');?>..." action="<?php echo url('user-send_code-user_create');?>">发送验证码</button>
+        <?php } ?>
+
+        <button type="submit" class="btn btn-primary" id="submit" data-loading-text="<?php echo lang('submiting');?>..." <?php if($conf['user_create_email_on']) { ?>disabled<?php } ?>>下一步</button>
+        <!--{hook user_create_submit_after.htm}-->
+    </form>
+
+    <!-- 底部链接容器（和登录页完全一致，带图标） -->
+    <div class="link-group">
+        <div class="link-item user-login">
+            <a href="<?php echo url('user-login');?>"><i class="fas fa-sign-in-alt"></i> 用户登录</a>
+        </div>
+        <?php if(!empty($conf['user_resetpw_on'])) { ?>
+        <div class="link-item forgot-pw">
+            <a href="<?php echo url('user-resetpw');?>"><i class="fas fa-key"></i> 忘记密码</a>
+        </div>
+        <?php } ?>
+    </div>
+</div>
+
+<!--{hook user_create_end.htm}-->
+
+<?php include _include(APP_PATH.'view/htm/footer.inc.htm');?>
+
+<script src="<?php echo $conf['view_url'];?>js/md5.js"></script>
+<script>
+var jform = $('#form');
+var jsubmit = $('#submit');
+var jsend = $('#sendcode');
+var referer = '<?php echo http_referer();?>';
+jform.find('.captcha-img').on('click', function() {
+    $(this).attr('src', '?captcha.htm&r=' + Math.random());
+});
+jsend.on('click', function() {
+    jform.reset();
+    jsend.button('loading');
+    var postdata = jform.serialize();
+    $.xpost(jsend.attr('action'), postdata, function(code, message) {
+        if(code == 0) {
+            $('#code').focus();
+            var t = 60;
+            jsend.button('<?php echo lang('user_send_sucessfully');?> 60 ');
+            jsubmit.button('reset');
+            var handler = setInterval(function() {
+                jsend.button('<?php echo lang('user_send_sucessfully');?> '+(--t)+' ');
+                if(t == 0) {
+                    clearInterval(handler);
+                    jsend.button('reset');
+                }
+            }, 1000);
+        } else if(code < 0) {
+            $.alert(message, -1);
+            jsend.button('reset');
+        } else {
+            jform.find('[name="'+code+'"]').alert(message).focus();
+            jsend.button('reset');
+        }
+    });
+    return false;
+});
+
+jform.on('submit', function() {
+    var postdata = jform.serializeObject();
+    jsubmit.button('loading');
+    $.xpost(jform.attr('action'), postdata, function(code, message) {
+        if(code == 0) {
+            jsubmit.button(message).delay(1000).location(referer);
+        } else if(xn.is_number(code)) {
+            alert(message);
+            jsubmit.button('reset');
+        } else {
+            jform.find('[name="'+code+'"]').alert(message).focus();
+            jsubmit.button('reset');
+            if(code == 'captcha') jform.find('.captcha-img').attr('src', '?captcha.htm&r=' + Math.random());
+        }
+    });
+    return false;
+});
+</script>
+<!--{hook user_create_js.htm}-->

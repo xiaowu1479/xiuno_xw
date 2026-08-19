@@ -1,0 +1,160 @@
+<!--侧边栏开关-->
+					<div class="form-group row">
+						<label class="col-md-2 form-control-label text-md-right pr-0" for="side_nav_switch">
+							<b class="text-dark"><?php echo lang('admin_setting_config_sidebar'); ?>：</b>
+						</label>
+						<div class="col-md-8">
+							<div class="side_nav" id="side_nav_switch">
+
+								<label class="custom-input custom-radio mr-3">
+									<input type="radio" name="side_nav_switch" value="1" checked="checked"> <?php echo lang('admin_on'); ?>
+								</label>
+
+								<label class="custom-input custom-radio mr-3">
+									<input type="radio" name="side_nav_switch" value="0" <?php if (isset($light_config['side_nav_switch']) && $light_config['side_nav_switch'] == 0) { ?>  checked="checked" <?php }?> > <?php echo lang('admin_off'); ?>
+								</label>
+
+							</div>
+							<div class="figure-caption mt-2">
+								<?php echo lang('side_nav_switch_tip'); ?>
+							</div>
+						</div>
+						
+					</div>
+					<!--侧边导航高度-->
+					<div class="form-group row">
+						<label class="col-md-2 form-control-label text-md-right pr-0" for="sidebar_height">
+							<b class="text-dark"><?php echo lang('admin_setting_config_sidebar_height'); ?>：</b>
+						</label>
+						<div class="col-md-8">
+							<div class="navbar-cate" id="sidebar_height">
+
+								<label class="custom-input custom-radio mr-3">
+									<input type="radio" name="sidebar_height" value="1" checked="checked"> <?php echo lang('admin_on'); ?>
+								</label>
+
+								<label class="custom-input custom-radio mr-3">
+									<input type="radio" name="sidebar_height" value="0" <?php if (isset($light_config['index_side_height']) && $light_config['index_side_height'] == 0) { ?>  checked="checked" <?php }?> > <?php echo lang('admin_off'); ?>
+								</label>
+
+							</div>
+						</div>
+					</div>
+					<!--用户快捷卡片-->
+					<div class="form-group row">
+						<label class="col-md-2 form-control-label text-md-right pr-0" for="sidebar_usercard">
+							<b class="text-dark"><?php echo lang('admin_setting_config_sidebar_usercard'); ?>：</b>
+						</label>
+						<div class="col-md-8">
+							<div class="navbar-cate" id="sidebar_usercard">
+
+								<label class="custom-input custom-radio mr-3">
+									<input type="radio" name="sidebar_usercard" value="1" checked="checked"> <?php echo lang('admin_on'); ?>
+								</label>
+
+								<label class="custom-input custom-radio mr-3">
+									<input type="radio" name="sidebar_usercard" value="0" <?php if (isset($light_config['index_side_usercard']) && $light_config['index_side_usercard'] == 0) { ?>  checked="checked" <?php }?> > <?php echo lang('admin_off'); ?>
+								</label>
+
+							</div>
+						</div>
+					</div>
+					<!--用户快捷卡片位置-->
+					<!-- <div class="form-group row">
+						<label class="col-md-2 form-control-label text-md-right pr-0" for="usercard_position">
+							<b class="text-dark"><?php echo lang('admin_setting_config_sidebar_usercard_position'); ?>：</b>
+						</label>
+						<div class="col-md-8">
+							<div class="usercard-position" id="usercard_position">
+
+								<label class="custom-input custom-radio mr-3">
+									<input type="radio" name="usercard_position" value="1" checked="checked"> <?php echo lang('admin_setting_config_sidebar_usercard_position_2'); ?>
+								</label>
+
+								<label class="custom-input custom-radio mr-3">
+									<input type="radio" name="usercard_position" value="0" <?php if (isset($light_config['index_side_usercard_position']) && $light_config['index_side_usercard_position'] == 0) { ?>  checked="checked" <?php }?> > <?php echo lang('admin_setting_config_sidebar_usercard_position_1'); ?>
+								</label>
+
+							</div>
+						</div>
+					</div> -->
+						<!--导航分类显示-->
+						<div class="form-group row">
+							<label class="col-md-2 form-control-label text-md-right pr-0" for="navbar_cate">
+								<b class="text-dark"><?php echo lang('admin_setting_config_navbar_cate'); ?>：</b>
+							</label>
+							<div class="col-md-8">
+								<div class="navbar-cate" id="navbar_cate">
+	
+									<label class="custom-input custom-radio mr-3">
+										<input type="radio" name="navbar_cate" value="1" checked="checked"> <?php echo lang('admin_on'); ?>
+									</label>
+	
+									<label class="custom-input custom-radio mr-3">
+										<input type="radio" name="navbar_cate" value="0" <?php if (isset($light_config['navbar_cate']) && $light_config['navbar_cate'] == 0) { ?>  checked="checked" <?php }?> > <?php echo lang('admin_off'); ?>
+									</label>
+	
+								</div>
+								<div class="figure-caption mt-2">
+									<?php echo lang('admin_setting_config_navbar_cate_tip'); ?>
+								</div>
+							</div>
+						</div>	
+						<!--导航分类选项显示-->
+						<div class="form-group row">
+							<label class="col-md-2 form-control-label text-md-right pr-0" for="navbar_cate_func">
+								<b class="text-dark"><?php echo lang('admin_setting_config_navbar_cate_func'); ?>：</b>
+							</label>
+							<div class="col-md-8">
+								<div class="navbar-cate-func" id="navbar_cate_func">
+	
+									<label class="custom-input custom-radio mr-3">
+										<input type="radio" name="navbar_cate_func" value="1" checked="checked"> <?php echo lang('admin_on'); ?>
+									</label>
+	
+									<label class="custom-input custom-radio mr-3">
+										<input type="radio" name="navbar_cate_func" value="0" <?php if (isset($light_config['navbar_cate_func']) && $light_config['navbar_cate_func'] == 0) { ?>  checked="checked" <?php }?> > <?php echo lang('admin_off'); ?>
+									</label>
+	
+								</div>
+							</div>
+						</div>
+						<!--导航发帖图标显示-->
+						<div class="form-group row">
+							<label class="col-md-2 form-control-label text-md-right pr-0" for="navbar_create_icon">
+								<b class="text-dark"><?php echo lang('admin_setting_config_navbar_create_icon'); ?>：</b>
+							</label>
+							<div class="col-md-8">
+								<div class="navbar-create-icon" id="navbar_create_icon">
+	
+									<label class="custom-input custom-radio mr-3">
+										<input type="radio" name="navbar_create_icon" value="1" checked="checked"> <?php echo lang('admin_on'); ?>
+									</label>
+	
+									<label class="custom-input custom-radio mr-3">
+										<input type="radio" name="navbar_create_icon" value="0" <?php if (isset($light_config['navbar_create_icon']) && $light_config['navbar_create_icon'] == 0) { ?>  checked="checked" <?php }?> > <?php echo lang('admin_off'); ?>
+									</label>
+	
+								</div>
+							</div>
+						</div>
+						<!--侧边导航自定义内容-->
+						<div class="form-group row">
+							<label class="col-md-2 form-control-label text-md-right pr-0" for="func_left_custom">
+								<b class="text-dark"><?php echo lang('admin_setting_config_func_left_custom'); ?>：</b>
+							</label>
+							<div class="col-md-8">
+								<div class="func-left-custom" id="func_left_custom">
+	
+									<label class="custom-input custom-radio mr-3">
+										<input type="radio" name="func_left_custom" value="1" checked="checked"> <?php echo lang('admin_on'); ?>
+									</label>
+	
+									<label class="custom-input custom-radio mr-3">
+										<input type="radio" name="func_left_custom" value="0" <?php if (isset($light_config['func_left_custom']) && $light_config['func_left_custom'] == 0) { ?>  checked="checked" <?php }?> > <?php echo lang('admin_off'); ?>
+									</label>
+								</div>
+								<textarea type="text" class="form-control" name="func_left_custom_content"  id="func_left_custom_content" rows="3" placeholder="支持HTML标签"><?php echo $light_config['func_left_custom_content'] ;?></textarea>
+
+							</div>
+						</div>	

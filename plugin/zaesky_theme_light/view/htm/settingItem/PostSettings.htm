@@ -1,0 +1,317 @@
+<!--回复后刷新-->
+					<div class="form-group row">
+						<label class="col-md-2 form-control-label text-md-right pr-0" for="thread_reply_reload">
+							<b class="text-dark"><?php echo lang('admin_setting_config_reload'); ?>：</b>
+						</label>
+						<div class="col-md-8">
+							<div class="thread-reload" id="thread_reply_reload">
+	
+								<label class="custom-input custom-radio mr-3">
+									<input type="radio" name="thread_reply_reload" value="1" checked="checked"> <?php echo lang('admin_on'); ?>
+								</label>
+	
+								<label class="custom-input custom-radio mr-3">
+									<input type="radio" name="thread_reply_reload" value="0" <?php if (isset($light_config['thread_reply_reload']) && $light_config['thread_reply_reload'] == 0) { ?>  checked="checked" <?php }?> > <?php echo lang('admin_off'); ?>
+								</label>
+	
+							</div>
+							<div class="figure-caption mt-2">
+								<?php echo lang('thread_reply_reload_tip'); ?>
+							</div>
+						</div>
+					</div>
+					<!--帖内路径导航-->
+					<div class="form-group row">
+											<label class="col-md-2 form-control-label text-md-right pr-0" for="thread_top_nav">
+												<b class="text-dark"><?php echo lang('admin_setting_config_thread_nav'); ?>：</b>
+											</label>
+											<div class="col-md-8">
+												<div class="thread-nav" id="thread_top_nav">
+						
+													<label class="custom-input custom-radio mr-3">
+														<input type="radio" name="thread_top_nav" value="1" checked="checked"> <?php echo lang('admin_on'); ?>
+													</label>
+						
+													<label class="custom-input custom-radio mr-3">
+														<input type="radio" name="thread_top_nav" value="0" <?php if (isset($light_config['thread_top_nav']) && $light_config['thread_top_nav'] == 0) { ?>  checked="checked" <?php }?> > <?php echo lang('admin_off'); ?>
+													</label>
+						
+												</div>
+												<div class="figure-caption mt-2">
+													<?php echo lang('admin_setting_config_thread_nav_tip'); ?>
+												</div>
+											</div>
+					</div>	
+					<!--楼主标识-->
+					<div class="form-group row">
+						<label class="col-md-2 form-control-label text-md-right pr-0" for="post_show_first_floor">
+							<b class="text-dark"><?php echo lang('admin_setting_config_show_first_floor'); ?>：</b>
+						</label>
+						<div class="col-md-8">
+							<div class="post-show-floor" id="post_show_first_floor">
+	
+								<label class="custom-input custom-radio mr-3">
+									<input type="radio" name="post_show_first_floor" value="1" checked="checked"> <?php echo lang('admin_on'); ?>
+								</label>
+	
+								<label class="custom-input custom-radio mr-3">
+									<input type="radio" name="post_show_first_floor" value="0" <?php if (isset($light_config['post_show_first_floor']) && $light_config['post_show_first_floor'] == 0) { ?>  checked="checked" <?php }?> > <?php echo lang('admin_off'); ?>
+								</label>
+	
+							</div>
+						</div>
+					</div>	
+					<!--楼层标识-->
+					<div class="form-group row">
+						<label class="col-md-2 form-control-label text-md-right pr-0" for="post_show_floors">
+							<b class="text-dark"><?php echo lang('admin_setting_config_show_floors'); ?>：</b>
+						</label>
+						<div class="col-md-8">
+							<div class="post-show-floors" id="post_show_floors">
+	
+								<label class="custom-input custom-radio mr-3">
+									<input type="radio" name="post_show_floors" value="1" checked="checked"> <?php echo lang('admin_on'); ?>
+								</label>
+	
+								<label class="custom-input custom-radio mr-3">
+									<input type="radio" name="post_show_floors" value="0" <?php if (isset($light_config['post_show_floors']) && $light_config['post_show_floors'] == 0) { ?>  checked="checked" <?php }?> > <?php echo lang('admin_off'); ?>
+								</label>
+	
+							</div>
+						</div>
+					</div>
+					<!--评论时间位置-->
+					<div class="form-group row">
+						<label class="col-md-2 form-control-label text-md-right pr-0" for="post_show_time">
+							<b class="text-dark"><?php echo lang('admin_setting_config_post_show_time'); ?>：</b>
+						</label>
+						<div class="col-md-8">
+							<div class="post-show-time" id="post_show_time">
+	
+								<label class="custom-input custom-radio mr-3">
+									<input type="radio" name="post_show_time" value="0" checked="checked"> <?php echo lang('admin_post_show_time_after'); ?>
+								</label>
+	
+								<label class="custom-input custom-radio mr-3">
+									<input type="radio" name="post_show_time" value="1" <?php if (isset($light_config['post_show_time']) && $light_config['post_show_time'] == 1) { ?>  checked="checked" <?php }?> > <?php echo lang('admin_post_show_time_below'); ?>
+								</label>
+	
+							</div>
+						</div>
+					</div>
+					<!--评论管理功能位置-->
+					<div class="form-group row">
+						<label class="col-md-2 form-control-label text-md-right pr-0" for="post_func_position">
+							<b class="text-dark"><?php echo lang('admin_setting_config_post_func_position'); ?>：</b>
+						</label>
+						<div class="col-md-8">
+							<div class="post-func-position" id="post_func_position">
+	
+								<label class="custom-input custom-radio mr-3">
+									<input type="radio" name="post_func_position" value="0" checked="checked"> <?php echo lang('post_func_position_after'); ?>
+								</label>
+	
+								<label class="custom-input custom-radio mr-3">
+									<input type="radio" name="post_func_position" value="1" <?php if (isset($light_config['post_func_position']) && $light_config['post_func_position'] == 1) { ?>  checked="checked" <?php }?> > <?php echo lang('post_func_position_below'); ?>
+								</label>
+	
+							</div>
+						</div>
+					</div>
+					<!--评论框位置-->
+					<div class="form-group row">
+						<label class="col-md-2 form-control-label text-md-right pr-0" for="post_form_position">
+							<b class="text-dark"><?php echo lang('admin_setting_config_post_form_position'); ?>：</b>
+						</label>
+						<div class="col-md-8">
+							<div class="post-form-position" id="post_form_position">
+	
+								<label class="custom-input custom-radio mr-3">
+									<input type="radio" name="post_form_position" value="0" checked="checked"> <?php echo lang('post_form_position_after'); ?>
+								</label>
+	
+								<label class="custom-input custom-radio mr-3">
+									<input type="radio" name="post_form_position" value="1" <?php if (isset($light_config['post_form_position']) && $light_config['post_form_position'] == 1) { ?>  checked="checked" <?php }?> > <?php echo lang('post_form_position_before'); ?>
+								</label>
+	
+							</div>
+						</div>
+					</div>
+					<!--左侧边栏-->
+					<div class="form-group row">
+						<label class="col-md-2 form-control-label text-md-right pr-0" for="thread_left_switch">
+							<b class="text-dark"><?php echo lang('admin_setting_thread_left_switch'); ?>：</b>
+						</label>
+						<div class="col-md-8">
+							<div class="thread-left" id="thread_left_switch">
+	
+								<label class="custom-input custom-radio mr-3">
+									<input type="radio" name="thread_left_switch" value="1" checked="checked"> <?php echo lang('admin_on'); ?>
+								</label>
+	
+								<label class="custom-input custom-radio mr-3">
+									<input type="radio" name="thread_left_switch" value="0" <?php if (isset($light_config['thread_left_switch']) && $light_config['thread_left_switch'] == 0) { ?>  checked="checked" <?php }?> > <?php echo lang('admin_off'); ?>
+								</label>
+							</div>
+						</div>
+						</div>
+					
+						<!--帖子管理工具-->
+					<div class="form-group row">
+						<label class="col-md-2 form-control-label text-md-right pr-0" for="thread_left_tools">
+							<b class="text-dark"><?php echo lang('admin_setting_thread_left_tools'); ?>：</b>
+						</label>
+						<div class="col-md-8">
+							<div class="thread-left-tools" id="thread_left_tools">
+	
+								<label class="custom-input custom-radio mr-3">
+									<input type="radio" name="thread_left_tools" value="1" checked="checked"> <?php echo lang('admin_on'); ?>
+								</label>
+	
+								<label class="custom-input custom-radio mr-3">
+									<input type="radio" name="thread_left_tools" value="0" <?php if (isset($light_config['thread_left_tools']) && $light_config['thread_left_tools'] == 0) { ?>  checked="checked" <?php }?> > <?php echo lang('admin_off'); ?>
+								</label>
+							</div>
+						</div>
+						</div>
+						<!--帖子用户背景显示-->
+					<div class="form-group row">
+						<label class="col-md-2 form-control-label text-md-right pr-0" for="thread_user_bg">
+							<b class="text-dark"><?php echo lang('admin_setting_thread_user_bg'); ?>：</b>
+						</label>
+						<div class="col-md-8">
+							<div class="thread-user-bg" id="thread_user_bg">
+	
+								<label class="custom-input custom-radio mr-3">
+									<input type="radio" name="thread_user_bg" value="1" checked="checked"> <?php echo lang('admin_on'); ?>
+								</label>
+	
+								<label class="custom-input custom-radio mr-3">
+									<input type="radio" name="thread_user_bg" value="0" <?php if (isset($light_config['thread_user_bg']) && $light_config['thread_user_bg'] == 0) { ?>  checked="checked" <?php }?> > <?php echo lang('admin_off'); ?>
+								</label>
+							</div>
+						</div>
+						</div>
+						<!--禁止用户删除帖子-->
+					<div class="form-group row">
+						<label class="col-md-2 form-control-label text-md-right pr-0" for="thread_user_del">
+							<b class="text-dark"><?php echo lang('admin_setting_thread_user_del'); ?>：</b>
+						</label>
+						<div class="col-md-8">
+							<div class="thread-user-del" id="thread_user_del">
+	
+								<label class="custom-input custom-radio mr-3">
+									<input type="radio" name="thread_user_del" value="1" checked="checked"> <?php echo lang('admin_on'); ?>
+								</label>
+	
+								<label class="custom-input custom-radio mr-3">
+									<input type="radio" name="thread_user_del" value="0" <?php if (isset($light_config['thread_user_del']) && $light_config['thread_user_del'] == 0) { ?>  checked="checked" <?php }?> > <?php echo lang('admin_off'); ?>
+								</label>
+							</div>
+						</div>
+						</div>
+						<!--禁止用户编辑帖子-->
+					<div class="form-group row">
+						<label class="col-md-2 form-control-label text-md-right pr-0" for="thread_user_upd">
+							<b class="text-dark"><?php echo lang('admin_setting_thread_user_upd'); ?>：</b>
+						</label>
+						<div class="col-md-8">
+							<div class="thread-user-upd" id="thread_user_upd">
+	
+								<label class="custom-input custom-radio mr-3">
+									<input type="radio" name="thread_user_upd" value="1" checked="checked"> <?php echo lang('admin_on'); ?>
+								</label>
+	
+								<label class="custom-input custom-radio mr-3">
+									<input type="radio" name="thread_user_upd" value="0" <?php if (isset($light_config['thread_user_upd']) && $light_config['thread_user_upd'] == 0) { ?>  checked="checked" <?php }?> > <?php echo lang('admin_off'); ?>
+								</label>
+							</div>
+						</div>
+						</div>
+						<!--评论表情功能-->
+					<div class="form-group row">
+						<label class="col-md-2 form-control-label text-md-right pr-0" for="thread_emo_func">
+							<b class="text-dark"><?php echo lang('admin_setting_thread_emo_func'); ?>：</b>
+						</label>
+						<div class="col-md-8">
+							<div class="thread-emo-func" id="thread_emo_func">
+	
+								<label class="custom-input custom-radio mr-3">
+									<input type="radio" name="thread_emo_func" value="1" checked="checked"> <?php echo lang('admin_on'); ?>
+								</label>
+	
+								<label class="custom-input custom-radio mr-3">
+									<input type="radio" name="thread_emo_func" value="0" <?php if (isset($light_config['thread_emo_func']) && $light_config['thread_emo_func'] == 0) { ?>  checked="checked" <?php }?> > <?php echo lang('admin_off'); ?>
+								</label>
+							</div>
+							<div class="figure-caption mt-2">
+								<?php echo lang('admin_setting_thread_emo_func_tip'); ?>
+							</div>
+						</div>
+						</div>
+						<!--查看所有回复功能-->
+					<div class="form-group row">
+						<label class="col-md-2 form-control-label text-md-right pr-0" for="show_all_reply">
+							<b class="text-dark"><?php echo lang('admin_setting_show_all_reply'); ?>：</b>
+						</label>
+						<div class="col-md-8">
+							<div class="show-all-reply" id="show_all_reply">
+	
+								<label class="custom-input custom-radio mr-3">
+									<input type="radio" name="show_all_reply" value="1" checked="checked"> <?php echo lang('admin_on'); ?>
+								</label>
+	
+								<label class="custom-input custom-radio mr-3">
+									<input type="radio" name="show_all_reply" value="0" <?php if (isset($light_config['show_all_reply']) && $light_config['show_all_reply'] == 0) { ?>  checked="checked" <?php }?> > <?php echo lang('admin_off'); ?>
+								</label>
+							</div>
+						</div>
+						</div>
+						<!--上一篇下一篇帖子功能-->
+					<div class="form-group row">
+						<label class="col-md-2 form-control-label text-md-right pr-0" for="pre_next_thread">
+							<b class="text-dark"><?php echo lang('admin_setting_pre_next_thread'); ?>：</b>
+						</label>
+						<div class="col-md-8">
+							<div class="pre-next-thread" id="pre_next_thread">
+	
+								<label class="custom-input custom-radio mr-3">
+									<input type="radio" name="pre_next_thread" value="1" checked="checked"> <?php echo lang('admin_on'); ?>
+								</label>
+	
+								<label class="custom-input custom-radio mr-3">
+									<input type="radio" name="pre_next_thread" value="0" <?php if (isset($light_config['pre_next_thread']) && $light_config['pre_next_thread'] == 0) { ?>  checked="checked" <?php }?> > <?php echo lang('admin_off'); ?>
+								</label>
+							</div>
+						</div>
+						</div>
+						<!--帖子末尾信息显示-->
+					<div class="form-group row">
+						<label class="col-md-2 form-control-label text-md-right pr-0" for="thread_footer_info">
+							<b class="text-dark"><?php echo lang('admin_setting_thread_footer_info'); ?>：</b>
+						</label>
+						<div class="col-md-8">
+							<div class="thread-footer-info" id="thread_footer_info">
+	
+								<label class="custom-input custom-radio mr-3">
+									<input type="radio" name="thread_footer_info" value="1" checked="checked"> <?php echo lang('admin_on'); ?>
+								</label>
+	
+								<label class="custom-input custom-radio mr-3">
+									<input type="radio" name="thread_footer_info" value="0" <?php if (isset($light_config['thread_footer_info']) && $light_config['thread_footer_info'] == 0) { ?>  checked="checked" <?php }?> > <?php echo lang('admin_off'); ?>
+								</label>
+							</div>
+						</div>
+						</div>
+						<!--帖子末尾信息内容-->
+						<div class="form-group row">
+							<label class="col-md-2 form-control-label text-md-right pr-0" for="thread_footer_info_content">
+								<b class="text-dark"><?php echo lang('admin_setting_config_thread_footer_info_content'); ?>：</b>
+							</label>
+							<div class="col-md-8">
+									<textarea type="text" class="form-control" name="thread_footer_info_content"  id="thread_footer_info_content" rows="3" placeholder="建议在100字左右"><?php echo $light_config['thread_footer_info_content'] ;?></textarea>
+									<div class="figure-caption mt-2">
+										<?php echo lang('thread_footer_info_content_tip'); ?>
+									</div>
+								</div>
+						</div>

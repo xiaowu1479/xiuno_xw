@@ -1,0 +1,81 @@
+<?php 
+$msg_fmt = $first['message_fmt']; 
+$msg_fmt = preg_replace("/\[em_([0-9]*)\]/i","<img src='/plugin/zaesky_theme_light/view/img/emoicon/$1.png' class='border-0 mx-1 mb-0'/>",$msg_fmt);
+$first['message_fmt']=	$msg_fmt;
+?>
+
+    <style>
+      @media screen and (max-width: 992px) {
+      #footer {padding-bottom: 5rem !important};
+      }
+    </style>
+
+    <div class="fixed-bottom d-flex align-items-center justify-content-between header_fixed thread-nav d-lg-none high-blur-bg">
+      <div class="d-flex px-3 align-items-center w-100">
+        <a href="javascript:;" class="flex-grow-1 thread_comment_input text-gray">
+          <em>
+            <?php if ($user): ?>
+            <i class="fas fa-pen"></i>
+              <span class="thread_tip_text1">说点什么吧~</span>
+              <span class="tip_close d-none">点击关闭评论框</span>
+            <?php else: ?>
+              请先登录后发表评论！
+            <?php endif; ?>
+          </em>
+        </a>
+        <div class="thread_btm_func d-flex align-items-center">
+          <div class="px-3">
+            <a href="#comments" class="position-relative text-gray">
+              <i class="fas fa-comment-dots"></i>
+              <span class="thread_nav_pop_count"><?php echo convert($thread['posts']) ?: ''; ?></span>
+            </a>
+          </div>
+          <?php if (!empty($light_config['thread_left_func'])): ?>
+            <div class="px-3">
+              <?php $isFavorite = haya_favorite_find_by_uid_and_tid($uid, $tid); ?>
+              <span href="javascript:;" class="position-relative add_func text-gray <?php echo $isFavorite ? 'js-haya-favorite-del text-primary' : 'js-haya-favorite-add'; ?>" data-tid="<?php echo $tid; ?>">
+                <i class="fas fa-star"></i>
+                <span class="haya-favorite-user-count thread_nav_pop_count"><?php echo convert(intval($thread['favorites'])) ?: ''; ?></span>
+              </span>
+            </div>
+            <div class="px-3">
+              <?php $isLiked = haya_post_like_find_by_uid_and_pid($uid, $first['pid']); ?>
+              <span href="javascript:;" class="position-relative add_func text-gray <?php echo $isLiked ? 'js-haya-post-like-thread-del text-primary' : 'js-haya-post-like-thread-add'; ?>" data-pid="<?php echo $first['pid']; ?>">
+                <i class="fas fa-thumbs-up"></i>
+                <span class="thread_nav_pop_count haya-post-like-thread-user-count"><?php echo convert(intval($first['likes'])) ?: ''; ?></span>
+              </span>
+            </div>
+          <?php endif; ?>
+          <?php if ($gid > 0 && $gid < 5 || $allowupdate || $first['allowupdate'] || $allowdelete || $first['allowdelete']): ?>
+            <div class="pl-3 pr-2">
+              <div class="dropup">
+                <i class="fas fa-ellipsis-h text-gray" data-toggle="dropdown"></i>
+                <div class="dropdown-menu p-0">
+                  <div class="text-center">
+                    <div class="btn-group-vertical w-100 mod-button" role="group" aria-label="">
+                      <?php if (param(0) != 'thread'): ?>
+                        <label class="btn btn-secondary mb-0">
+                          <input type="checkbox" data-target='input[name="modtid"]' class="checkall mr-2" value="" aria-label="<?php echo lang('checkall'); ?>" /><?php echo lang('checkall'); ?>
+                        </label>
+                      <?php endif; ?>
+                      <?php if ($gid > 0 && $gid < 5): ?>
+                        <button class="btn btn-secondary delete" data-modal-url="<?php echo url("mod-delete"); ?>" data-modal-title="<?php echo lang('delete'); ?>" data-modal-arg=".threadlist" data-modal-size="md"><?php echo lang('delete'); ?></button>
+                        <button class="btn btn-secondary move" data-modal-url="<?php echo url("mod-move"); ?>" data-modal-title="<?php echo lang('move'); ?>" data-modal-arg=".threadlist" data-modal-size="md"><?php echo lang('move'); ?></button>
+                        <button class="btn btn-secondary top" data-modal-url="<?php echo url("mod-top"); ?>" data-modal-title="<?php echo lang('top'); ?>" data-modal-arg=".threadlist" data-modal-size="md"><?php echo lang('top'); ?></button>
+                        <button class="btn btn-secondary _close" data-modal-url="<?php echo url("mod-close"); ?>" data-modal-title="<?php echo lang('close'); ?>" data-modal-arg=".threadlist" data-modal-size="md"><?php echo lang('close'); ?></button>
+                      <?php endif; ?>
+                      <?php if ($allowupdate || $first['allowupdate']): ?>
+                        <a class="btn btn-secondary post_update" href="<?php echo url("post-update-$thread[firstpid]"); ?>"><?php echo lang('edit'); ?></a>
+                      <?php endif; ?>
+                      <?php if ($allowdelete || $first['allowdelete']): ?>
+                        <a class="btn btn-secondary post_delete" data-href="<?php echo url("post-delete-$thread[firstpid]"); ?>" href="javascript:void(0);" isfirst="1"><?php echo lang('delete'); ?></a>
+                      <?php endif; ?>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <?php endif; ?>
+        </div>
+      </div>
+    </div>

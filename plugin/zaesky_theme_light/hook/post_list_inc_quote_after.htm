@@ -1,0 +1,5 @@
+<?php if($user && isset($light_config['thread_quick_at']) && $light_config['thread_quick_at'] == 1){;?><a href="javascript:;" class="mr-3 text-grey quick-at" title="@Ta" onclick="atAdd('<?php echo strip_tags($_post['username']); ?>',this);return false"><i class="fas fa-at "></i></a><?php };?>
+<?php if($user && isset( $light_config['show_all_reply']) &&  $light_config['show_all_reply'] == 1){?>
+  <a href="javascript:void(0)" class="text-grey mr-3" data-modal-url="<?php echo url('post-show_all_reply-'.$_post['pid'].'-1');?>" data-modal-title="<?php echo lang('show_all_replies');?>" data-modal-size="lg"><i class="far fa-comments" title="<?php echo lang('show_all_replies');?>"></i> <span class="d-none"><?php echo lang('show_all_replies');?></span></a>
+  <?php }?>
+ 

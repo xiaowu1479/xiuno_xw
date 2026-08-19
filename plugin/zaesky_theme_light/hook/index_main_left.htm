@@ -1,0 +1,29 @@
+<?php if (isset($light_config['side_nav_switch']) && $light_config['side_nav_switch'] == 1) { ?>
+<div class="col-lg-2 pr-0 hidden-md hidden-sm index_main_left">
+	<div class="card" <?php if (isset($light_config['index_side_height']) && $light_config['index_side_height'] == 1) { ?> style="min-height: calc(100vh - 94.2px);" <?php } ?>>
+    
+	<div class="card-body p-3" style="display: flex
+  ;
+      flex-direction: column;
+      justify-content: space-between;">
+     <div class="forumList">
+      <li class="nav-item home" data-active="index">
+        <a class="nav-link" href="./" data-active="index"><i class="far fa-compass"></i>
+          综合</a>
+      </li>
+     <?php foreach($forumlist_show as $_forum) { ?>
+      <!--{hook header_nav_forumlist_loop_start.htm}-->
+      <li fid="<?php echo $_forum['fid'];?>" data-active="fid-<?php echo $_forum['fid'];?>">
+        <a class="nav-link" fid="<?php echo $_forum['fid'];?>" data-active="fid-<?php echo $_forum['fid'];?>" href="<?php echo url("forum-$_forum[fid]");?>"><img class="avatar-2 mr-2 rounded" src="<?php echo $_forum['icon_url'];?>"><?php echo $_forum['name'];?></a>
+      </li>
+      <!--{hook header_nav_forumlist_loop_end.htm}-->
+      <?php } ?>
+    </div>
+  <?php if (isset($light_config['index_side_usercard']) && $light_config['index_side_usercard'] == 1 && isset($light_config['index_side_height']) && $light_config['index_side_height'] == 1) { ?>
+	  <?php include _include(APP_PATH.'plugin/zaesky_theme_light/view/htm/components/quickUserCard.htm');?>
+  <?php } ?>
+	</div>
+	</div>
+      <!--{hook index_func_left_end.htm}-->
+  </div>
+  <?php } ?>

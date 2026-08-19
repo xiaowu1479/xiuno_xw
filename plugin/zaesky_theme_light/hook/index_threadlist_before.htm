@@ -1,0 +1,9 @@
+<?php 
+if (isset($light_config['thread_top_ind']) && $light_config['thread_top_ind'] == 1) { 
+/* 普通帖子 */
+if($page === 1) {
+    $threadlist =  thread_find_by_fids($fids, $page, $pagesize, $order, $threads); 
+    thread_list_access_filter($threadlist, $gid); 
+}
+}
+?>

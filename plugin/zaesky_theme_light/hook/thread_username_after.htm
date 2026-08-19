@@ -1,0 +1,12 @@
+<style>
+  .user-group-icon{
+    width: 40px;
+  }
+</style>
+
+    <?php if (isset($light_config['groupicon_display']) && $light_config['groupicon_display'] == 1) {
+      $groupImg = './plugin/zaesky_theme_light/view/img/groupicon/'.$thread['user']['gid'].'.png';
+      if(file_exists($groupImg))
+        echo '<img src="./plugin/zaesky_theme_light/view/img/groupicon/'.$thread['user']['gid'].'.png" class="user-group-icon" data-toggle="tooltip" data-placement="top" title="'.$thread['user']['groupname'].'">';
+      }?>
+    

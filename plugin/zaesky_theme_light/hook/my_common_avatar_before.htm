@@ -1,0 +1,21 @@
+<div class="my-user-profile">
+    <img src="<?php echo $user['avatar_url'];?>" alt="用户头像" class="my-avatar">
+    <div class="my-username"><?php echo $user['username'];?></div>
+    <div class="badges">
+        <span class="badge badge-pill jb-blue">UID:<?php echo $user['uid'];?></span>
+        <span class="badge badge-pill jb-cyan"><?php echo $user['groupname'];?></span>
+    </div>
+    <div class="user-stats">
+        <div class="stat-item">
+            <span class="stat-value"><?php echo $user['threads'];?></span>
+            <span class="stat-label"><?php echo lang('mb_threads');?></span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-value"><?php echo $user['posts'];?></span>
+            <span class="stat-label"><?php echo lang('mb_posts');?></span>
+        </div>
+        <!--{hook my_common_left_custom_end.htm}-->
+    </div>
+</div>
+
+<div class="d-none">

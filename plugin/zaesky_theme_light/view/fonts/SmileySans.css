@@ -1,0 +1,9 @@
+@font-face {
+  font-family: 'smileySans';
+  src: url('../fonts/alimama.woff');
+}
+
+
+body{
+  font-family: 'smileySans' !important;
+}

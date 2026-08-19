@@ -1,0 +1,156 @@
+<!--帖子列表样式开关-->
+					<div class="form-group row">
+						<label class="col-md-2 form-control-label text-md-right pr-0" for="thread_list_style">
+							<b class="text-dark"><?php echo lang('admin_setting_config_thread'); ?>：</b>
+						</label>
+						<div class="col-md-8">
+							<div class="thread-style" id="thread_list_style">
+								<label class="custom-input custom-radio mr-3">
+									<input type="radio" name="thread_list_style" value="1" checked="checked"> <?php echo lang('admin_thread_style_1'); ?>
+								</label>
+	
+								<label class="custom-input custom-radio mr-3">
+									<input type="radio" name="thread_list_style" value="2" <?php if (isset($light_config['thread_list_style']) && $light_config['thread_list_style'] == 2) { ?>  checked="checked" <?php }?> > <?php echo lang('admin_thread_style_2'); ?>
+								</label>
+	
+								<label class="custom-input custom-radio mr-3">
+									<input type="radio" name="thread_list_style" value="3" <?php if (isset($light_config['thread_list_style']) && $light_config['thread_list_style'] == 3) { ?>  checked="checked" <?php }?> > <?php echo lang('admin_thread_style_3'); ?>
+								</label>
+
+							</div>
+							
+						</div>
+					</div>
+					<!--显示帖子板块名称-->
+	<div class="form-group row">
+		<label class="col-md-2 form-control-label text-md-right pr-0" for="thread_forum_name">
+			<b class="text-dark"><?php echo lang('admin_setting_thread_forum_name'); ?>：</b>
+		</label>
+		<div class="col-md-8">
+			<div class="thread-forum-name" id="thread_forum_name">
+
+				<label class="custom-input custom-radio mr-3">
+					<input type="radio" name="thread_forum_name" value="1" checked="checked"> <?php echo lang('admin_on'); ?>
+				</label>
+
+				<label class="custom-input custom-radio mr-3">
+					<input type="radio" name="thread_forum_name" value="0" <?php if (isset($light_config['thread_forum_name']) && $light_config['thread_forum_name'] == 0) { ?>  checked="checked" <?php }?> > <?php echo lang('admin_off'); ?>
+				</label>
+			</div>
+		</div>
+</div>
+<!--显示帖子最后回复-->
+<div class="form-group row">
+	<label class="col-md-2 form-control-label text-md-right pr-0" for="thread_last_reply">
+		<b class="text-dark"><?php echo lang('admin_setting_thread_last_reply'); ?>：</b>
+	</label>
+	<div class="col-md-8">
+		<div class="thread-last-reply" id="thread_last_reply">
+
+			<label class="custom-input custom-radio mr-3">
+				<input type="radio" name="thread_last_reply" value="1" checked="checked"> <?php echo lang('admin_on'); ?>
+			</label>
+
+			<label class="custom-input custom-radio mr-3">
+				<input type="radio" name="thread_last_reply" value="0" <?php if (isset($light_config['thread_last_reply']) && $light_config['thread_last_reply'] == 0) { ?>  checked="checked" <?php }?> > <?php echo lang('admin_off'); ?>
+			</label>
+		</div>
+	</div>
+</div>
+<!--新帖标识-->
+<div class="form-group row">
+	<label class="col-md-2 form-control-label text-md-right pr-0" for="new_thread">
+		<b class="text-dark"><?php echo lang('admin_setting_config_new_thread'); ?>：</b>
+	</label>
+	<div class="col-md-8">
+		<div class="new-thread" id="new_thread">
+
+			<label class="custom-input custom-radio mr-3">
+				<input type="radio" name="new_thread" value="1" checked="checked"> <?php echo lang('admin_on'); ?>
+			</label>
+
+			<label class="custom-input custom-radio mr-3">
+				<input type="radio" name="new_thread" value="0" <?php if (isset($light_config['new_thread']) && $light_config['new_thread'] == 0) { ?>  checked="checked" <?php }?> > <?php echo lang('admin_off'); ?>
+			</label>
+		</div>
+		<div class="figure-caption mt-2">
+			<?php echo lang('new_thread_tip'); ?>
+		</div>
+	</div>
+</div>
+<!--新帖选项功能-->
+<div class="form-group row">
+	<label class="col-md-2 form-control-label text-md-right pr-0" for="new_threadlist">
+		<b class="text-dark"><?php echo lang('admin_setting_config_new_threadlist'); ?>：</b>
+	</label>
+	<div class="col-md-8">
+		<div class="new-threadlist" id="new_threadlist">
+
+			<label class="custom-input custom-radio mr-3">
+				<input type="radio" name="new_threadlist" value="1" checked="checked"> <?php echo lang('admin_on'); ?>
+			</label>
+
+			<label class="custom-input custom-radio mr-3">
+				<input type="radio" name="new_threadlist" value="0" <?php if (isset($light_config['new_threadlist']) && $light_config['new_threadlist'] == 0) { ?>  checked="checked" <?php }?> > <?php echo lang('admin_off'); ?>
+			</label>
+		</div>
+		<div class="figure-caption mt-2">
+			<?php echo lang('new_threadlist_tip'); ?>
+		</div>
+	</div>
+</div>
+<!--摘要字数显示-->
+<div class="form-group row">
+	<label class="col-md-2 form-control-label text-md-right pr-0" for="thread_summary_word">
+		<b class="text-dark"><?php echo lang('admin_setting_config_thread_summary_word'); ?>：</b>
+	</label>
+	<div class="col-md-8">
+		<input type="number" name="thread_summary_word" value="<?php echo $light_config['thread_summary_word'] ;?>" class="form-control" id="thread_summary_word" placeholder="请输入字数，建议100字左右">
+	</div>
+</div>
+<!--摘要图片显示-->
+<div class="form-group row">
+	<label class="col-md-2 form-control-label text-md-right pr-0" for="thread_summary">
+		<b class="text-dark"><?php echo lang('admin_setting_config_thread_summary'); ?>：</b>
+	</label>
+	<div class="col-md-8">
+		<div class="thread-summary" id="thread_summary">
+
+			<label class="custom-input custom-radio mr-3">
+				<input type="radio" name="thread_summary" value="1" checked="checked"> <?php echo lang('admin_on'); ?>
+			</label>
+
+			<label class="custom-input custom-radio mr-3">
+				<input type="radio" name="thread_summary" value="0" <?php if (isset($light_config['thread_summary']) && $light_config['thread_summary'] == 0) { ?>  checked="checked" <?php }?> > <?php echo lang('admin_off'); ?>
+			</label>
+		</div>
+	</div>
+</div>
+<!--摘要图片数量-->
+<div class="form-group row">
+	<label class="col-md-2 form-control-label text-md-right pr-0" for="thread_summary_pic">
+		<b class="text-dark"><?php echo lang('admin_setting_config_thread_summary_pic'); ?>：</b>
+	</label>
+	<div class="col-md-8">
+		
+		<div class="thread-summary-pic" id="thread_summary_pic">
+			<select name="thread_summary_pic" class="form-control form-control-sm">
+				<option  value="3" <?php if (isset($light_config['thread_summary_pic']) && $light_config['thread_summary_pic'] == 0) { ?>  selected <?php }?>>3</option>
+				<option  value="6" <?php if (isset($light_config['thread_summary_pic']) && $light_config['thread_summary_pic'] == 1) { ?>  selected <?php }?>>6</option>
+				<option  value="9" <?php if (isset($light_config['thread_summary_pic']) && $light_config['thread_summary_pic'] == 2) { ?>  selected <?php }?>>9</option>
+			</select>
+			<div class="figure-caption mt-2">
+				<?php echo lang('admin_setting_config_thread_summary_pic_tip'); ?>
+			</div>
+		</div>
+	</div>
+</div>
+<!--帖子标题字体大小-->
+<div class="form-group row">
+	<label class="col-md-2 form-control-label text-md-right pr-0" for="thread_subject_size">
+		<b class="text-dark"><?php echo lang('admin_setting_config_thread_subject_size'); ?>：</b>
+	</label>
+	<div class="col-md-8">
+		<input type="number" name="thread_subject_size" value="<?php echo $light_config['thread_subject_size'] ;?>" class="form-control" id="thread_subject_size" placeholder="请输入字体像素大小，建议14-20之间">
+	</div>
+</div>

@@ -1,0 +1,184 @@
+
+<?php if (isset($light_config['site_info_total']) && $light_config['site_info_total'] == 1) { ?> 
+
+			<div class="card p-2">
+				<table class="w-100 small">
+					<tr align="center">
+						<td>
+              <i class="si si-bubble" style="font-size: large;"></i>
+							<span class="text-black-50 d-block mb-1"><?php echo lang('threads');?></span>
+							<b><?php echo $runtime['threads'];?></b>
+						</td>
+						<td>
+              <i class="si si-bubbles" style="font-size: large;"></i>
+							<span class="text-black-50 d-block mb-1"><?php echo lang('posts');?></span>
+							<b><?php echo $runtime['posts'];?></b>
+						</td>
+						<td>
+              <i class="si si-users" style="font-size: large;"></i>
+							<span class="text-black-50 d-block mb-1"><?php echo lang('users');?></span>
+							<b><?php echo $runtime['users'];?></b>
+						</td>
+						<?php if($runtime['onlines'] > 0) { ?>
+						<td>
+              <i class="si si-bar-chart" style="font-size: large;"></i>
+
+							<span class="text-black-50 d-block mb-1"><?php echo lang('online');?></span>
+							<b><?php echo $runtime['onlines'];?></b>
+						</td>
+						<?php } ?>
+					</tr>
+				</table>
+			</div>
+			<?php } ?>
+<div class="card">
+  <div class="card-header">
+    <i class="fas fa-fire-alt mr-2"></i><?php echo lang('discovery_hotforum');?>
+  </div>
+  <div class="card-body">
+    <?php
+    $hotforumList =  discovery_get_hot_forum();
+      if($hotforumList){
+        foreach ($hotforumList as $hotforum) { 
+          $hotforum['icon_url'] = $hotforum['icon'] ? $conf['upload_url']."forum/$hotforum[fid].png" : 'view/img/forum.png';
+          ?>
+          <div class="media mb-2">
+            <img class=" avatar-3-5  mr-2" src="<?php echo $hotforum['icon_url'];?>">
+            <div class="media-body">
+              <a href="<?php echo url("forum-$hotforum[fid]");?>">
+                <div><?php echo $hotforum['name'];?><span class="badge badge-primary badge-pill ml-2"><?php echo $hotforum['threads'];?></span></div>
+              <div class="text-gray hot-forum-breif small mt-2"><?php echo $hotforum['brief'];?></div>
+            </a>
+            </div>
+          </div>
+       <?php }}?>
+  </div>
+</div>
+
+ <div class="card">
+  <div class="card-header">
+<ul class="nav nav-pills nav-justified" id="pills-tab" role="tablist">
+  <li class="nav-item" role="presentation">
+    <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab" aria-controls="pills-home" aria-selected="true">活跃榜</a>
+  </li>
+  <li class="nav-item" role="presentation">
+    <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile" role="tab" aria-controls="pills-profile" aria-selected="false">贡献榜</a>
+  </li>
+  <li class="nav-item" role="presentation">
+    <a class="nav-link" id="pills-contact-tab" data-toggle="pill" href="#pills-contact" role="tab" aria-controls="pills-contact" aria-selected="false">财富榜</a>
+  </li>
+</ul>
+</div>
+<div class="card-body py-0">
+<div class="tab-content" id="pills-tabContent">
+  <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+    <ul class="list-unstyled mb-0">
+      <?php
+        $loginRankList = discovery_get_login_List();
+        if($loginRankList){
+          $rank_num = 1;
+          foreach ($loginRankList as $loginRankList) { 
+            $loginRankList['avatar_url'] = $loginRankList['avatar'] ? 'upload/avatar/000/'.$loginRankList['uid'].'.png' : 'view/img/avatar.png';
+           ?>
+           <li class="my-2">
+            <div class="media">
+              <a href="<?php echo url("user-$loginRankList[uid]");?>"><img class="avatar-3 mt-1 mr-2" src="<?php echo $loginRankList['avatar_url'];?>" alt=""></a>
+              <div class="media-body">
+                <span class="rank_name">
+                  <a href="<?php echo url("user-$loginRankList[uid]");?>"><span class="badge badge-pill badge-primary mr-1"></span><?php echo $loginRankList['username'];?></a>
+                </span>
+                <span class="rank_time d-block text-gray small mt-1">
+                  <i class="fas fa-fingerprint"></i> 登录：<?php echo $loginRankList['logins'] ;?>
+                </span>
+              </div>
+              <?php
+              switch($rank_num){
+                case 1:$badge_color = 'badge-danger';break;
+                case 2:$badge_color = 'badge-warning';break;
+                case 3:$badge_color = 'badge-primary';break;
+                case 4:$badge_color = 'badge-success';break;
+                case 5:$badge_color = 'badge-info';break;
+              }
+              ?>
+              <span class="badge mt-2 badge-pill <?php echo $badge_color;?>"><i class="fas fa-medal mr-2"></i><?php echo $rank_num++;?></span>
+            </div>
+            
+          </li>
+         <?php }}?>
+        </ul>
+  </div>
+  <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+    <ul class="list-unstyled mb-0">
+      <?php
+        $threadRankList = discovery_get_thread_List();
+        if($threadRankList){
+          $rank_num = 1;
+          foreach ($threadRankList as $threadRankList) { 
+            $threadRankList['avatar_url'] = $threadRankList['avatar'] ? 'upload/avatar/000/'.$threadRankList['uid'].'.png' : 'view/img/avatar.png';
+           ?>
+           <li class="my-2">
+            <div class="media">
+              <a href="<?php echo url("user-$threadRankList[uid]");?>"><img class="avatar-3 mt-1 mr-2" src="<?php echo $threadRankList['avatar_url'];?>" alt=""></a>
+              <div class="media-body">
+                <span class="rank_name">
+                  <a href="<?php echo url("user-$threadRankList[uid]");?>"><span class="badge badge-pill badge-primary mr-1"></span><?php echo $threadRankList['username'];?></a>
+                </span>
+                <span class="rank_time d-block text-gray small mt-1">
+                  <i class="fas fa-hand-holding-heart"></i> 主题：<?php echo $threadRankList['threads'] ;?>
+                </span>
+              </div>
+              <?php
+              switch($rank_num){
+                case 1:$badge_color = 'badge-danger';break;
+                case 2:$badge_color = 'badge-warning';break;
+                case 3:$badge_color = 'badge-primary';break;
+                case 4:$badge_color = 'badge-success';break;
+                case 5:$badge_color = 'badge-info';break;
+              }
+              ?>
+              <span class="badge mt-2 badge-pill <?php echo $badge_color;?>"><i class="fas fa-medal mr-2"></i><?php echo $rank_num++;?></span>
+            </div>
+            
+          </li>
+         <?php }}?>
+        </ul>
+  </div>
+  <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">
+    <ul class="list-unstyled mb-0">
+      <?php
+        $goldRankList = discovery_get_gold_List();
+        if($goldRankList){
+          $rank_num = 1;
+          foreach ($goldRankList as $RankList) { 
+            $RankList['avatar_url'] = $RankList['avatar'] ? 'upload/avatar/000/'.$RankList['uid'].'.png' : 'view/img/avatar.png';
+           ?>
+           <li class="my-2">
+            <div class="media">
+              <a href="<?php echo url("user-$RankList[uid]");?>"><img class="avatar-3 mt-1 mr-2" src="<?php echo $RankList['avatar_url'];?>" alt=""></a>
+              <div class="media-body">
+                <span class="rank_name">
+                  <a href="<?php echo url("user-$RankList[uid]");?>"><span class="badge badge-pill badge-primary mr-1"></span><?php echo $RankList['username'];?></a>
+                </span>
+                <span class="rank_time d-block text-gray small mt-1">
+                  <i class="fa fa-coins"></i> 金币：<?php echo $RankList['golds'] ;?>
+                </span>
+              </div>
+              <?php
+              switch($rank_num){
+                case 1:$badge_color = 'badge-danger';break;
+                case 2:$badge_color = 'badge-warning';break;
+                case 3:$badge_color = 'badge-primary';break;
+                case 4:$badge_color = 'badge-success';break;
+                case 5:$badge_color = 'badge-info';break;
+              }
+              ?>
+              <span class="badge mt-2 badge-pill <?php echo $badge_color;?>"><i class="fas fa-medal mr-2"></i><?php echo $rank_num++;?></span>
+            </div>
+            
+          </li>
+         <?php }}?>
+        </ul>
+  </div>
+</div>
+</div>
+</div>

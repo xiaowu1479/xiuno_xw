@@ -1,0 +1,19 @@
+<?php if (isset($light_config['site_annoucement_switch']) && $light_config['site_annoucement_switch'] == 1 && $light_config['login_annoucement_content']) {
+  $site_annoucement_style = "";
+  switch($light_config['site_annoucement_style']){
+      case 0: $site_annoucement_style = "primary";break;
+      case 1: $site_annoucement_style = "secondary";break;
+      case 2: $site_annoucement_style = "success";break;
+      case 3: $site_annoucement_style = "danger";break;
+      case 4: $site_annoucement_style = "warning";break;
+      case 5: $site_annoucement_style = "info";break;
+  }
+  ?> 
+<div class="alert alert-<?php echo $site_annoucement_style;?> alert-dismissible fade show mb-0 mt-3" role="alert">
+  <i class="<?php echo $light_config['site_annoucement_icon'] ;?> mr-2"></i>
+  <?php echo $light_config['login_annoucement_content'] ;?>
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<?php }?>

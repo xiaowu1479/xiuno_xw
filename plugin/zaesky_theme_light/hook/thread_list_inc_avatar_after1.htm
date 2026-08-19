@@ -1,0 +1,8 @@
+<?php if (isset($light_config['user_online']) && $light_config['user_online'] == 1) { ?>
+<?php
+			foreach($arronline as $online_user) {
+			if($online_user['uid'] == $_thread['uid']){
+			echo "<i class='icon icon-circle position-absolute  userOnline'  data-toggle='tooltip' data-placement='right' title='在线'></i>";
+			} 
+		} ; ?>
+		<?php }?>

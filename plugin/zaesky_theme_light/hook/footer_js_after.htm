@@ -1,0 +1,153 @@
+<script src="<?php echo 'plugin/zaesky_theme_light/view/js/message.min.js';?>"></script>
+<script src="<?php echo 'plugin/zaesky_theme_light/view/js/apexcharts.min.js';?>"></script>
+<script src="<?php echo 'plugin/zaesky_theme_light/view/js/ResizeSensor.min.js';?>"></script>
+<script src="<?php echo 'plugin/zaesky_theme_light/view/js/theia-sticky-sidebar.min.js';?>"></script>
+<script src="<?php echo 'plugin/zaesky_theme_light/view/js/mSlider.min.js';?>"></script>
+<script src="<?php echo 'plugin/zaesky_theme_light/view/js/zaesky-theme-light.min.js';?>"></script>
+
+
+<?php if (!empty($light_config['pic_lazyload_switch'])) { ?>
+    <script src="<?php echo '../plugin/zaesky_theme_light/view/js/jquery.lazyload.min.js';?>"></script>
+    <script>
+        $(function(){
+            $('.message img, .pic_box img, .left_img_box img').each(function(){
+                $(this).addClass("lazy img-responsive").attr("data-original", $(this).attr("src")).removeAttr("src");
+            });
+            $(".message img.lazy, .pic_box img.lazy, .left_img_box img.lazy").lazyload({
+                placeholder: "plugin/zaesky_theme_light/view/img/loading.gif",
+                effect: "fadeIn"
+            });
+        });
+    </script>
+<?php } ?>
+
+<?php if (!empty($light_config['window_no_console'])) { ?>
+    <script>
+        const h = window.innerHeight, w = window.innerWidth;
+        window.oncontextmenu = () => false;
+        window.addEventListener("keydown", (e) => {
+            if ([123, 73, 121, 85, 83].includes(e.keyCode) && (e.ctrlKey || e.shiftKey)) {
+                e.preventDefault();
+                console.log("为了安全，在打浏览器开发者工具下不能访问系统");
+            }
+        });
+
+        function checkDebugger() {
+            const d = new Date();
+            debugger;
+            return (Date.now() - d) < 5 ? false : (window.close(), window.location = "about:blank", true);
+        }
+
+        (function isConsoleOpen() {
+            if (checkDebugger()) isConsoleOpen();
+        })();
+
+        (function(){
+            const re = /x/;
+            re.toString = () => {
+                window.close();
+                window.location = "about:blank";
+                console.log("为了安全，在打浏览器开发者工具下不能访问系统");
+            };
+        })();
+
+        document.onkeydown = (e) => {
+            if ([123, 73].includes(e.keyCode) && (e.ctrlKey && e.shiftKey)) {
+                layer.msg('控制台不见了呢', { time: 1000 });
+                e.preventDefault();
+            }
+        };
+    </script>
+<?php } ?>
+
+<script>
+    $('.add_func').on('click', function() {
+        <?php if (!empty($user)) { ?>
+            $(this).toggleClass('text-primary');
+        <?php } else { ?> 
+            cocoMessage.error("请先登录后操作！", 3000);
+        <?php } ?>
+    });
+</script>
+
+<?php if (!empty($light_config['back_top'])) { ?> 
+    <script src="<?php echo 'plugin/zaesky_theme_light/view/js/GoToTop.min.js';?>"></script>
+    <div class="goTop text-center shadow-sm text-muted" id="js-go_top" style="transform: translate(60px,0px);"><i class="fas fa-arrow-alt-circle-up"></i></div>
+    <script>
+        $('#js-go_top').gotoTop({
+            offset: 100,
+            speed: 300,
+            animationShow: { 'transform': 'translate(0,0)', 'transition': 'transform .5s ease-in-out' },
+            animationHide: { 'transform': 'translate(60px,0)', 'transition': 'transform .5s ease-in-out' }
+        });
+    </script>
+<?php } ?>
+
+
+<?php if (!empty($light_config['thread_emo_func'])) { ?>
+    <script src="/plugin/zaesky_theme_light/view/js/jquery.qqFace.min.js"></script>
+    <script>
+        $(function() {
+            $('.emotion').qqFace({
+                id: 'facebox',
+                assign: 'message',
+                path: 'plugin/zaesky_theme_light/view/img/emoicon/',
+                emoNum: <?php echo ShuLiang('plugin/zaesky_theme_light/view/img/emoicon/'); ?>
+            });
+        });
+    </script>
+<?php } ?>
+
+<?php if (isset($light_config['dark_mode_switch']) && $light_config['dark_mode_switch'] == 1): ?>
+<script>
+    
+// 初始化开关状态
+document.addEventListener('DOMContentLoaded', function() {
+                    const darkModeSwitch = document.getElementById('darkModeSwitch');
+                    
+                    // 从cookie获取当前主题设置
+                    const currentTheme = getCookie('Theme');
+                    if(currentTheme === '1') {
+                        darkModeSwitch.checked = true;
+                    }
+                    
+                    // 添加切换事件
+                    darkModeSwitch.addEventListener('change', function() {
+                        if(this.checked) {
+                            // 启用夜间模式
+                            setCookie('Theme', '1', 365);
+                            document.documentElement.setAttribute('data-theme', 'dark');
+                        } else {
+                            // 关闭夜间模式
+                            setCookie('Theme', '0', 365);
+                            document.documentElement.removeAttribute('data-theme');
+                        }
+                        // 刷新页面使更改生效（可选）
+                        location.reload();
+                    });
+                });
+                
+                // 设置cookie函数
+                function setCookie(name, value, days) {
+                    let expires = "";
+                    if (days) {
+                        const date = new Date();
+                        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                        expires = "; expires=" + date.toUTCString();
+                    }
+                    document.cookie = name + "=" + (value || "") + expires + "; path=/";
+                }
+                
+                // 获取cookie函数
+                function getCookie(name) {
+                    const nameEQ = name + "=";
+                    const ca = document.cookie.split(';');
+                    for(let i = 0; i < ca.length; i++) {
+                        let c = ca[i];
+                        while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+                        if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+                    }
+                    return null;
+                }
+            </script>
+                <?php endif; ?>

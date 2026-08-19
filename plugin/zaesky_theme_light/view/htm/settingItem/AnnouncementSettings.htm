@@ -1,0 +1,105 @@
+<!-- 站点公告开关 -->
+	<div class="form-group row">
+	<label class="col-md-2 form-control-label text-md-right pr-0" for="site_annoucement_switch">
+	<b class="text-dark"><?php echo lang('admin_setting_config_site_annoucement_switch'); ?>：</b>
+	</label>
+	<div class="col-md-8">
+	<div class="site-annoucement-switch" id="site_annoucement_switch">
+
+		<label class="custom-input custom-radio mr-3">
+			<input type="radio" name="site_annoucement_switch" value="1" checked="checked"> <?php echo lang('admin_on'); ?>
+		</label>
+
+		<label class="custom-input custom-radio mr-3">
+			<input type="radio" name="site_annoucement_switch" value="0" <?php if (isset($light_config['site_annoucement_switch']) && $light_config['site_annoucement_switch'] == 0) { ?>  checked="checked" <?php }?> > <?php echo lang('admin_off'); ?>
+		</label>
+	</div>
+	</div>
+	</div>	
+	<!-- 站点公告位置 -->
+	<!-- <div class="form-group row">
+	<label class="col-md-2 form-control-label text-md-right pr-0" for="site_annoucement_position">
+	<b class="text-dark"><?php echo lang('admin_setting_config_site_annoucement_position'); ?>：</b>
+	</label>
+	<div class="col-md-8">
+	<div class="site-annoucement-position" id="site_annoucement_position">
+
+		<label class="custom-input custom-radio mr-3">
+			<input type="radio" name="site_annoucement_position" value="1" checked="checked"> <?php echo lang('site_annoucement_position_1'); ?>
+		</label>
+
+		<label class="custom-input custom-radio mr-3">
+			<input type="radio" name="site_annoucement_position" value="0" <?php if (isset($light_config['site_annoucement_position']) && $light_config['site_annoucement_position'] == 0) { ?>  checked="checked" <?php }?> > <?php echo lang('site_annoucement_position_2'); ?>
+		</label>
+	</div>
+	</div>
+	</div> -->
+	<!--公告颜色设置-->
+	<div class="form-group row">
+	<label class="col-md-2 form-control-label text-md-right pr-0" for="site_annoucement_style">
+	<b class="text-dark"><?php echo lang('admin_setting_config_site_annoucement_style'); ?>：</b>
+	</label>
+	<div class="col-md-8">
+	<div class="annoucement-style" id="site_annoucement_style">
+	<select name="site_annoucement_style" class="form-control form-control-sm">
+		<option  value="0" <?php if (isset($light_config['site_annoucement_style']) && $light_config['site_annoucement_style'] == 0) { ?>  selected <?php }?>><?php echo lang('admin_setting_config_style_primary'); ?></option>
+		<option  value="1" <?php if (isset($light_config['site_annoucement_style']) && $light_config['site_annoucement_style'] == 1) { ?>  selected <?php }?>><?php echo lang('admin_setting_config_style_secondary'); ?></option>
+		<option  value="2" <?php if (isset($light_config['site_annoucement_style']) && $light_config['site_annoucement_style'] == 2) { ?>  selected <?php }?>><?php echo lang('admin_setting_config_style_success'); ?></option>
+		<option  value="3" <?php if (isset($light_config['site_annoucement_style']) && $light_config['site_annoucement_style'] == 3) { ?>  selected <?php }?>><?php echo lang('admin_setting_config_style_danger'); ?></option>
+		<option  value="4" <?php if (isset($light_config['site_annoucement_style']) && $light_config['site_annoucement_style'] == 4) { ?>  selected <?php }?>><?php echo lang('admin_setting_config_style_warning'); ?></option>
+		<option  value="5" <?php if (isset($light_config['site_annoucement_style']) && $light_config['site_annoucement_style'] == 5) { ?>  selected <?php }?>><?php echo lang('admin_setting_config_style_info'); ?></option>
+	</select>
+	</div>
+	</div>
+	</div>
+	<!--公告图标-->
+	<div class="form-group row">
+	<label class="col-md-2 form-control-label text-md-right pr-0" for="site_annoucement_icon">
+	<b class="text-dark"><?php echo lang('admin_setting_config_site_annoucement_icon'); ?>：</b>
+	</label>
+	<div class="col-md-8">
+	<input type="text" name="site_annoucement_icon" value="<?php echo $light_config['site_annoucement_icon'] ;?>" class="form-control" id="site_annoucement_icon">
+	<div class="figure-caption mt-2">
+	<?php echo lang('login_guide_icon_tip'); ?>
+	</div>
+	</div>
+	</div>
+	<!--公告内容-->
+	<div class="form-group row">
+	<label class="col-md-2 form-control-label text-md-right pr-0" for="site_annoucement_content">
+	<b class="text-dark"><?php echo lang('admin_setting_config_site_annoucement_content'); ?>：</b>
+	</label>
+	<div class="col-md-8">
+	<textarea type="text" class="form-control" name="site_annoucement_content"  id="site_annoucement_content" rows="3" placeholder="建议在100字左右"><?php echo $light_config['site_annoucement_content'] ;?></textarea>
+	</div>
+	</div>
+	<!--登录注册公告内容-->
+	<div class="form-group row">
+	<label class="col-md-2 form-control-label text-md-right pr-0" for="login_annoucement_content">
+	<b class="text-dark"><?php echo lang('admin_setting_config_login_annoucement_content'); ?>：</b>
+	</label>
+	<div class="col-md-8">
+	<textarea type="text" class="form-control" name="login_annoucement_content"  id="login_annoucement_content" rows="3" placeholder="建议在50字左右"><?php echo $light_config['login_annoucement_content'] ;?></textarea>
+	</div>
+	</div>
+	<!--评论公告内容-->
+	<div class="form-group row">
+	<label class="col-md-2 form-control-label text-md-right pr-0" for="comment_annoucement_content">
+	<b class="text-dark"><?php echo lang('admin_setting_config_comment_annoucement_content'); ?>：</b>
+	</label>
+	<div class="col-md-8">
+	<textarea type="text" class="form-control" name="comment_annoucement_content"  id="comment_annoucement_content" rows="3" placeholder="建议在50字左右"><?php echo $light_config['comment_annoucement_content'] ;?></textarea>
+	</div>
+	</div>
+	<!--发帖公告内容-->
+	<div class="form-group row">
+		<label class="col-md-2 form-control-label text-md-right pr-0" for="thread_post_annoucement">
+		<b class="text-dark"><?php echo lang('admin_setting_config_post_annoucement_content'); ?>：</b>
+		</label>
+		<div class="col-md-8">
+		<textarea type="text" class="form-control" name="thread_post_annoucement"  id="thread_post_annoucement" rows="3" placeholder="建议在50字左右"><?php echo $light_config['thread_post_annoucement'] ;?></textarea>
+		<div class="figure-caption mt-2">
+			<?php echo lang('admin_setting_announce_tip'); ?>
+		</div>
+		</div>
+		</div>

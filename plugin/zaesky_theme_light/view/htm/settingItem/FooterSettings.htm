@@ -1,0 +1,139 @@
+<!--执行数据显示-->
+										<div class="form-group row">
+											<label class="col-md-2 form-control-label text-md-right pr-0" for="config_exc_info">
+												<b class="text-dark"><?php echo lang('admin_setting_config_exc_info'); ?>：</b>
+											</label>
+											<div class="col-md-8">
+												<div class="config-exc-info" id="config_exc_info">
+					
+													<label class="custom-input custom-radio mr-3">
+														<input type="radio" name="config_exc_info" value="1" checked="checked"> <?php echo lang('admin_on'); ?>
+													</label>
+					
+													<label class="custom-input custom-radio mr-3">
+														<input type="radio" name="config_exc_info" value="0" <?php if (isset($light_config['config_exc_info']) && $light_config['config_exc_info'] == 0) { ?>  checked="checked" <?php }?> > <?php echo lang('admin_off'); ?>
+													</label>
+												</div>
+											</div>
+										</div>	
+											<!--QQ联系功能-->
+											<div class="form-group row">
+												<label class="col-md-2 form-control-label text-md-right pr-0" for="contact_qq">
+													<b class="text-dark"><?php echo lang('admin_setting_config_contact_qq'); ?>：</b>
+												</label>
+												<div class="col-md-8">
+													<div class="contact-qq" id="contact_qq">
+						
+														<label class="custom-input custom-radio mr-3">
+															<input type="radio" name="contact_qq" value="1" checked="checked"> <?php echo lang('admin_on'); ?>
+														</label>
+						
+														<label class="custom-input custom-radio mr-3">
+															<input type="radio" name="contact_qq" value="0" <?php if (isset($light_config['contact_qq']) && $light_config['contact_qq'] == 0) { ?>  checked="checked" <?php }?> > <?php echo lang('admin_off'); ?>
+														</label>
+						
+													</div>
+												</div>
+											</div>	
+											<!--QQ号-->
+							<div class="form-group row">
+								<label class="col-md-2 form-control-label text-md-right pr-0" for="contact_qq_number">
+									<b class="text-dark"><?php echo lang('admin_setting_config_contact_qq_number'); ?>：</b>
+								</label>
+								<div class="col-md-8">
+									<input type="number" name="contact_qq_number" value="<?php echo $light_config['contact_qq_number'] ;?>" class="form-control" id="contact_qq_number" placeholder="请输入QQ号">
+								</div>
+							</div>
+							<!--微信联系功能-->
+							<div class="form-group row">
+								<label class="col-md-2 form-control-label text-md-right pr-0" for="contact_wx">
+									<b class="text-dark"><?php echo lang('admin_setting_config_contact_wx'); ?>：</b>
+								</label>
+								<div class="col-md-8">
+									<div class="contact-wx" id="contact_wx">
+		
+										<label class="custom-input custom-radio mr-3">
+											<input type="radio" name="contact_wx" value="1" checked="checked"> <?php echo lang('admin_on'); ?>
+										</label>
+		
+										<label class="custom-input custom-radio mr-3">
+											<input type="radio" name="contact_wx" value="0" <?php if (isset($light_config['contact_wx']) && $light_config['contact_wx'] == 0) { ?>  checked="checked" <?php }?> > <?php echo lang('admin_off'); ?>
+										</label>
+		
+									</div>
+								</div>
+							</div>	
+							<!--微信图片地址-->
+			<div class="form-group row">
+				<label class="col-md-2 form-control-label text-md-right pr-0" for="contact_wx_img">
+					<b class="text-dark"><?php echo lang('admin_setting_config_contact_wx_img'); ?>：</b>
+				</label>
+				<div class="col-md-8">
+					<input type="text" name="contact_wx_img" value="<?php echo $light_config['contact_wx_img'] ;?>" class="form-control" id="contact_wx_img" placeholder="图片url地址或本地图片路径">
+				</div>
+			</div>
+			<!--邮箱联系功能-->
+			<div class="form-group row">
+				<label class="col-md-2 form-control-label text-md-right pr-0" for="contact_email">
+					<b class="text-dark"><?php echo lang('admin_setting_config_contact_email'); ?>：</b>
+				</label>
+				<div class="col-md-8">
+					<div class="contact-email" id="contact_email">
+
+						<label class="custom-input custom-radio mr-3">
+							<input type="radio" name="contact_email" value="1" checked="checked"> <?php echo lang('admin_on'); ?>
+						</label>
+
+						<label class="custom-input custom-radio mr-3">
+							<input type="radio" name="contact_email" value="0" <?php if (isset($light_config['contact_email']) && $light_config['contact_email'] == 0) { ?>  checked="checked" <?php }?> > <?php echo lang('admin_off'); ?>
+						</label>
+
+					</div>
+				</div>
+			</div>	
+			<!--邮箱-->
+<div class="form-group row">
+<label class="col-md-2 form-control-label text-md-right pr-0" for="contact_email_number">
+	<b class="text-dark"><?php echo lang('admin_setting_config_contact_email_number'); ?>：</b>
+</label>
+<div class="col-md-8">
+	<input type="email" name="contact_email_number" value="<?php echo $light_config['contact_email_number'] ;?>" class="form-control" id="contact_email_number" placeholder="请输入邮箱">
+</div>
+</div>
+<!--站点logo显示-->
+<div class="form-group row">
+	<label class="col-md-2 form-control-label text-md-right pr-0" for="footer_icon_show">
+		<b class="text-dark"><?php echo lang('admin_setting_config_footer_icon_show'); ?>：</b>
+	</label>
+	<div class="col-md-8">
+		<div class="contact-qq" id="footer_icon_show">
+
+			<label class="custom-input custom-radio mr-3">
+				<input type="radio" name="footer_icon_show" value="1" checked="checked"> <?php echo lang('admin_on'); ?>
+			</label>
+
+			<label class="custom-input custom-radio mr-3">
+				<input type="radio" name="footer_icon_show" value="0" <?php if (isset($light_config['footer_icon_show']) && $light_config['footer_icon_show'] == 0) { ?>  checked="checked" <?php }?> > <?php echo lang('admin_off'); ?>
+			</label>
+
+		</div>
+	</div>
+</div>
+<!--一级标题内容-->
+<div class="form-group row">
+	<label class="col-md-2 form-control-label text-md-right pr-0" for="footer_one_content">
+	<b class="text-dark"><?php echo lang('admin_setting_config_footer_title_one_content'); ?>：</b>
+	</label>
+	<div class="col-md-8">
+	<textarea type="text" class="form-control" name="footer_one_content"  id="footer_one_content" rows="3" placeholder="可以输入站点名称或者其他信息，支持HTML标签"><?php echo $light_config['footer_one_content'] ;?></textarea>
+	</div>
+	</div>
+	<!--二级标题内容-->
+<div class="form-group row">
+	<label class="col-md-2 form-control-label text-md-right pr-0" for="footer_two_content">
+	<b class="text-dark"><?php echo lang('admin_setting_config_footer_title_two_content'); ?>：</b>
+	</label>
+	<div class="col-md-8">
+	<textarea type="text" class="form-control" name="footer_two_content"  id="footer_two_content" rows="3" placeholder="可以输入链接或者简介等其他信息，支持HTML标签"><?php echo $light_config['footer_two_content'] ;?></textarea>
+</div>
+	</div>

@@ -1,0 +1,173 @@
+<script src="<?php echo '../plugin/zaesky_theme_light/view/js/loading.min.js';?>"></script>
+<script>
+    $('#nav li.home').addClass('active');
+function checkAuth(){
+	$.xget(xn.url("index-checkAuth"), function(code, message) {
+		if(code == 0) {
+				let authInfo = JSON.parse(message);
+				$("#authStatus").html(authInfo.msg);
+		}
+	});
+}
+
+$(function() {
+    // 获取当前时间
+    const now = new Date().getTime();
+        // 从 localStorage 中获取上次检查更新的时间
+        const lastUpdateTime = localStorage.getItem('lastUpdateTime');
+        // 定义时间间隔为 5 分钟（单位：毫秒）
+        const interval = 5 * 60 * 1000;
+
+        // 如果上次检查时间不存在，或者距离上次检查已经超过 5 分钟
+        if (!lastUpdateTime || now - lastUpdateTime > interval) {
+        checkAuth();
+		setTimeout(function() {
+			checkUpdate();
+		}, 100);
+        // 更新上次检查时间
+        localStorage.setItem('lastUpdateTime', now);
+        }
+});
+
+function checkUpdate(pop = 0){
+    if(pop){
+        $('body').mLoading({
+            text:"检测更新中，请稍等...",
+        });
+    }
+	// 禁用按钮并显示加载图标
+	const updateButton = $(".btn.btn-alt-success");
+	updateButton.prop("disabled", true);
+	updateButton.html('<i class="si si-reload fa-spin opacity-50 me-1"></i> 检测中...');
+
+	$.xget(xn.url("index-checkUpdate"), function(code, message) {
+		// 恢复按钮状态
+		updateButton.prop("disabled", false);
+		updateButton.html('<i class="si si-reload opacity-50 me-1"></i> 检测更新');
+        try {
+            if(code == 0) {
+                let updateInfo = JSON.parse(message);
+                console.log(updateInfo);
+                
+                if(updateInfo.code == 0){
+                    updateStatusDisplay(updateInfo, pop);
+                }else{
+                    $.alert(updateInfo.msg);
+                }
+                
+		} else {
+			$.alert(message);
+		}
+        } finally {
+            $('body').mLoading("hide");
+        }
+		
+	});
+}
+
+function updateStatusDisplay(updateInfo, pop = 0) {
+    const $status = $("#updateStatus");
+    const $statusTitle = $("#updateStatus_title");
+    const $statusIcon = $("#updateStatus_icon");
+    let displayMessage = updateInfo.msg;
+    $status.html(displayMessage);
+
+    if (!updateInfo.data?.data?.data) {
+        if (pop === 1) {
+            $.alert(displayMessage);
+        }
+        return;
+    }
+
+    // 更新状态显示
+    $statusTitle.html("有新版本");
+    $statusIcon.removeClass("si-check").addClass("si-cloud-download");
+
+    const updateData = updateInfo.data.data.data;
+    const updateLogInfo = updateData.update_log;
+
+    // 构建更新日志信息
+    let logContent = '<div class="p-3">' +
+        '<h5 class="mb-3">版本信息</h5>' +
+        `<p class="mb-2"><span class="text-muted">最新版本：</span>${updateData.edition}</p>` +
+        '<p class="mb-2"><span class="text-muted">更新说明：</span></p>' +
+        '<div class="alert alert-info">';
+
+    // 遍历更新日志对象
+    for (const date in updateLogInfo) {
+        logContent += `<p class="mb-2"><strong>${date}</strong></p><ul class="mb-3 pl-4">`;
+        updateLogInfo[date].forEach(item => {
+            logContent += `<li>${item}</li>`;
+        });
+        logContent += '</ul>';
+    }
+    logContent += '</div></div>';
+    if (pop === 1) {
+        $.confirm(logContent, update);
+    } else {
+        $status.html(updateInfo.msg);
+    }
+}
+
+function update(){
+    $('body').mLoading({
+    text:"下载更新中，请稍等...",
+});
+	$.xget(xn.url("index-update"),function(code,message){
+        try {
+            if(code == 0){
+                $.alert(message);
+                setTimeout(function(){
+                    $.xpost(xn.url("other-cache"),"clear_tmp=1&clear_cache=1", function(code, message) {
+                    if(code == 0) {
+                        window.location.reload();
+                    }
+                });
+                },2000)
+		}else{
+			$.alert(message);
+		}
+        } finally {
+            $('body').mLoading("hide");
+        }
+	});
+}
+
+$(function() {
+    const options = {
+        series: [<?php
+            foreach($grouplist as $_gid => $_group) {
+                if($_group['gid'] > 100) {
+                    $group_num = db_count('user', array('gid' => $_group['gid']));
+                    echo $group_num . ',';
+                }
+            }
+        ?>],
+        chart: {
+            width: 380,
+            type: 'donut'
+        },
+        labels: [<?php
+            foreach($grouplist as $_gid => $_group) {
+                if($_group['gid'] > 100) {
+                    echo "'" . $_group['name'] . "',";
+                }
+            }
+        ?>],
+        responsive: [{
+            breakpoint: 480,
+            options: {
+                chart: {
+                    width: "100%"
+                },
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }]
+    };
+
+    const chart = new ApexCharts(document.querySelector("#js-chartjs-pie"), options);
+    chart.render();
+});
+</script>

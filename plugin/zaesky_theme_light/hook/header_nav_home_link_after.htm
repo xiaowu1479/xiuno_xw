@@ -1,0 +1,21 @@
+<?php if(isset($light_config['disc_page']) && $light_config['disc_page'] && $light_config['disc_page_index'] && $light_config['disc_nav_bbs']) { ?>
+  <li class="nav-item bbs" data-active="bbs"><a class="nav-link" href="<?php echo url('bbs');?>"><i class="fas fa-comments"></i> <?php echo lang('bbs');?></a></li>
+  <?php } ?>
+<?php if (isset($light_config['side_nav_switch']) && $light_config['side_nav_switch'] == 0 && $light_config['navbar_cate'] == 1 && $light_config['navbar_cate_func'] == 1) { ?>
+<div class="dropdown hidden-sm hidden-md">
+    <li class="nav-item" id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false" style="cursor:pointer;"><a class="nav-link dropdown-toggle" ><i class="fas fa-layer-group"></i> <?php echo lang('catalog');?></a></li>
+    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+      <?php foreach($forumlist_show as $_forum) { ?>
+        <!--{hook header_nav_forumlist_loop_start.htm}-->
+        <li fid="<?php echo $_forum['fid'];?>" data-active="fid-<?php echo $_forum['fid'];?>">
+            <a class="dropdown-item" href="<?php echo url("forum-$_forum[fid]");?>"><img class="avatar-1 mr-1 rounded" src="<?php echo $_forum['icon_url'];?>"> <?php echo $_forum['name'];?></a>
+        </li>
+        <!--{hook header_nav_forumlist_loop_end.htm}-->
+        <?php } ?>
+    </div>
+  </div>
+  <?php } ?>
+
+<?php if (isset($light_config['disc_page']) && $light_config['disc_page'] == 1 && $light_config['disc_page_index'] == 0) { ?>
+<li class="nav-item discovery" data-active="discovery"><a class="nav-link" data-active="discovery" href="<?php echo url('discovery');?>"><i class="<?php echo $light_config['disc_page_icon'];?>"></i> <?php echo $light_config['disc_page_title'];?></a></li>
+<?php } ?>

@@ -1,0 +1,84 @@
+<?php include _include(ADMIN_PATH.'view/htm/header.inc.htm'); ?>
+<link rel="stylesheet" href="<?php echo '../plugin/zaesky_theme_light/view/css/loading.min.css'.$static_version;?>">
+<form action="<?php echo url('plugin-setting-zaesky_theme_light');?>" method="post" id="form">
+<div class="container">
+  <div class="row justify-content-center mt-5">
+    <div class="col-md-8">
+      <div class="card shadow-sm">
+        <div class="card-body p-5">
+          <h3 class="text-center mb-4"><i class="fas fa-key"></i> 主题授权验证</h3>
+          
+          <div class="alert alert-info" role="alert">
+            <i class="fas fa-info-circle"></i> 请输入您购买的授权码以激活主题完整功能
+          </div>
+
+          <form method="post" action="" id="auth_form">
+            <div class="form-group">
+              <div class="input-group">
+                <input type="text" class="form-control" name="auth_code" id="auth_code" placeholder="请输入授权码" required>
+              </div>
+            </div>
+
+            <div class="form-group mt-4">
+              <button type="submit" class="btn btn-primary btn-block" id="submit" data-loading-text="<?php echo lang('submiting');?>...">
+                验证授权
+              </button>
+            </div>
+          </form>
+
+          <div class="text-center mt-4 text-muted">
+            <small>
+              <i class="fas fa-question-circle"></i>
+              还没有授权码？<a href="https://admin.idaily.top/" target="_blank">点击这里购买</a>
+            </small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</form>
+<?php
+include _include(ADMIN_PATH.'view/htm/footer.inc.htm');
+?>
+<script src="<?php echo '../plugin/zaesky_theme_light/view/js/loading.min.js';?>"></script>
+<script>
+$('#nav li.nav-item-light').addClass('active');
+    var jform = $("#form");
+    var jsubmit = $("#submit");
+    jform.on('submit', function(event) {
+        event.preventDefault(); // Prevent default form submission
+        $('body').mLoading({ text: "验证中，请稍等..." });
+        jsubmit.button('loading');
+
+        var postdata = jform.serialize() + "&type=auth_check";
+        $.xpost(jform.attr('action'), postdata, function(code, message) {
+            $('body').mLoading('destroy'); // Always destroy loading indicator first
+            jsubmit.button('reset'); // Reset button state at the end
+
+            if (code === 0) {
+                console.log(message);
+                var url = '<?php echo url("plugin-setting-zaesky_theme_light");?>';
+                $.xpost(url, { 'type': 'update_check' }, function(code, message) {
+                    if (message.data.data.code === 1) {
+                        $('body').mLoading({ text: "下载更新中，请稍等..." });
+                        $.xpost(url, { 'type': 'update' }, function(code, message) {
+                            $('body').mLoading('destroy');
+                            $.alert(message.msg);
+                              $.xpost(xn.url("other-cache"),"clear_tmp=1&clear_cache=1", function(code, message) {
+                                  if(code == 0) {
+                                    setTimeout(() => window.location.reload(), 1000);
+                                  }
+                              });
+                        });
+                    } else {
+                        $.alert('验证成功！即将为您刷新页面！');
+                        setTimeout(() => window.location.reload(), 1000);
+                    }
+                });
+            } else {
+                $.alert(message);
+            }
+        });
+    });
+</script>

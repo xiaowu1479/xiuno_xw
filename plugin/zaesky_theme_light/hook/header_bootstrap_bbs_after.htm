@@ -1,0 +1,61 @@
+<link rel="stylesheet" href="<?php echo 'plugin/zaesky_theme_light/view/css/bootstrap.min.css'.$static_version;?>">
+<link rel="stylesheet" href="<?php echo 'plugin/zaesky_theme_light/view/css/bootstrap-bbs.min.css'.$static_version;?>">
+<link rel="stylesheet" href="<?php echo 'plugin/zaesky_theme_light/view/css/animationFont.min.css'.$static_version;?>">
+<link rel="stylesheet" href="<?php echo 'plugin/zaesky_theme_light/view/fonts/simple-line-icons/Simple-Line-Icons.css'.$static_version;?>">
+<link rel="stylesheet" href="<?php echo 'plugin/zaesky_theme_light/view/css/zaesky-theme-light.min.css'.$static_version;?>">
+<?php if (isset($light_config['body_font_style']) && $light_config['body_font_style'] == 1) { ?> 
+  <link rel="stylesheet" href="<?php echo 'plugin/zaesky_theme_light/view/fonts/HarmonySanc.css'.$static_version;?>">
+  <?php }else if(isset($light_config['body_font_style']) && $light_config['body_font_style'] == 2){?>
+  <link rel="stylesheet" href="<?php echo 'plugin/zaesky_theme_light/view/fonts/SmileySans.css'.$static_version;?>">
+  <?php }?>
+<style>
+/* 导航栏标签过多时的优化处理 */
+#navbar .navbar-nav.mr-auto {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    max-width: calc(100vw - 400px);
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding-bottom: 2px;
+}
+#navbar .navbar-nav.mr-auto::-webkit-scrollbar {
+    display: none;
+}
+#navbar .navbar-nav.mr-auto .nav-item {
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+#navbar .navbar-nav.mr-auto .nav-link {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+}
+/* 导航栏滚动指示器 */
+#navbar .navbar-nav.mr-auto::before,
+#navbar .navbar-nav.mr-auto::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 30px;
+    pointer-events: none;
+    z-index: 10;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+/* 移动端导航栏优化 */
+.header_nav_2_mobile_menu .nav-tabs {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+.header_nav_2_mobile_menu .nav-tabs::-webkit-scrollbar {
+    display: none;
+}
+.header_nav_2_mobile_menu .nav-tabs .nav-item {
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+</style>

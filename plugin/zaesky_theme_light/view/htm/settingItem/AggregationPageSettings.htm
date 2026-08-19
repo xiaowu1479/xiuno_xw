@@ -1,0 +1,105 @@
+<div class="alert alert-warning">
+								<?php echo lang('admin_setting_config_disc_page_warning'); ?>
+							</div>
+							<!-- 聚合页开关 -->
+							<div class="form-group row">
+								<label class="col-md-2 form-control-label text-md-right pr-0" for="disc_page">
+									<b class="text-dark"><?php echo lang('admin_setting_config_disc_page'); ?>：</b>
+								</label>
+								<div class="col-md-8">
+									<div class="disc-page" id="disc_page">
+			
+										<label class="custom-input custom-radio mr-3">
+											<input type="radio" name="disc_page" value="1" checked="checked"> <?php echo lang('admin_on'); ?>
+										</label>
+			
+										<label class="custom-input custom-radio mr-3">
+											<input type="radio" name="disc_page" value="0" <?php if (isset($light_config['disc_page']) && $light_config['disc_page'] == 0) { ?>  checked="checked" <?php }?> > <?php echo lang('admin_off'); ?>
+										</label>
+									</div>
+								</div>
+								
+							</div>
+							<!-- 聚合页设置为首页 -->
+							<div class="form-group row">
+								<label class="col-md-2 form-control-label text-md-right pr-0" for="disc_page_index">
+									<b class="text-dark"><?php echo lang('admin_setting_config_disc_page_index'); ?>：</b>
+								</label>
+								<div class="col-md-8">
+									<div class="disc-page-index" id="disc_page_index">
+			
+										<label class="custom-input custom-radio mr-3">
+											<input type="radio" name="disc_page_index" value="1" checked="checked"> <?php echo lang('admin_on'); ?>
+										</label>
+			
+										<label class="custom-input custom-radio mr-3">
+											<input type="radio" name="disc_page_index" value="0" <?php if (isset($light_config['disc_page_index']) && $light_config['disc_page_index'] == 0) { ?>  checked="checked" <?php }?> > <?php echo lang('admin_off'); ?>
+										</label>
+									</div>
+									<div class="figure-caption mt-2">
+										<?php echo lang('admin_setting_config_disc_page_index_tip'); ?>
+									</div>
+								</div>
+								
+							</div>
+							<!-- 导航论坛选项显示 -->
+							<div class="form-group row">
+								<label class="col-md-2 form-control-label text-md-right pr-0" for="disc_nav_bbs">
+									<b class="text-dark"><?php echo lang('admin_setting_disc_nav_bbs'); ?>：</b>
+								</label>
+								<div class="col-md-8">
+									<div class="disc-nav-bbs" id="disc_nav_bbs">
+			
+										<label class="custom-input custom-radio mr-3">
+											<input type="radio" name="disc_nav_bbs" value="1" checked="checked"> <?php echo lang('admin_on'); ?>
+										</label>
+			
+										<label class="custom-input custom-radio mr-3">
+											<input type="radio" name="disc_nav_bbs" value="0" <?php if (isset($light_config['disc_nav_bbs']) && $light_config['disc_nav_bbs'] == 0) { ?>  checked="checked" <?php }?> > <?php echo lang('admin_off'); ?>
+										</label>
+									</div>
+								</div>
+								
+							</div>	
+							<!--聚合页名称-->
+						<div class="form-group row">
+						<label class="col-md-2 form-control-label text-md-right pr-0" for="disc_page_title">
+						<b class="text-dark"><?php echo lang('admin_setting_config_disc_page_title'); ?>：</b>
+						</label>
+						<div class="col-md-8">
+							<input type="text" name="disc_page_title" value="<?php echo $light_config['disc_page_title'] ;?>" class="form-control" id="disc_page_title" placeholder="请输入字体像素大小，建议14-20之间">
+						</div>
+						</div>
+						<!--聚合页图标-->
+						<div class="form-group row">
+							<label class="col-md-2 form-control-label text-md-right pr-0" for="disc_page_icon">
+								<b class="text-dark"><?php echo lang('admin_setting_config_disc_page_icon'); ?>：</b>
+							</label>
+							<div class="col-md-8">
+								<input type="text" name="disc_page_icon" value="<?php echo $light_config['disc_page_icon'] ;?>" class="form-control" id="disc_page_icon">
+								<div class="figure-caption mt-2">
+									<?php echo lang('login_guide_icon_tip'); ?>
+								</div>
+							</div>
+						</div>
+						<!--banner图地址-->
+						<!-- <div class="form-group row">
+							<label class="col-md-2 form-control-label text-md-right pr-0" for="disc_page_banner">
+								<b class="text-dark"><?php echo lang('admin_setting_config_disc_page_banner'); ?>：</b>
+							</label>
+							<div class="col-md-8">
+								<input type="text" name="disc_page_banner" value="<?php echo $light_config['disc_page_banner'] ;?>" class="form-control" id="disc_page_banner">
+								<div class="figure-caption mt-2">
+									<?php echo lang('admin_setting_config_site_info_tip'); ?>
+								</div>
+							</div>
+						</div> -->
+						<!--banner图点击跳转地址-->
+						<!-- <div class="form-group row">
+							<label class="col-md-2 form-control-label text-md-right pr-0" for="disc_page_banner_a">
+								<b class="text-dark"><?php echo lang('admin_setting_config_disc_page_banner_a'); ?>：</b>
+							</label>
+							<div class="col-md-8">
+								<input type="text" name="disc_page_banner_a" value="<?php echo $light_config['disc_page_banner_a'] ;?>" class="form-control" id="disc_page_banner_a">
+							</div>
+						</div> -->

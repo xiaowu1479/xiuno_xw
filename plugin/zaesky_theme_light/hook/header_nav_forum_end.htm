@@ -1,0 +1,12 @@
+<?php if (isset($light_config['nav_search_form']) && $light_config['nav_search_form'] == 1) {?>
+<div class="form-group nav-item hidden-sm hidden-md ml-4 mb-0 mt-2">
+	<form action="<?php echo url('search');?>" id="search_form">
+		<div class="input-group ">
+			<input type="text" class="form-control border-0  search_form_input"  placeholder="<?php echo lang('keyword');?>" name="keyword" autocomplete="off">
+			<div class="input-group-append">
+				<button class="btn btn-light" type="submit"><span class="fas fa-search"></span></button>
+			</div>
+		</div>
+	</form>
+</div>
+<?php } ?>

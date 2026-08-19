@@ -1,0 +1,13 @@
+<?php if (isset($light_config['user_online']) && $light_config['user_online'] == 1) { ?>
+
+  <?php
+        $arronline=assoc_unique(online_list_cache(),'uid');
+        foreach($arronline as $online_user) { 
+  
+        if($online_user['uid'] == $_user['uid']){
+        echo "<span class='badge jb-green mr-1'>在线</span>";
+        } 
+      }
+      ; ?>
+      <?php }?>
+  

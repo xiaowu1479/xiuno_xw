@@ -1,0 +1,93 @@
+<script src="<?php echo '../plugin/zaesky_theme_light/view/js/loading.min.js';?>"></script>
+<script>
+    $('#nav li.home').addClass('active');
+    const _0x11a1=['msg','parse','#authStatus','xget','html'];const _0x3a00=function(_0x11a168,_0x3a00f9){_0x11a168=_0x11a168-0x0;let _0x13543a=_0x11a1[_0x11a168];return _0x13543a;};function checkAuth(){$[_0x3a00('0x3')](xn['url']('index-checkAuth'),function(_0x2e160a,_0x46322c){if(_0x2e160a==0x0){let _0x4c8964=JSON[_0x3a00('0x1')](_0x46322c);$(_0x3a00('0x2'))[_0x3a00('0x4')](_0x4c8964[_0x3a00('0x0')]);}});}
+
+    const _0x2a81=['lastUpdateTime','setItem','getItem'];const _0x171f=function(_0x2a81b4,_0x171f05){_0x2a81b4=_0x2a81b4-0x0;let _0x4eed94=_0x2a81[_0x2a81b4];return _0x4eed94;};$(function(){const _0x3c2aa9=new Date()['getTime']();const _0x1023a7=localStorage[_0x171f('0x2')](_0x171f('0x0'));const _0x446171=0x5*0x3c*0x3e8;if(!_0x1023a7||_0x3c2aa9-_0x1023a7>_0x446171){checkAuth();setTimeout(function(){checkUpdate();},0x64);localStorage[_0x171f('0x1')]('lastUpdateTime',_0x3c2aa9);}});
+
+    const _0x356a=['<i\x20class=\x22si\x20si-reload\x20opacity-50\x20me-1\x22></i>\x20检测更新','body','mLoading','检测更新中，请稍等...','url','parse','prop','disabled','hide','alert'];const _0x1f89=function(_0x356afd,_0x1f8964){_0x356afd=_0x356afd-0x0;let _0x28473d=_0x356a[_0x356afd];return _0x28473d;};function checkUpdate(_0x268216=0x0){if(_0x268216){$(_0x1f89('0x1'))['mLoading']({'text':_0x1f89('0x3')});}const _0x18568b=$('.btn.btn-alt-success');_0x18568b[_0x1f89('0x6')](_0x1f89('0x7'),!![]);_0x18568b['html']('<i\x20class=\x22si\x20si-reload\x20fa-spin\x20opacity-50\x20me-1\x22></i>\x20检测中...');$['xget'](xn[_0x1f89('0x4')]('index-checkUpdate'),function(_0x140d78,_0x1927ac){_0x18568b['prop'](_0x1f89('0x7'),![]);_0x18568b['html'](_0x1f89('0x0'));try{if(_0x140d78==0x0){let _0x4a35d2=JSON[_0x1f89('0x5')](_0x1927ac);console['log'](_0x4a35d2);if(_0x4a35d2['code']==0x0){updateStatusDisplay(_0x4a35d2,_0x268216);}else{$[_0x1f89('0x9')](_0x4a35d2['msg']);}}else{$[_0x1f89('0x9')](_0x1927ac);}}finally{$(_0x1f89('0x1'))[_0x1f89('0x2')](_0x1f89('0x8'));}});}
+
+function updateStatusDisplay(updateInfo, pop = 0) {
+    const $status = $("#updateStatus");
+    const $statusTitle = $("#updateStatus_title");
+    const $statusIcon = $("#updateStatus_icon");
+    let displayMessage = updateInfo.msg;
+    $status.html(displayMessage);
+
+    if (!updateInfo.data?.data?.data) {
+        if (pop === 1) {
+            $.alert(displayMessage);
+        }
+        return;
+    }
+
+    // 更新状态显示
+    $statusTitle.html("有新版本");
+    $statusIcon.removeClass("si-check").addClass("si-cloud-download");
+
+    const updateData = updateInfo.data.data.data;
+    const updateLogInfo = updateData.update_log;
+
+    // 构建更新日志信息
+    let logContent = '<div class="p-3">' +
+        '<h5 class="mb-3">版本信息</h5>' +
+        `<p class="mb-2"><span class="text-muted">最新版本：</span>${updateData.edition}</p>` +
+        '<p class="mb-2"><span class="text-muted">更新说明：</span></p>' +
+        '<div class="alert alert-info">';
+
+    // 遍历更新日志对象
+    for (const date in updateLogInfo) {
+        logContent += `<p class="mb-2"><strong>${date}</strong></p><ul class="mb-3 pl-4">`;
+        updateLogInfo[date].forEach(item => {
+            logContent += `<li>${item}</li>`;
+        });
+        logContent += '</ul>';
+    }
+    logContent += '</div></div>';
+    if (pop === 1) {
+        $.confirm(logContent, update);
+    } else {
+        $status.html(updateInfo.msg);
+    }
+}
+
+var _0x52d6=['下载更新中，请稍等...','url','mLoading','clear_tmp=1&clear_cache=1','index-update','body','alert','xget'];var _0x1605=function(_0x52d683,_0x160536){_0x52d683=_0x52d683-0x0;var _0x177300=_0x52d6[_0x52d683];return _0x177300;};function update(){$(_0x1605('0x5'))[_0x1605('0x2')]({'text':_0x1605('0x0')});$[_0x1605('0x7')](xn[_0x1605('0x1')](_0x1605('0x4')),function(_0x1d2f98,_0x10096d){try{if(_0x1d2f98==0x0){$['alert'](_0x10096d);setTimeout(function(){$['xpost'](xn['url']('other-cache'),_0x1605('0x3'),function(_0x4bb895,_0x4a1071){if(_0x4bb895==0x0){window['location']['reload']();}});},0x7d0);}else{$[_0x1605('0x6')](_0x10096d);}}finally{$(_0x1605('0x5'))['mLoading']('hide');}});}
+
+$(function() {
+    const options = {
+        series: [<?php
+            foreach($grouplist as $_gid => $_group) {
+                if($_group['gid'] > 100) {
+                    $group_num = db_count('user', array('gid' => $_group['gid']));
+                    echo $group_num . ',';
+                }
+            }
+        ?>],
+        chart: {
+            width: 380,
+            type: 'donut'
+        },
+        labels: [<?php
+            foreach($grouplist as $_gid => $_group) {
+                if($_group['gid'] > 100) {
+                    echo "'" . $_group['name'] . "',";
+                }
+            }
+        ?>],
+        responsive: [{
+            breakpoint: 480,
+            options: {
+                chart: {
+                    width: "100%"
+                },
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }]
+    };
+
+    const chart = new ApexCharts(document.querySelector("#js-chartjs-pie"), options);
+    chart.render();
+});
+</script>

@@ -1,0 +1,51 @@
+
+<div class="row hidden-sm hidden-md">
+  <div class="col-12">
+    <div>
+          <div class="row">
+            <div class="col-3">
+              <div class="my_common_total_info p-3 py-4 bg-gradient-start-1">
+                <div class="d-flex align-items-center justify-content-between">
+                  <div class="text-left">
+                    <p class="fs-lg fw-semibold mb-0 font-weight-bold h5">
+                      <?php echo $user['threads'];?> <?php echo lang('mb_threads');?>
+                    </p>
+                    <p class="text-muted mb-0 text-muted small mt-2">
+                      总主题数
+                    </p>
+                  </div>
+                  <div>
+                    <i class="si si-bubble h3 mb-0 text-info"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-3"><div class="my_common_total_info p-3 py-4 bg-gradient-start-3">
+              <div class="d-flex align-items-center justify-content-between">
+                <div class="text-left">
+                  <p class="fs-lg fw-semibold mb-0 font-weight-bold h5">
+                    <?php echo $user['posts'];?> <?php echo lang('mb_posts');?>
+                  </p>
+                  <p class="text-muted mb-0 text-muted small mt-2">
+                    总回帖数
+
+                  </p>
+                </div>
+                <div>
+                  <i class="si si-bubbles h3 mb-0 text-primary"></i>
+                </div>
+              </div>
+            </div></div>
+              <!--{hook my_common_myinfo_item_after.htm}-->
+          </div>
+  </div>
+  </div>
+</div>
+
+<div class="col-12 card hidden-lg">
+  <div class="d-flex justify-content-around text-center card-body p-2">
+      <div><span class="text-muted"><?php echo lang('mb_threads');?><br/></span><b><?php echo $user['threads'];?></b></div>
+      <div><span class="text-muted"><?php echo lang('mb_posts');?><br/></span><b><?php echo $user['posts'];?></b></div>
+      <!--{hook user_page_info_count_after.htm}-->
+  </div>
+</div>
