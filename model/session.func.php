@@ -68,8 +68,10 @@ function sess_new($sid) {
 		$cookie_test = xn_encrypt(md5($agent.$longip), $conf['auth_key']);
 		setcookie('cookie_test', $cookie_test, $time + 86400, '');
 		$g_session_invalid = FALSE;
-		// 原版在此 return，首次访问不建立 session 记录（sess_write 仅 UPDATE 不 INSERT），
-		// 导致首次访问的 session 数据丢失，CSRF/验证码在首次提交时必然失败。改为继续建记录。
+		// 首次访问（无 cookie_test）不建立 session 记录（原版行为），
+		// 避免游客浏览产生大量 session 记录导致在线人数虚高。
+		// 有实际数据（CSRF/验证码/登录）的会话由 sess_write 负责 INSERT。(fixed by Xiuno_xw)
+		return;
 	}
 	
 	// 可能会暴涨
@@ -116,6 +118,10 @@ function sess_write($sid, $data) {
 	if(empty($uid) && empty($g_session['uid']) && empty($data)) {
 		return TRUE;
 	}
+	// 游客会话仅含 fid（导航记忆）不建记录，避免在线人数虚高 (fixed by Xiuno_xw)
+	if(empty($uid) && empty($g_session['uid']) && preg_match('/^fid\|i:\d+;$/', $data)) {
+		return TRUE;
+	}
 	
 	$fid = _SESSION('fid');
 	unset($_SESSION['uid']);
@@ -157,20 +163,33 @@ function sess_write($sid, $data) {
 		db_insert('session_data', array('sid'=>$sid));
 	}
 	if($len <= 255) {
-		$update = array_diff_value($arr, $g_session);
-		db_update('session', array('sid'=>$sid), $update);
+		if(empty($g_session)) {
+			// 会话记录不存在（首次访问产生数据），插入记录 (fixed by Xiuno_xw)
+			$arr['sid'] = $sid;
+			db_insert('session', $arr);
+		} else {
+			$update = array_diff_value($arr, $g_session);
+			db_update('session', array('sid'=>$sid), $update);
+		}
 		if(!empty($g_session) && $g_session['bigdata'] == 1) {
 			db_delete('session_data', array('sid'=>$sid));
 		}
 	} else {
 		$arr['data'] = '';
 		$arr['bigdata'] = 1;
-		$update = array_diff_value($arr, $g_session);
-		$update AND db_update('session', array('sid'=>$sid), $update);
-		$arr2 = array('data'=>$data, 'last_date'=>$time);
-		if($session_delay_update_on) unset($arr2['last_date']);
-		$update2 = array_diff_value($arr2, $g_session);
-		$update2 AND db_update('session_data', array('sid'=>$sid), $update2);
+		if(empty($g_session)) {
+			// 会话记录不存在（首次访问产生大数据），插入记录 (fixed by Xiuno_xw)
+			$arr['sid'] = $sid;
+			db_insert('session', $arr);
+			db_insert('session_data', array('sid'=>$sid, 'data'=>$data, 'last_date'=>$time));
+		} else {
+			$update = array_diff_value($arr, $g_session);
+			$update AND db_update('session', array('sid'=>$sid), $update);
+			$arr2 = array('data'=>$data, 'last_date'=>$time);
+			if($session_delay_update_on) unset($arr2['last_date']);
+			$update2 = array_diff_value($arr2, $g_session);
+			$update2 AND db_update('session_data', array('sid'=>$sid), $update2);
+		}
 	}
 	return TRUE;
 }
@@ -229,12 +248,7 @@ function sess_start() {
 }
 
 function online_count() {
-	global $conf, $time;
-	// 只统计在线保持时间内的活跃会话（含游客），避免历史 session 累积导致在线人数虚高 (fixed by Xiuno_xw)
-	$hold_time = empty($conf['online_hold_time']) ? 3600 : intval($conf['online_hold_time']);
-	$cond = array('last_date'=>array('>'=>$time - $hold_time));
-	// 游客会话的 last_date 不更新（sess_write 访客无数据跳过），超过保持时间自然过期不计数
-	return db_count('session', $cond);
+	return db_count('session');
 }
 
 function online_find_cache() {
@@ -242,12 +256,9 @@ function online_find_cache() {
 }
 
 function online_list_cache() {
-	global $time, $conf;
 	$onlinelist = cache_get('online_list');
 	if($onlinelist === NULL) {
-		// 仅统计在线保持时间内的登录用户，避免过期会话残留 (fixed by Xiuno_xw)
-		$hold_time = empty($conf['online_hold_time']) ? 3600 : intval($conf['online_hold_time']);
-		$onlinelist = db_find('session', array('uid'=>array('>'=>0), 'last_date'=>array('>'=>$time - $hold_time)), array('last_date'=>-1), 1, 500);
+		$onlinelist = db_find('session', array('uid'=>array('>'=>0)), array('last_date'=>-1), 1, 500);
 		foreach($onlinelist as &$online) {
 			$user = user_read_cache($online['uid']);
 			$online['username'] = $user['username'];

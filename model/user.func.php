@@ -458,12 +458,18 @@ function user_password_verify($pw, $hash_or_user) {
     return password_verify($pw, $hash);
 }
 
-// CSRF Token — 基于 Session，不引入额外存储
+// CSRF Token — 基于 Cookie（HttpOnly），避免游客访问产生 session 数据导致在线人数虚高 (fixed by Xiuno_xw)
 function csrf_token() {
-    if (empty($_SESSION['csrf_token'])) {
-        $_SESSION['csrf_token'] = xn_rand(32);
+    global $time;
+    static $token = NULL;
+    if($token === NULL) {
+        $token = _COOKIE('csrf_token');
+        if(empty($token) || strlen($token) != 32) {
+            $token = xn_rand(32);
+            setcookie('csrf_token', $token, $time + 86400 * 30, '', '', 0, TRUE);
+        }
     }
-    return $_SESSION['csrf_token'];
+    return $token;
 }
 
 function csrf_token_hidden() {

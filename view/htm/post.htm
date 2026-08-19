@@ -9,10 +9,11 @@
 		$form_subject = '';
 		$form_message = '';
 		$form_doctype = 1;
-		$isfirst = 1;
-		$quotepid = 0;
-		$location = url("forum-'+jfid.checked()+'");
-		$filelist = array();
+				$isfirst = 1;
+				$quotepid = 0;
+				// 发帖成功后跳转到所选版块，优先用 URL 中的 fid（可靠），避免依赖 JS 的 jfid.checked() (fixed by Xiuno_xw)
+				$location = $fid ? url("forum-$fid") : url("forum-'+jfid.checked()+'");
+				$filelist = array();
 	} elseif($route == 'post' && $action == 'update') {
 		$form_title = lang('post_update');
 		$form_action = url("post-update-$pid");

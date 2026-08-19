@@ -6,6 +6,9 @@
 
 $sid = sess_start();
 
+// 预生成 CSRF Token 并写入 Cookie（须在 headers 发送前调用，否则 setcookie 失效）(fixed by Xiuno_xw)
+csrf_token();
+
 // 语言 / Language
 $_SERVER['lang'] = $lang = include _include(APP_PATH."lang/$conf[lang]/bbs.php");
 
@@ -43,9 +46,6 @@ $header = array(
 
 // 运行时数据，存放于 cache_set() / runtime data
 $runtime = runtime_init();
-
-// 定时任务：5 分钟清理过期会话并刷新在线数，每日重置统计 (fixed by Xiuno_xw)
-cron_run();
 
 // 检测站点运行级别 / restricted access
 check_runlevel();

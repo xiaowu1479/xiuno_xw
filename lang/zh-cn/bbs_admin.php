@@ -132,7 +132,7 @@ return array(
 	'forum_delete_successfully'=>'删除成功。',
 	
 	// 导航菜单 (Xiuno_xw)
-	'nav_admin'=>'导航菜单',
+	'nav_admin'=>'导航',
 	'nav_name'=>'菜单名称',
 	'nav_url'=>'链接地址',
 	'nav_target'=>'新窗口',

@@ -2,7 +2,7 @@
 
 /*
 
-	Xiuno_xw 1.0.0 配置文件 (基于 Xiuno BBS 4.0 二开)
+	Xiuno_xw 1.1.0 配置文件 (基于 Xiuno BBS 4.0 二开)
 	支持多台 DB，主从配置好以后，xn 会自动根据 SQL 读写分离。
 	支持各种 cache，本机 apc/xcache, 网络: redis/memcached/mysql
 	支持 CDN，如果前端开启了 CDN 请设置 cdn_on=>1, 否则获取 IP 会不准确 
@@ -132,7 +132,7 @@ return array (
 	// 禁止插件
 	'disabled_plugin' => 0, 
 	  
-	'version' => '1.0.0',
+	'version' => '1.1.0',
 	'static_version' => '?1.0',
 	'installed' => 0,
 );
