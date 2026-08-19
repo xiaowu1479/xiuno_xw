@@ -79,6 +79,65 @@ function admin_tab_active($arr, $active) {
 	return $s;
 }
 
+// 检测远程最新版本 (Xiuno_xw)
+function admin_update_check($force = FALSE) {
+	global $conf;
+	$key = 'admin_update_check';
+	if(!$force) {
+		$cache = cache_get($key);
+		if($cache !== NULL) return $cache;
+	}
+	$result = array(
+		'error' => 0,
+		'latest' => 0,
+		'tag' => '',
+		'name' => '',
+		'body' => '',
+		'published_at' => '',
+		'html_url' => '',
+		'zipball_url' => '',
+	);
+	$url = empty($conf['update_check_url']) ? 'https://api.github.com/repos/xiaowu1479/xiuno_xw/releases/latest' : $conf['update_check_url'];
+	$opts = array(
+		'http' => array(
+			'method' => 'GET',
+			'timeout' => 5,
+			'header' => "User-Agent: Xiuno_xw-Update-Check\r\nAccept: application/vnd.github+json\r\n",
+		),
+	);
+	$ctx = stream_context_create($opts);
+	$s = @file_get_contents($url, FALSE, $ctx);
+	$arr = array();
+	if($s !== FALSE) {
+		$arr = json_decode($s, TRUE);
+	}
+	// 无 Release 时（404），回退到 tags 接口，至少能拿到版本号
+	if(empty($arr['tag_name']) && strpos($url, 'releases/latest') !== FALSE) {
+		$url2 = substr($url, 0, strpos($url, '/releases/latest')).'/tags';
+		$s2 = @file_get_contents($url2, FALSE, $ctx);
+		if($s2 !== FALSE) {
+			$arr2 = json_decode($s2, TRUE);
+			if(!empty($arr2[0]['name'])) {
+				$arr = array('tag_name'=>$arr2[0]['name'], 'name'=>'', 'body'=>'', 'published_at'=>'', 'html_url'=>'https://github.com/xiaowu1479/xiuno_xw/releases', 'zipball_url'=>isset($arr2[0]['zipball_url']) ? $arr2[0]['zipball_url'] : '');
+			}
+		}
+	}
+	if(empty($arr['tag_name'])) {
+		$result['error'] = 1;
+	} else {
+			$tag = trim($arr['tag_name'], 'vV ');
+			$result['tag'] = $tag;
+			$result['name'] = empty($arr['name']) ? '' : $arr['name'];
+			$result['body'] = empty($arr['body']) ? '' : $arr['body'];
+			$result['published_at'] = empty($arr['published_at']) ? '' : substr($arr['published_at'], 0, 10);
+			$result['html_url'] = empty($arr['html_url']) ? '' : $arr['html_url'];
+			$result['zipball_url'] = empty($arr['zipball_url']) ? '' : $arr['zipball_url'];
+			$result['latest'] = version_compare($tag, $conf['version'], '>') ? 1 : 0;
+	}
+	cache_set($key, $result, 3600);
+	return $result;
+}
+
 // hook admin_func_end.php
 
 ?>

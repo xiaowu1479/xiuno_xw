@@ -1,0 +1,77 @@
+<?php include _include(ADMIN_PATH.'view/htm/header.inc.htm');?>
+
+<!--{hook admin_other_update_start.htm}-->
+
+<div class="row">
+	<div class="col-12">
+		<div class="btn-group mb-3" role="group">
+			<?php echo admin_tab_active($menu['other']['tab'], 'update');?>
+		</div>
+		<div class="card">
+			<div class="card-body">
+				
+				<div class="row">
+					<div class="col-sm-6">
+						<h5 class="mb-0"><?php echo lang('admin_update_current_version');?>：<b>Xiuno_xw <?php echo $conf['version'];?></b></h5>
+					</div>
+					<div class="col-sm-6 text-right">
+						<a class="btn btn-primary btn-sm" href="<?php echo url('other-update').'&force=1';?>"><?php echo lang('admin_update_check_now');?></a>
+					</div>
+				</div>
+				
+				<hr>
+				
+				<?php if(!empty($upinfo['error'])) { ?>
+					<div class="alert alert-danger mb-0">
+						<i class="icon-warning-sign"></i> <?php echo lang('admin_update_error');?>
+					</div>
+				<?php } else { ?>
+					<div class="row">
+						<div class="col-sm-6">
+							<h5 class="mb-1"><?php echo lang('admin_update_latest_version');?>：<b><?php echo $upinfo['tag'];?></b></h5>
+							<?php if(!empty($upinfo['name'])) { ?>
+								<p class="text-grey small mb-2"><?php echo $upinfo['name'];?></p>
+							<?php } ?>
+						</div>
+						<div class="col-sm-6 text-right">
+							<?php if(!empty($upinfo['latest'])) { ?>
+								<span class="badge badge-warning"><?php echo lang('admin_update_found');?></span>
+								<?php if(!empty($upinfo['zipball_url'])) { ?>
+									<a class="btn btn-warning btn-sm" href="<?php echo $upinfo['zipball_url'];?>" target="_blank"><?php echo lang('admin_update_download');?></a>
+								<?php } ?>
+							<?php } else { ?>
+								<span class="badge badge-success"><?php echo lang('admin_update_latest');?></span>
+							<?php } ?>
+						</div>
+					</div>
+					
+					<?php if(!empty($upinfo['published_at'])) { ?>
+						<p class="text-grey small mb-2 mt-2"><?php echo lang('admin_update_release_date');?>：<?php echo $upinfo['published_at'];?></p>
+					<?php } ?>
+					
+					<?php if(!empty($upinfo['body'])) { ?>
+						<div class="alert alert-light border small mb-0">
+							<b><?php echo lang('admin_update_notes');?>：</b>
+							<div class="mt-1" style="white-space:pre-wrap;"><?php echo htmlspecialchars($upinfo['body']);?></div>
+						</div>
+					<?php } ?>
+					
+					<?php if(!empty($upinfo['html_url'])) { ?>
+						<p class="small mt-3 mb-0"><a href="<?php echo $upinfo['html_url'];?>" target="_blank"><?php echo lang('admin_update_github');?></a></p>
+					<?php } ?>
+				<?php } ?>
+				
+			</div>
+		</div>
+	</div>
+</div>
+
+<!--{hook admin_other_update_end.htm}-->
+	
+<?php include _include(ADMIN_PATH.'view/htm/footer.inc.htm');?>
+
+<script>
+$('#nav li.nav-item-other').addClass('active');
+</script>
+
+<!--{hook admin_other_update_js.htm}-->

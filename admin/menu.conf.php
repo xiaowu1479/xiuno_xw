@@ -49,6 +49,7 @@ return array(
 		'icon'=>'icon-wrench',
 		'tab'=> array (
 			'cache'=>array('url'=>url('other-cache'), 'text'=>lang('admin_other_cache')),
+			'update'=>array('url'=>url('other-update'), 'text'=>lang('admin_other_update')),
 		)
 	),
 	'plugin' => array(

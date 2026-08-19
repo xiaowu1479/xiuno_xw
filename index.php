@@ -35,6 +35,8 @@ $conf = (@include APP_PATH.'conf/conf.php') OR exit('<script>window.location="in
 !isset($conf['captcha_login_on']) AND $conf['captcha_login_on'] = 1;
 !isset($conf['captcha_reg_on']) AND $conf['captcha_reg_on'] = 1;
 !isset($conf['captcha_post_on']) AND $conf['captcha_post_on'] = 0;
+// 更新检测地址 (Xiuno_xw)，默认 GitHub Releases API，可改为自建镜像
+!isset($conf['update_check_url']) AND $conf['update_check_url'] = 'https://api.github.com/repos/xiaowu1479/xiuno_xw/releases/latest';
 $conf['version'] = '1.0.0';		// 定义版本号！避免手工修改 conf/conf.php
 
 // 转换为绝对路径，防止被包含时出错。

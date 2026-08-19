@@ -35,6 +35,32 @@ if($action == 'cache') {
 	}
 }
 
+if($action == 'update') {
+	
+	// hook admin_other_update_get_post.php
+	
+	if($method == 'GET') {
+		
+		// hook admin_other_update_get_start.php
+		
+		$force = param('force', 0);
+		$upinfo = admin_update_check($force);
+		
+		$header['title'] = lang('admin_other_update');
+		$header['mobile_title'] = lang('admin_other_update');
+		
+		// hook admin_other_update_get_end.php
+		
+		include _include(ADMIN_PATH.'view/htm/other_update.htm');
+		
+	} else {
+		
+		// hook admin_other_update_post_end.php
+		
+		message(0, lang('modify_successfully'));
+	}
+}
+
 // hook admin_other_end.php
 
 ?>

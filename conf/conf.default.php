@@ -111,6 +111,7 @@ return array (
 	'captcha_login_on' => 1,
 	'captcha_reg_on' => 1,
 	'captcha_post_on' => 0,
+	'update_check_url' => 'https://api.github.com/repos/xiaowu1479/xiuno_xw/releases/latest',
 	
 	'admin_bind_ip' => 0,		// 后台是否绑定 IP
 	
