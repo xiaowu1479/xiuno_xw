@@ -19,12 +19,12 @@
 							<span class="text-black-50 d-block mb-1"><?php echo lang('users');?></span>
 							<b><?php echo $runtime['users'];?></b>
 						</td>
-						<?php if($runtime['onlines'] > 0) { ?>
+						<?php if(online_count() > 0) { ?>
 						<td>
               <i class="si si-bar-chart" style="font-size: large;"></i>
 
 							<span class="text-black-50 d-block mb-1"><?php echo lang('online');?></span>
-							<b><?php echo $runtime['onlines'];?></b>
+							<b><?php echo online_count();?></b>
 						</td>
 						<?php } ?>
 					</tr>
