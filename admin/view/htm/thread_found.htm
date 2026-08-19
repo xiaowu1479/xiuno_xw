@@ -1,0 +1,120 @@
+<?php include _include(ADMIN_PATH.'view/htm/header.inc.htm');?>
+
+<!--{hook admin_thread_found_start.htm}-->
+
+<div class="row">
+	<div class="col-12">
+		<div class="card">
+			<div class="card-header d-flex justify-content-between align-items-center">
+				<h5 class="mb-0">搜索到的主题（<?php echo $total; ?> 条）</h5>
+				<div>
+					<button type="button" class="btn btn-sm btn-danger" id="batch_delete_btn" disabled onclick="batchDelete()">批量删除</button>
+					<a href="<?php echo url('thread-list');?>" class="btn btn-sm btn-outline-secondary ml-1">返回搜索</a>
+				</div>
+			</div>
+			<div class="card-body p-0">
+				<form id="batch_form" method="post">
+				<div class="table-responsive">
+					<table class="table table-hover mb-0">
+						<thead class="thead-light">
+							<tr>
+								<th style="width:30px;"><input type="checkbox" id="checkall" onchange="toggleAll(this)"></th>
+								<th style="width:40px;">ID</th>
+								<th>标题</th>
+								<th style="width:80px;">版块</th>
+								<th style="width:80px;">作者</th>
+								<th style="width:70px;">回复</th>
+								<th style="width:60px;">状态</th>
+								<th style="width:180px;">操作</th>
+							</tr>
+						</thead>
+						<tbody>
+							<?php if($threadlist) { foreach($threadlist as $_thread) { ?>
+							<tr>
+								<td><input type="checkbox" name="tids[]" value="<?php echo $_thread['tid'];?>" onchange="updateBatchBtn()"></td>
+								<td class="text-muted small"><?php echo $_thread['tid'];?></td>
+								<td>
+									<a href="../<?php echo url('thread-'.$_thread['tid']);?>" target="_blank" class="text-break">
+										<?php echo $_thread['subject'];?>
+									</a>
+								</td>
+								<td><span class="badge badge-secondary"><?php echo isset($forumlist[$_thread['fid']]) ? $forumlist[$_thread['fid']]['name'] : '?';?></span></td>
+								<td><a href="../<?php echo url('user-'.$_thread['uid']);?>" target="_blank"><?php echo $_thread['username'];?></a></td>
+								<td><?php echo $_thread['posts'];?></td>
+								<td>
+									<?php if($_thread['closed']) { ?>
+										<span class="text-danger">关闭</span>
+									<?php } else { ?>
+										<span class="text-success">正常</span>
+									<?php } ?>
+								</td>
+								<td nowrap>
+									<a href="../<?php echo url('thread-'.$_thread['tid']);?>" class="btn btn-sm btn-outline-primary" target="_blank">
+										查看
+									</a>
+									<a href="../<?php echo url('post-update-'.$_thread['firstpid']);?>" class="btn btn-sm btn-outline-warning" target="_blank">
+										编辑
+									</a>
+									<button type="button" class="btn btn-sm btn-outline-danger" onclick="batchDeleteOne(<?php echo $_thread['tid'];?>)">删除</button>
+									<!--{hook admin_thread_found_action.htm}-->
+								</td>
+							</tr>
+							<?php } } else { ?>
+							<tr><td colspan="8" class="text-center text-muted py-4">没有找到符合条件的主题</td></tr>
+							<?php } ?>
+						</tbody>
+					</table>
+				</div>
+				</form>
+			</div>
+		</div>
+		
+		<nav><ul class="pagination justify-content-center mt-3"><?php echo $pagination; ?></ul></nav>
+		
+	</div>
+</div>
+<script>
+function toggleAll(source) {
+	var checkboxes = document.querySelectorAll('input[name="tids[]"]');
+	for(var i = 0; i < checkboxes.length; i++) {
+		checkboxes[i].checked = source.checked;
+	}
+	updateBatchBtn();
+}
+function updateBatchBtn() {
+	var checkboxes = document.querySelectorAll('input[name="tids[]"]:checked');
+	document.getElementById('batch_delete_btn').disabled = checkboxes.length === 0;
+}
+function batchDelete() {
+	var checkboxes = document.querySelectorAll('input[name="tids[]"]:checked');
+	if(checkboxes.length === 0) return;
+	if(!confirm('确定要删除选中的 ' + checkboxes.length + ' 个主题吗？此操作不可恢复！')) return;
+	var tids = [];
+	for(var i = 0; i < checkboxes.length; i++) {
+		tids.push(checkboxes[i].value);
+	}
+	$.xpost('?thread-batch_delete.htm', {tids: tids.join(',')}, function(code, message) {
+		if(code == 0) {
+			location.reload();
+		} else {
+			$.alert(message);
+		}
+	});
+}
+function batchDeleteOne(tid) {
+	if(!confirm('确定要删除主题 #' + tid + ' 吗？此操作不可恢复！')) return;
+	$.xpost('?thread-batch_delete.htm', {tids: '' + tid}, function(code, message) {
+		if(code == 0) {
+			location.reload();
+		} else {
+			$.alert(message);
+		}
+	});
+}
+</script>
+
+<!--{hook admin_thread_found_end.htm}-->
+
+<?php include _include(ADMIN_PATH.'view/htm/footer.inc.htm');?>
+
+<!--{hook admin_thread_found_js.htm}-->

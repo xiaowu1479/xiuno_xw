@@ -1,0 +1,9 @@
+tmp/*
+admin/tmp/*
+log/*
+upload/tmp/*
+upload/attach/*
+upload/avatar/*
+upload/forum/*
+conf/conf.php
+conf/smtp.conf.php

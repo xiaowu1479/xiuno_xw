@@ -1,0 +1,146 @@
+xiuno_xw 1.0.0 (2026-08-19)
+===========================
+
+1. 品牌重命名：xiuno_xw（站点名 / 安装协议 / 语言包 / README）
+2. 安全修复：loco.php 密码配置化、登录 Token IP 绑定 + 过期、安装器移除 mysql_* 死代码、附件移除 exe/bin/swf 危险后缀
+3. 存储引擎：全部数据表 MyISAM → InnoDB
+4. 配置优化：session_delay_update=1、缓存引擎 innodb
+
+Xiuno BBS 4.1.1 - 更新日志
+============================
+
+概述
+----
+本版本对 Xiuno BBS 4.0.4 进行了全面现代化升级，主要针对 PHP 8.x 兼容性、
+SMTP 邮件系统和缓存机制进行更新。
+
+版本号: 4.0.4 → 4.1.1
+发布日期: 2026-05-17
+
+一、PHP 8.x 兼容性更新
+----------------------
+
+1. 修复 `get_magic_quotes_gpc()` 函数在 PHP 8.0 中已移除的问题
+   - 文件: xiunophp/xiunophp.php, xiunophp/xiunophp.min.php
+   - 在 PHP 8.0+ 环境下自动返回 false
+
+2. 修复 `get_magic_quotes_runtime()` / `set_magic_quotes_runtime()` 函数
+   - 文件: xiunophp/xn_send_mail.func.php
+   - 添加版本检测，PHP 5.4+ 跳过这些废弃函数
+
+3. 修复 `var` 关键字声明类属性
+   - 文件: xiunophp/xn_html_safe.func.php (34处)
+   - 将所有 `var` 替换为 `public`，符合 PHP 8.x 规范
+
+4. 修复 `db_mysql` 驱动 (mysql_* 函数)
+   - 文件: xiunophp/db_mysql.class.php
+   - 在 PHP 7.0+ 环境下抛出明确的错误提示，引导使用 pdo_mysql
+
+5. 更新框架入口生产模式文件
+   - 文件: xiunophp/xiunophp.min.php
+   - 同步所有 PHP 8.x 兼容性修复
+
+二、SMTP 邮件系统现代化
+----------------------
+
+1. 增强 `xn_send_mail()` 函数
+   - 文件: xiunophp/xn_send_mail.func.php
+   - 支持自动检测加密方式 (端口 465 → SSL, 端口 587 → TLS)
+   - 支持配置 `smtp['secure']` 手动指定加密方式
+   - 增加参数验证和详细的错误提示
+   - 增加可配置的超时时间
+
+2. 增强邮件发送错误处理
+   - 文件: route/user.php
+   - SMTP 配置为空时给出明确的错误提示，而不是内部错误
+
+3. 新增语言包字符串
+   - 文件: lang/*/bbs.php
+   - 新增 `smtp_not_configured` 多语言错误提示
+
+三、缓存机制升级
+----------------
+
+1. 新增 File 文件缓存驱动
+   - 文件: xiunophp/cache_file.class.php
+   - 支持缓存过期时间
+   - 使用 MD5 分片子目录，避免单目录文件过多
+   - 支持配置缓存路径（可指向 /dev/shm 利用内存加速）
+   - 支持缓存统计功能 (stats() 方法)
+
+2. 增强 Redis 缓存驱动
+   - 文件: xiunophp/cache_redis.class.php
+   - 支持密码认证 (password 配置项)
+   - 支持数据库选择 (database 配置项)
+   - 支持连接超时配置 (timeout 配置项)
+   - 支持长连接 (pconnect 配置项)
+
+3. 更新缓存工厂函数
+   - 文件: xiunophp/cache.func.php
+   - 新增 'file' 类型支持
+   - 完整同步到 xiunophp.min.php
+
+4. 更新默认配置文件
+   - 文件: conf/conf.default.php
+   - 默认缓存类型改为 file
+   - 新增 redis 的 password/database/timeout 配置项
+   - 新增 file 缓存的 path 和 cachepre 配置项
+
+四、配置参考
+-----------
+
+File 缓存配置:
+  'cache' => array(
+      'enable' => true,
+      'type' => 'file',
+      'file' => array(
+          'path' => './tmp/cache/',   // 可配置为 /dev/shm/ 使用内存加速
+          'cachepre' => 'bbs_',
+      ),
+  ),
+
+Redis 增强配置:
+  'redis' => array(
+      'host' => 'localhost',
+      'port' => '6379',
+      'password' => 'your_password',  // 可选
+      'database' => 0,                // 可选，默认 0
+      'timeout' => 1.0,              // 可选，默认 1.0 秒
+      'cachepre' => 'bbs_',
+  ),
+
+SMTP 配置 (conf/smtp.conf.php):
+  array(
+      'email' => 'sender@example.com',
+      'host' => 'smtp.example.com',
+      'port' => 587,
+      'secure' => 'tls',            // 'ssl', 'tls' 或留空自动检测
+      'user' => 'username',
+      'pass' => 'password',
+      'timeout' => 10,              // 可选，连接超时秒数
+  ),
+
+五、注意事项
+-----------
+
+1. 如果从 4.0.x 升级，请检查 conf/conf.php 中的缓存配置：
+   - 添加 'type' => 'file' 可以使用文件缓存（推荐）
+   - 如果使用 Redis，建议添加 password 配置项
+
+2. PHP 8.0+ 环境下会自动禁用 mysql 数据库驱动，请使用 pdo_mysql
+
+3. SMTP 配置请登录后台 → 设置 → SMTP 设置 进行配置，
+   或直接编辑 conf/smtp.conf.php 文件
+
+4. 如果使用 utf8mb4 字符集，需要手动修改 MySQL 数据库和表的字符集，
+   仅修改 conf/conf.php 中的配置是无效的。
+
+
+4.1.1 更新内容 (2026-05-17)
+---------------------------
+
+1. Bootstrap 4.0.0 → 4.5.0 升级
+2. jQuery 3.1.0 → 3.5.1 升级
+3. 前端资源全部使用 .min.js / .min.css 压缩版本，提升加载速度
+4. 修复 bbs.js 确认框跳转问题（卸载按钮无响应）
+5. 默认配置字符集改为 utf8mb4（新安装生效）

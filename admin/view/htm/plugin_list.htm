@@ -1,0 +1,170 @@
+<?php include _include(ADMIN_PATH.'view/htm/header.inc.htm');?>
+
+<div class="row">
+	<div class="col-12">
+		<div class="row">
+			<div class="col-md-4">
+				<div class="btn-group mb-3" role="group">
+					<?php echo admin_tab_active($menu['plugin']['tab'], $action);?>
+				</div>
+			</div>
+			<div class="col-md-8 text-right">
+				<div class="btn-group mb-3" role="group">
+					<?php echo $pugin_cate_html;?>
+				</div>
+			</div>
+			
+		</div>
+		<div class="card">
+			<div class="card-body">
+				<?php if($action == 'local') { ?>
+				<div class="mb-3">
+					<div class="form-check form-check-inline">
+						<input class="form-check-input" type="checkbox" id="checkall" checked>
+						<label class="form-check-label" for="checkall"><?php echo lang('checkall'); ?></label>
+					</div>
+					<button class="btn btn-success btn-sm" id="install-batch"><?php echo lang('install_batch'); ?></button>
+					<button class="btn btn-danger btn-sm" id="unstall-batch"><?php echo lang('unstall_batch'); ?></button>
+				</div>
+				<?php } ?>
+				<div class="table-responsive">
+					<table class="table">
+						<?php foreach($pluginlist as $dir=>$plugin) { ?>
+											
+						<?php
+							$plugin['name'] = array_value($plugin, 'name');
+							$plugin['brief'] = array_value($plugin, 'brief');
+							$plugin['version_fmt'] = $action == 'local' ? $plugin['version'] : array_value($plugin, 'official_version');
+						?>
+	
+						<tr valign="top" dir="<?php echo $dir; ?>">
+							<?php if($action == 'local') { ?>
+							<td class="text-center" width="30">
+								<input type="checkbox" class="plugin-cb" value="<?php echo $dir; ?>" checked>
+							</td>
+							<?php } ?>
+							<td width="80" class="text-center">
+								<a href="<?php echo url("plugin-read-$dir");?>" target="_blank">
+									<img src="<?php echo $plugin['icon_url']; ?>" width="54" height="54" />
+								</a>
+								
+							</td>
+							<td width="300">
+								<a href="<?php echo url("plugin-read-$dir");?>"><b><?php echo $plugin['name']; ?> </b></a>
+								<span class="small">v<?php echo $plugin['version_fmt']; ?> </span>
+								<?php if($plugin['have_upgrade']) { ?>
+								<span class="small text-danger font-weight-bold">v<?php echo array_value($plugin, 'official_version'); ?> </span>
+								<?php } ?>
+	
+								<br /><span class="small text-muted"><?php echo $dir; ?></span>
+								
+								<?php if(!empty($plugin['username'])) { ?>
+								<br /><span class="small text-muted"><?php echo lang('author'); ?>：
+								<a href="http://bbs.xiuno.com/user-<?php echo $plugin['uid'];?>.htm" target="_blank"><?php echo $plugin['username'];?></span></a>
+								<?php } ?>
+							</td>
+							<td width="100">
+								<?php $price = $plugin['official']['price']; ?>
+								<span class="price" <?php echo $price == 0 ? 'style="color: #aaa"' : ''; ?>><?php echo $price; ?>元</span>
+							</td>
+							<td>
+								<p class="grey"><?php echo $plugin['brief']; ?></p>
+							</td>
+							<td width="250" align="right">
+							
+								<?php if($action == 'official_fee' && !$plugin['downloaded']) { ?>
+								<a role="button" class="btn btn-primary btn-sm buy" href="<?php echo url("plugin-read-$dir"); ?>"><?php echo lang('buy');?></a>
+								<?php } ?>
+	
+								<?php if($action == 'official_free' && !$plugin['downloaded']) { ?>
+								<a role="button" class="btn btn-primary btn-sm download" href="<?php echo url("plugin-download-$dir"); ?>"><?php echo lang('download');?></a>
+								<?php } ?>
+								
+								<?php if($plugin['setting_url']) { ?>
+								<a role="button" class="btn btn-primary btn-sm setting" href="<?php echo url("plugin-setting-$dir"); ?>"><?php echo lang('setting');?></a>
+								<?php } ?>
+								
+								<?php if(!$plugin['installed'] && $plugin['downloaded']) { ?>
+								<a role="button" class="btn btn-primary btn-sm install" href="<?php echo url("plugin-install-$dir"); ?>"><?php echo lang('install');?></a>
+								<?php } ?>
+								
+								<?php if($plugin['installed'] && $plugin['enable']) { ?>
+								<a role="button" class="btn btn-secondary btn-sm disable" href="<?php echo url("plugin-disable-$dir"); ?>"><?php echo lang('disable');?></a>
+								<?php } ?>
+								
+								<?php if($plugin['installed'] && !$plugin['enable']) { ?>
+								<a role="button" class="btn btn-secondary btn-sm enable" href="<?php echo url("plugin-enable-$dir"); ?>"><?php echo lang('enable');?></a>
+								<?php } ?>
+								
+							<?php if($plugin['installed']) { ?>
+								<a role="button" class="btn btn-danger btn-sm unstall confirm" data-method="post" data-confirm-text="<?php echo lang('plugin_unstall_confirm_tips', array('name'=>$plugin['name']));?>" href="<?php echo url("plugin-unstall-$dir"); ?>"><?php echo lang('unstall');?></a>
+							<?php } ?>
+								
+								<?php if($plugin['have_upgrade']) { ?>
+								<a role="button" class="btn btn-primary btn-sm upgrade" href="<?php echo url("plugin-upgrade-$dir"); ?>"><?php echo lang('update');?></a>
+								<?php } ?>
+								
+							</td>
+						</tr>
+						<?php } ?>
+					</table>
+				</div>
+			</div>
+		</div>
+		
+		<?php if($pagination) { ?> <nav><ul class="pagination justify-content-center"><?php echo $pagination; ?></ul></nav> <?php } ?>
+		
+	</div>
+	
+</div>
+
+<?php include _include(ADMIN_PATH.'view/htm/footer.inc.htm');?>
+
+<script>
+$('#nav li.nav-item-plugin').addClass('active');
+
+// 全选 / 取消全选
+$('#checkall').on('click', function() {
+	$('.plugin-cb').prop('checked', this.checked);
+});
+
+// 批量安装
+$('#install-batch').on('click', function() {
+	var dirs = [];
+	$('.plugin-cb:checked').each(function() {
+		dirs.push($(this).val());
+	});
+	if(dirs.length == 0) {
+		$.alert(lang('please_select_plugin'));
+		return;
+	}
+	$.xpost('<?php echo url("plugin-install_batch"); ?>', {dirs: dirs}, function(code, message) {
+		if(code == 0) {
+			window.location.reload();
+		} else {
+			$.alert(message);
+		}
+	});
+});
+
+// 批量卸载
+$('#unstall-batch').on('click', function() {
+	var dirs = [];
+	$('.plugin-cb:checked').each(function() {
+		dirs.push($(this).val());
+	});
+	if(dirs.length == 0) {
+		$.alert(lang('please_select_plugin'));
+		return;
+	}
+	$.confirm('<?php echo lang('plugin_unstall_batch_confirm_tips');?>', function() {
+		$.xpost('<?php echo url("plugin-unstall_batch"); ?>', {dirs: dirs}, function(code, message) {
+			if(code == 0) {
+				window.location.reload();
+			} else {
+				$.alert(message);
+			}
+		});
+	});
+});
+</script>
