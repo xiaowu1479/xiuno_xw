@@ -1,45 +1,11 @@
 <?php
 
 !defined('DEBUG') and exit('Access Denied.');
-define('SF_ROOT', APP_PATH.'plugin/zaesky_theme_light/model/');
-require_once(SF_ROOT . 'AuthInfo.php');
-require_once(SF_ROOT . 'Authorization.php');
 $header['title'] = lang('setting');
-$gettype = param('type');
-$auth_code = param('auth_code','');
 if ($method == 'GET') {
     $light_config = setting_get('admin_light_setting');
-	$auth_result = Authorization::checkIsAuth();
-    $view_file = $auth_result['code'] == 0 ? 'setting.htm' : 'auth_check.htm';
-    include _include(APP_PATH."plugin/zaesky_theme_light/view/htm/$view_file");
-} else if ($method == 'POST') {
-    
-    if($gettype == 'auth_check') {
-        try {
-            $auth_code = param('auth_code', '');
-            if (empty($auth_code)) {
-                throw new Exception('授权码不能为空');
-            }
-            if (session_status() == PHP_SESSION_NONE) {
-                session_start();
-            }
-            $result = Authorization::validateAndSaveAuth($auth_code);
-			if($result['code'] == 0){
-				// Authorization::updateMain('update');
-				message(0, $result['message']);
-			}else{
-				message(1, $result['message']);
-			}
-        } catch (Exception $e) {
-            message(1, $e->getMessage());
-        }
-    } else if($gettype == 'update_check'){
-		$update_result = Authorization::updateMain('check');
-		message(0, $update_result);
-	} else if($gettype == 'update'){
-		$update_result = Authorization::updateMain('update');
-		message(0, $update_result);
-	} else {
+    include _include(APP_PATH.'plugin/zaesky_theme_light/view/htm/setting.htm');
+} else {
         $light_config = array();
         $light_config['side_nav_switch'] = param('side_nav_switch', 1);
         $light_config['thread_list_style'] = param('thread_list_style', 1); 
@@ -137,7 +103,6 @@ if ($method == 'GET') {
 
         setting_set('admin_light_setting', $light_config);
         message(0, jump(lang('admin_setting_config_success'), url('plugin-setting-zaesky_theme_light')));
-    }
 }
 
 ?>

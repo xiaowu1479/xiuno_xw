@@ -1,5 +1,6 @@
 <?php include _include(ADMIN_PATH.'view/htm/header.inc.htm'); ?>
 <form action="<?php echo url('plugin-setting-zaesky_theme_light');?>" method="post" id="formcreate">
+	<?php echo csrf_token_hidden();?>
 	<div class="block block-rounded overflow-hidden">
 		<ul class="nav nav-tabs nav-tabs-block" role="tablist">
 		  <li class="nav-item" role="presentation">

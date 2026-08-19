@@ -13,28 +13,3 @@ if ($freeSpace!== false && $totalSpace!== false && $totalSpace > 0) {
     // 计算已使用空间百分比
     $usedPercentage = ($usedSpace / $totalSpace) * 100;
 }
-
-define('SF_ROOT', APP_PATH.'plugin/zaesky_theme_light/model/');
-include(SF_ROOT . 'AuthInfo.php');
-include(SF_ROOT . 'Authorization.php');
-
-if (session_status() == PHP_SESSION_NONE) {
-    session_start();
-}
-
-if($action == 'checkUpdate') {
-    if($method == 'GET') {
-        $result = Authorization::updateMain('check');
-        message(0, json_encode($result));
-    }
-}else if($action == 'update') {
-    if($method == 'GET') {
-        $result = Authorization::updateMain('update');
-        message(0, $result['msg']);
-    }
-}else if($action == 'checkAuth') {
-    if($method == 'GET') {
-        $result = Authorization::checkIsAuth();
-        message(0, json_encode($result));
-    }
-}
