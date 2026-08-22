@@ -1,0 +1,19 @@
+{
+    "name": "帖子点赞",
+    "brief": "对喜欢的帖子点赞及对喜欢的回复点赞。<br /><br /><span class='text-success'>更新</span>：修复点赞数显示BUG。",
+    "version": "2.5.10",
+    "author": "deatil",
+    "id": "haya_post_like",
+    "bbs_version": "4.0.3",
+    "installed": 1,
+    "enable": 1,
+    "hooks_rank": {
+        "thread_plugin_body.htm": 600,
+        "thread_list_inc_posts_after.htm": 600,
+        "post_list_inc_create_date_after.htm": -1600,
+        "post_list_inc_quote_before.htm": 1600,
+        "post_list_inc_filelist_after.htm": -1600,
+        "thread_postlist_before.htm": 600
+    },
+    "dependencies": []
+}

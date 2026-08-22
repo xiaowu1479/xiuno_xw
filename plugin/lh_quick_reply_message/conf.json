@@ -1,0 +1,10 @@
+{
+    "name": "快速回复",
+    "brief": "帖子快速回复插件，后台设置回复语！<br/>可限制每个帖子单用户最多回帖数量，防止恶意灌水！",
+    "version": "1.0.0",
+    "bbs_version": "4.0.4",
+    "installed": 1,
+    "enable": 1,
+    "hooks_rank": [],
+    "dependencies": []
+}

@@ -1,0 +1,11 @@
+{
+    "name": "兔兔审核插件",
+    "brief": "发帖审核、回帖审核、新注册用户审核、编辑审核、软删除（主题回收站）。",
+    "version": "1.06",
+    "bbs_version": "4.0.4",
+    "installed": 1,
+    "enable": 1,
+    "hooks_rank": [],
+    "overwrites_rank": [],
+    "dependencies": []
+}

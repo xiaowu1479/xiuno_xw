@@ -1,0 +1,65 @@
+<?php $conf_email = include "plugin/lee_not_email/conf.php"; ?>
+<?php if($conf_email['b_or_w'] == 'b'){ ?>
+<?php $the_arr = explode('|',$conf_email['black_list']);?>
+<div class="modal fade" id="the_email" tabindex="-1" role="dialog" aria-labelledby="the_email" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">当前禁用注册邮箱</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+            </div>
+            <div class="modal-body">
+                <ul>
+                    <?php foreach($the_arr as $m){
+                        echo '<li><span class="text-muted">example</span><strong>@'.$m.'</strong></li>';
+
+                        }
+                        ?>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<?php }elseif($conf_email['b_or_w'] == 'w'){ ?>
+<?php $the_arr = explode('|',$conf_email['white_list']);?>
+<div class="modal fade" id="the_email" tabindex="-1" role="dialog" aria-labelledby="the_email" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">当前支持注册邮箱</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+            </div>
+            <div class="modal-body">
+                <ul>
+                    <?php foreach($the_arr as $m){
+                    echo '<li><span class="text-muted">example</span><strong>@'.$m.'</strong></li>';
+                    }
+                    ?>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<?php } ?>
+<script>
+// 页面正文里的脚本先于 jQuery 加载，这里用原生事件委托
+function lee_email_hide_modal(modalEl) {
+    if (!modalEl) return;
+    // 兼容 Bootstrap 4（当前系统使用）与 Bootstrap 5 两种弹窗 API
+    if (window.bootstrap && bootstrap.Modal && bootstrap.Modal.getOrCreateInstance) {
+        bootstrap.Modal.getOrCreateInstance(modalEl).hide();
+    } else if (window.jQuery && jQuery.fn.modal) {
+        jQuery(modalEl).modal('hide');
+    }
+}
+document.addEventListener('click', function(e) {
+    var closeBtn = e.target.closest ? e.target.closest('[data-dismiss="modal"]') : null;
+    if (closeBtn) {
+        lee_email_hide_modal(closeBtn.closest('.modal'));
+        return;
+    }
+    if (e.target && e.target.classList && e.target.classList.contains('modal')) {
+        lee_email_hide_modal(e.target);
+    }
+});
+</script>

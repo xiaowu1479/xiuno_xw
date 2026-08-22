@@ -1,0 +1,4 @@
+
+<?php !defined('DEBUG') AND exit('Access Denied.');if(!empty($group['allowbanuser'])){if($_user['gid'] > 5){?>
+<?php if($_user['gid'] == 7){?><a role="button" class="btn btn-primary confirm btn-block my-3" data-confirm-text="确定要把该用户释放出来？" data-method="post" href="<?php echo url("mod-openuser-$_user[uid]");?>">释放出狱</a><?php }else{?><a role="button" href="javascript:void(0);" class="btn btn-dark btn-block my-3 prison" data-modal-url="<?php echo url("mod-prison-{$_user['uid']}");?>" data-modal-title="关小黑屋" data-modal-size="md">关小黑屋</a><?php }?><?php }}?>
+<?php if(!empty($_user['prison_status'])){?><div class="col-12 row"><?php if(!empty($_user['prison_status'])){?><div class="text-muted"><i class="icon-bell"></i> 该用户因 <?php echo $_user['prison_message'];?> 已于 <?php echo $_user['prison_start_time'];?> 被关进小黑屋！解禁时间：<?php echo $_user['prison_end_time'];?></div><?php }?></div><?php }?>

@@ -1,0 +1,1 @@
+$input['OK'] = form_text('OK', $_user['OK']);

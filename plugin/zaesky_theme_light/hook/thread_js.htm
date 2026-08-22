@@ -1,0 +1,189 @@
+<?php if($user && isset($light_config['thread_quick_at']) && $light_config['thread_quick_at'] == 1){;?>
+<script>
+    function hu60_insert_text(obj, str) {  
+        if (document.selection) {  
+            var sel = document.selection.createRange();  
+            sel.text = str;  
+        } else if (typeof obj.selectionStart === 'number' && typeof obj.selectionEnd === 'number') {  
+            var startPos = obj.selectionStart,  
+                endPos = obj.selectionEnd,  
+                cursorPos = startPos,  
+                tmpStr = obj.value;  
+            obj.value = tmpStr.substring(0, startPos) + str + tmpStr.substring(endPos, tmpStr.length);  
+            cursorPos += str.length;  
+            obj.selectionStart = obj.selectionEnd = cursorPos;  
+        } else {  
+            obj.value += str;  
+        }  
+    }
+
+    /* 将@标记插入光标位置，并使指定对象变色 */
+    function atAdd(uid, that) {
+        if (that.classList.contains('text-warning')) {
+            return cocoMessage.success("你已经@Ta了！请查看评论框！", 3000);
+        }else{
+            that.classList.toggle('text-warning');
+            cocoMessage.success("@Ta成功！请查看评论框！", 3000)
+        }
+        var nr = document.getElementById("message");
+        hu60_insert_text(nr, '@'+uid+' ，');
+    }
+</script>
+<?php } ?>
+
+<script>
+	$(".thread_comment_input").click(function(){
+    $('#comment_input').toggleClass('modal_reply_text');
+		$('.tip_close').toggleClass('d-none');
+		$('.thread_tip_text1').toggleClass('d-none');
+});
+	var jform = $('#quick_reply_form');
+	var jsubmit = $('#submit');
+	jform.on('submit', function() {
+		jform.reset();
+		jsubmit.button('loading');
+		var postdata = jform.serialize();
+		$.xpost(jform.attr('action'), postdata, function(code, message) {
+			if (code == 0) {
+				var s = '<ul>' + message + '</ul>';
+				var jli = $(s).find('li');
+	<?php if(isset($light_config['post_form_position']) && $light_config['post_form_position'] == 1) { ?>
+					jli.insertBefore($('.postlist > .post').first());
+				<?php }else{ ?>
+					jli.insertAfter($('.postlist > .post').last());
+					<?php } ?>
+				jsubmit.button('reset');
+				$('#message').val('');
+
+				// 楼层 +1
+				var jfloor = $('#newfloor');
+				jfloor.html(xn.intval(jfloor.html()) + 1);
+
+				// 回复数 +1
+				var jposts = $('.posts');
+				jposts.html(xn.intval(jposts.html()) + 1);
+				$('.no-comment').addClass('d-none');
+				cocoMessage.success("评论成功！", 3000);
+				cancelReply();
+				$('#comment_input').removeClass('modal_reply_text');
+				$('.tip_close').toggleClass('d-none');
+				$('.thread_tip_text1').toggleClass('d-none');
+				$('.quick-at').removeClass('text-warning');
+				<?php if (isset($light_config['thread_reply_reload']) && $light_config['thread_reply_reload'] == 1) { ?>
+				location.reload(true);
+				<?php } ?>
+			} else if (code < 0) {
+				$.alert(message);
+				jsubmit.button('reset');
+			} else {
+				jform.find('[name="' + code + '"]').alert(message).focus();
+				jsubmit.button('reset');
+			}
+		});
+		return false;
+	});
+
+	// 缩放图片，适应屏幕大小。
+	function resize_image() {
+		var jmessagelist = $('div.message');
+		var first_width = jmessagelist.width(); // 815 : 746; //  734 746
+		jmessagelist.each(function() {
+			var jdiv = $(this);
+			var maxwidth = jdiv.attr('isfirst') ? first_width : jdiv.width(); //  734 746
+			var jmessage_width = Math.min(jdiv.width(), maxwidth);
+			jdiv.find('img, embed, iframe, video').each(function() {
+				var jimg = $(this);
+				var img_width = this.org_width;
+				var img_height = this.org_height;
+				if (!img_width) {
+					var img_width = jimg.attr('width');
+					var img_height = jimg.attr('height');
+					this.org_width = img_width;
+					this.org_height = img_height;
+				}
+				//var percent = xn.min(100, xn.ceil((img_width / jmessage_width) * 100));
+				if (img_width > jmessage_width) {
+					if (this.tagName == 'IMG') {
+						jimg.width(jmessage_width);
+						jimg.css('height', 'auto');
+						jimg.css('cursor', 'pointer');
+						jimg.on('click', function() {
+							//window.open(jimg.attr('src'));
+						});
+					} else {
+						jimg.width(jmessage_width);
+						var height = (img_height / img_width) * jimg.width();
+						jimg.height(height);
+					}
+				}
+			});
+		});
+	}
+
+	// 对于超宽的表格，加上响应式
+	function resize_table() {
+		$('div.message').each(function() {
+			var jdiv = $(this);
+			jdiv.find('table').addClass('table').wrap('<div class="table-responsive"></div>');
+		});
+	}
+
+	$(function() {
+		resize_image();
+		resize_table();
+		$(window).on('resize', resize_image);
+	});
+
+	// 输入框自动伸缩
+
+	// var jmessage = $('#message');
+	// jmessage.on('focus mouseenter', function() {
+	// 	if (jmessage.t) {
+	// 		clearTimeout(jmessage.t);
+	// 		jmessage.t = null;
+	// 	}
+	// 	jmessage.css('height', '8rem');
+	// });
+	// jmessage.on('blur', function() {
+	// 	jmessage.t = setTimeout(function() {
+	// 		jmessage.css('height', '2.5rem');
+	// 	}, 1000);
+	// });
+
+	// 引用 / Quote
+$('body').on('click', '.mod_post_reply', function() {
+	var jthis = $(this);
+	var tid = jthis.data('tid');
+	var pid = jthis.data('pid');
+	var quser = jthis.data('quser');
+	var jmessage = $('#message');
+	var jli = jthis.closest('.post');
+	var qusername = $('.qusername');
+	var jpostlist = jli.closest('.postlist');
+	var jadvanced_reply = $('#advanced_reply');
+	var jform = $('#quick_reply_form');
+	var replying = $('.replying');
+	if(jli.hasClass('quote')) {
+		jli.removeClass('quote');
+		jform.find('input[name="quotepid"]').val(0);
+		jadvanced_reply.attr('href', xn.url('post-create-'+tid));
+		qusername.text('');
+		replying.hide('fast');
+	} else {
+		jpostlist.find('.post').removeClass('quote');
+		jli.addClass('quote');
+		var s = jmessage.val();
+		jform.find('input[name="quotepid"]').val(pid);
+		jadvanced_reply.attr('href', xn.url('post-create-'+tid+'-0-'+pid));
+		qusername.html('<a href="#'+pid+'">'+quser+'<i class="far fa-comment-dots ml-2"></i></a>');
+		replying.show('fast');
+	}
+	jmessage.focus();
+	return false;
+});
+
+
+
+
+	$('li[data-active="fid-<?php echo $fid;?>"]').addClass('active');
+</script>

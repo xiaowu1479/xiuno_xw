@@ -1,0 +1,12 @@
+<?php if (isset($light_config['dark_mode_switch']) && $light_config['dark_mode_switch'] == 1): ?>
+<li class="nav-item d-none d-lg-block">
+    <a class="nav-link" id="theme" onclick="theme_switch()" style="cursor:pointer;">
+        <i class="<?= 
+            isset($_COOKIE['Theme']) ? 
+            ($_COOKIE['Theme'] == "1" ? 'fas fa-adjust' : 
+             ($_COOKIE['Theme'] == "2" ? 'far fa-sun' : 'far fa-moon')) 
+            : 'far fa-moon' 
+        ?> nav-right-icons" data-toggle="tooltip" data-placement="bottom"></i>
+    </a>
+</li>
+<?php endif; ?>

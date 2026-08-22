@@ -1,0 +1,227 @@
+<!-- 
+		轻论坛导航：默认头部
+		Bootstrap 4.0 推荐的 PC/Mobile 公共写法 
+		优点：公用性强
+		缺点：结构稍微有点复杂
+	-->
+	
+	<?php if ( $user) {
+	 $no_cache_user = user_read($uid);
+	$progress=100; $max=1; $now=$no_cache_user['credits'];
+	if($no_cache_user['gid']>100){
+		foreach($grouplist as $group) {
+			if($group['gid'] < 100) continue;
+			$n = $no_cache_user['credits'] ;
+			if($n > $group['creditsfrom'] && $n <= $group['creditsto']) {
+				$max=$group['creditsto'];
+				if($no_cache_user['groupname']!=$group['name']) {
+					$no_cache_user['groupname']=$group['name'];
+					user_update_group($uid);
+				}
+				break;
+			}
+		}
+		$progress = (int)($now/$max * 100.0);
+	}
+}
+	?>
+<!--{hook header_nav_start.htm}-->
+<header id="header">
+	<?php include _include(APP_PATH.'plugin/zaesky_theme_light/view/htm/components/leftSliderBar.htm');?>
+	<?php include _include(APP_PATH.'plugin/zaesky_theme_light/view/htm/components/rightSliderBar.htm');?>
+	<!-- PC Navigation start -->
+	<div class="navbar navbar-light navbar-expand-lg hidden-sm hidden-md" id="navbar">
+		<div class="container" id="pc_nav">
+
+			<!-- PC: logo -->
+			<!--{hook header_nav_logo_before.htm}-->
+			<a class="navbar-brand text-truncate" href="<?php echo $header['mobile_link'];?>">
+				<img src="<?php echo $conf['logo_pc_url'];?>" class="logo-3">
+			</a>
+			<!--{hook header_nav_logo_after.htm}-->
+
+			<!-- PC: 左侧：主要导航菜单 -->
+			<ul class="navbar-nav mr-auto">
+				<!--{hook header_nav_forum_start.htm}-->
+				<li class="nav-item home" data-active="index"><a class="nav-link" href=".">
+					<i class="fas fa-home"></i> <?php echo lang('index_page');?></a></li>
+					<!--{hook header_nav_home_link_after.htm}-->
+					<?php if(!empty($navlist)) foreach($navlist as $_nav) { ?>
+					<li class="nav-item" data-active="">
+						<a class="nav-link" href="<?php echo htmlspecialchars($_nav['url'], ENT_QUOTES);?>"<?php echo $_nav['target'] ? ' target="_blank"' : '';?>><i class="fas fa-link"></i> <?php echo htmlspecialchars($_nav['name'], ENT_QUOTES);?></a>
+					</li>
+					<!--{hook header_nav_navlist_loop_end.htm}-->
+					<?php } ?>
+					<?php if (isset($light_config['side_nav_switch']) && $light_config['side_nav_switch'] == 0 && $light_config['navbar_cate'] == 0) { ?>
+					<?php foreach($forumlist_show as $_forum) { ?>
+						<!--{hook header_nav_forumlist_loop_start.htm}-->
+						<li class="nav-item" fid="<?php echo $_forum['fid'];?>" data-active="fid-<?php echo $_forum['fid'];?>">
+							<a class="nav-link" href="<?php echo url("forum-$_forum[fid]");?>"><i class="icon-circle-o d-md-none"></i> <?php echo $_forum['name'];?></a>
+						</li>
+						<!--{hook header_nav_forumlist_loop_end.htm}-->
+						<?php } ?>
+<?php } ?>
+				<!--{hook header_nav_forum_end.htm}-->
+			</ul>
+
+			<!-- PC: 右侧：用户 -->
+			<ul class="navbar-nav header-right align-items-center">
+				<?php if (isset($light_config['navbar_create_icon']) && $light_config['navbar_create_icon'] == 1 && $user) { ?>
+					<li class="nav-item nav-link">
+						<a  class="btn btn-primary text-white"  role="button" href="<?php echo url('thread-create-'.$fid);?>"><i class="far fa-edit mr-1"></i><?php echo lang('thread_create_new');?></a>
+					</li>
+					<?php }?>
+				<!--{hook header_nav_user_start.htm}-->
+
+				<?php if(empty($uid)) { ?>
+				<!--{hook header_nav_user_login_before.htm}-->
+					<li class="nav-item nav-link"><a class="btn btn-outline-primary btn-lg"  href="<?php echo url('user-login');?>">
+						<?php echo lang('login');?>/<?php echo lang('register');?>
+						</a>
+					</li>
+
+				<!--{hook header_nav_user_login_after.htm}-->
+				<?php } else { ?>
+					
+				<div class="dropdown user-header-dropdown">
+					<li class="nav-item username">
+						<a class="nav-link" id="profileDropdown" data-toggle="dropdown" href="#">
+							<img class="avatar-3 rounded-circle header_dropdown" src="<?php echo $user['avatar_url'];?>">
+							<!--{hook header_nav_user_avatar_after.htm}-->
+						</a>
+						<div class="dropdown-menu dropdown-menu-right">
+							<div class="widget-user-header p-4">
+								<div class="d-flex align-items-center">
+									<img src="<?php echo $user['avatar_url'];?>" class="avatar-4 rounded-circle mt-1">
+									<div class="d-flex ml-3" style="flex-direction: column;justify-content: space-between; align-items: flex-start;">
+										<span class="mb-2 text-lg"><?php echo $user['username'];?></span>
+										<span class="badge badge-pill badge-primary mb-2"><?php echo $user['groupname'];?></span>
+											<span class="text-gray text-xs"><i class="far fa-heart mr-2 heart-beat"></i>您已加入本站<?php echo getUserRegistrationDays($user['create_date']);?>天，感谢有您~</span>
+									</div>
+								</div>
+								<div class="dropdown-divider"></div>
+								
+								<?php if (isset($light_config['header_gold_count']) && $light_config['header_gold_count'] == 1) { ?>
+								<div class="user-header-dropdown-exp">
+									<div class="user-header-dropdown-exp-body">
+										<div class="p-4">
+											<div class="text-sm">当前等级</div>
+											<div class="text-3xl my-2"><?php echo $user['groupname'];?></div>
+											<div class="d-flex justify-content-between small text-muted">
+												<div>
+													<?php echo lang('credits1');?>：<?php echo $now;?>/<?php echo $now > $max ? 'Max': $max;?>
+												</div>
+											</div>
+											<div class="progress mt-2" style="height:5px;width: 120px;">
+												<div class="progress-bar" role="progressbar" style="width: <?php echo $progress;?>%;" aria-valuenow="<?php echo $progress;?>" aria-valuemin="0" aria-valuemax="100"></div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<?php }?>
+								<div class="user-header-dropdown-quick-link dropdown-menu-items mt-3">
+									<a class="dropdown-item text-muted" href="<?php echo url('my');?>"><i class="far fa-user-circle mr-2"></i> <?php echo lang('my_profile');?></a>
+									<a class="dropdown-item text-muted" href="<?php echo url('my-thread');?>"><i class="far fa-comment-dots mr-2"></i> <?php echo lang('my_threads');?></a>
+								<?php if($gid == 1) { ?>
+										<a class="dropdown-item text-muted" href="admin/" target="_blank"><i class="far fa-window-restore mr-2"></i> <?php echo lang('admin_page');?></a>
+								<?php }?>
+							</div>
+							<div class="dropdown-divider"></div>
+							
+								<a class="btn btn-block btn-outline-danger mt-3" href="<?php echo url('user-logout');?>"><i class="fas fa-sign-out-alt mr-1"></i> <?php echo lang('logout');?></a>
+						
+							</div>
+							
+						</div>
+					</li>
+				</div>
+				
+				<?php } ?>
+
+				<!--{hook header_nav_2_user_pc_end.htm}-->
+			</ul>
+
+		</div>
+	</div>
+
+	<!-- Mobile Navigation start -->
+	<div class="navbar navbar-light  navbar-expand-lg  hidden-lg mobile_nav_header">
+		<div class="container align-items-center px-3 py-2" id="mobile_nav">
+
+			<!-- 左侧：菜单按钮 -->
+			<!--{hook header_nav_2_toggler_before.htm}-->
+			<div class="header_nav_2_toggler">
+				<?php if($uid){?>
+				<img class="avatar-2" src="<?php echo $user['avatar_url'];?>" />
+			<?php } else { ?>
+				<img class="avatar-2" src="<?php echo './plugin/zaesky_theme_light/view/img/avatar.png';?>" />
+
+			<?php }  ?>
+			</div>
+			<!--{hook header_nav_2_toggler_after.htm}-->
+
+			<!-- 中间的 LOGO、网站标题 -->
+			<!--{hook header_nav_2_logo_before.htm}-->
+<?php if ($route == 'index' || $route == 'forum') { ?>
+
+			<a class="index_header_search text-gray mx-3 py-1 px-2 d-flex justify-content-between align-items-center" style="flex: 1;" href="<?php echo url('search');?>">
+				<span>搜索内容...</span><i class="fas fa-search text-sm"></i>
+			</a>
+			<?php }else{ ?>
+				<a class="text-truncate text-center <?php if (!empty($uid)) echo 'ml-4'; ?>" style="flex: 1;" href="<?php echo $header['mobile_link'];?>">
+				<?php if($header['mobile_title']) { ?>
+				<span><?php echo $header['mobile_title'];?></span>
+				<?php }else{ ?>
+					<img src="<?php echo $conf['logo_mobile_url'];?>" class="logo-2">
+					<?php } ?>
+			</a>
+
+				<?php } ?>
+
+			<!--{hook header_nav_2_logo_after.htm}-->
+
+			<!-- 右侧的用户登录、发帖图标 -->
+			<!--{hook header_nav_2_user_icon_before.htm}-->
+			<?php if($uid) { ?>
+			<li class="nav-item position-relative usernotice <?php echo $user['unread_notices'] !=0 ? 'current':''; ?>" id="nav-usernotice" data-active="nav-usernotice">
+				<a class="navbar-brand nav-dark header_notice" href="<?php echo url("my-notice");?>"><span class="si si-bell mobile_nav_header_icon text-gray" style="vertical-align: middle;" data-toggle="tooltip" data-placement="top" title="<?php echo lang('notice');?>"></span><span class="d-none unread text-danger position-absolute" id="nav-usernotice-unread-notices"><i class="fas fa-circle"></i></span>			
+				</a>
+			</li>
+			<?php } ?>
+			<a class="mt-1" href="<?php echo url("thread-create-$fid");?>" aria-label="<?php echo lang('thread_create');?>"><i class="si si-note mobile_nav_header_icon text-gray"></i></a>
+			
+			<!--{hook header_nav_2_user_icon_after.htm}-->	
+		</div>
+		<?php if ($route == 'index' || $route == 'forum' ) { ?>
+
+		<div class="header_nav_2_mobile_menu container mb-1">
+			<div>
+				<?php if ($route == 'index') { ?>
+				<ul class="nav nav-tabs card-header-tabs">
+					<li class="nav-item">
+						<a class="nav-link <?php echo $active == 'default' ? 'active' : '';?>"
+							href="./<?php echo url("$route");?>"><?php echo lang('new_thread');?></a>
+					</li>
+					<!--{hook index_thread_list_nav_item_after.htm}-->
+				</ul>
+				<?php }else if($route == 'forum'){ ?>
+					<ul class="nav nav-tabs card-header-tabs">
+						<li class="nav-item">
+							<a class="nav-link <?php echo $active == 'default' ? 'active' : '';?>"
+								href="<?php echo url("forum-$fid");?>"><?php echo lang('new_thread');?></a>
+						</li>
+						<!--{hook forum_thread_list_nav_item_after.htm}-->
+					</ul>
+		<?php } ?>
+			</div>
+			<div class="header_nav_2_mobile_menu_bar text-gray pr-3">
+				<i class="fa fa-bars"></i>
+			</div>
+		</div>
+		<?php } ?>
+
+	</div>
+
+
+</header>
+<!--{hook header_nav_end.htm}-->

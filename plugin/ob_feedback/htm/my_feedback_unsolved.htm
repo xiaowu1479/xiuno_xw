@@ -1,0 +1,110 @@
+<?php
+$header['title_mobile'] = '待解决的反馈';
+$header['title'] = $header['title_mobile'] . ' - ' . $conf['sitename'];
+include _include(APP_PATH . 'view/htm/header.inc.htm'); ?>
+
+<section class="page-heading fs-big">
+	<div class="d-flex align-items-center  mb-3 gap-3">
+		<div>
+			<span class="badge bg-label-warning rounded-2 fs-big">
+				<i class="icon-exclamation-triangle fs-1"></i>
+			</span>
+		</div>
+		<h1 class="h2 m-0">待解决的反馈</h1>
+	</div>
+</section>
+<?php if ($uid && $gid === 1) : ?>
+<ul class=" nav nav-pills nav-fill" role="tablist">
+	<li class="nav-item"><a href="<?= url('my-feedback') ?>" class="nav-link">我的反馈</a></li>
+	<li class="nav-item"><a href="<?= url('my-feedback_unsolved') ?>" class="nav-link active">待解决反馈</a></li>
+	<li class="nav-item"><a href="<?= url('my-feedback_solved') ?>" class="nav-link">已解决反馈</a></li>
+</ul>
+<?php endif; ?>
+<section class="card">
+	<?php if (!empty($feedback_list)) : ?>
+	<div class="table-responsive ">
+		<table class="table" style="min-width: 50em;">
+			<thead>
+				<th style="width: 4em;">#</th>
+				<th style="width: 6em;">举报者</th>
+				<th style="width: 10em;">举报对象</th>
+				<th style="width: 10em;">举报原因</th>
+				<th style="width: 6em;">受理状态</th>
+				<th style="width: 10em;">操作</th>
+			</thead>
+			<tbody>
+				<?php foreach ($feedback_list as $feedback_item) :
+						$feedback_from_user = user_read_cache($feedback_item['from_uid']);
+						$feedback_to_user = user_read_cache($feedback_item['to_uid']);
+						$feedback_item_url = '';
+						if (boolval($feedback_item['isfirst'])) {
+							$feedback_item_url = url('thread-' . $feedback_item['tid']);
+						} else {
+							$feedback_item_url = url('thread-' . $feedback_item['tid'], ['post' => 'all']) . '#' . $feedback_item['pid'];
+						}
+						$feedback_item_status = '';
+						switch ($feedback_item['status']) {
+							case -1:
+								$feedback_item_status = '已回绝';
+								break;
+							case 0:
+								$feedback_item_status = '等待解决';
+								break;
+							case 1:
+								$feedback_item_status = '已解决';
+								break;
+							default:
+								$feedback_item_status = '未知';
+								break;
+						}
+					?>
+				<tr>
+					<td><?= $feedback_item['fb_id'] ?></td>
+					<td><a href="<?= url('user-' . $feedback_item['from_uid'] ) ?>" target="_blank"><?= $feedback_from_user['username'] ?></a></td>
+					<td>
+						<ul class="p-0">
+							<li><span class="badge <?= boolval($feedback_item['isfirst']) ? 'bg-label-primary' : 'bg-label-secondary' ?>"><?= boolval($feedback_item['isfirst']) ? lang('thread') : lang('post') ?></span>
+								<a href="<?= $feedback_item_url ?>"><?= $feedback_item['thread_subject'] ?><?= boolval($feedback_item['isfirst']) ? '' : ' (' . lang('post') . ')' ?></a>
+							</li>
+							<li class="text-muted text-decoration-underline ">By: <a href="<?= url('user-' . $feedback_item['to_uid'] ) ?>" target="_blank"><?= $feedback_to_user['username'] ?></a></li>
+							<li class="text-muted ">举报时间：<?= date($abs_theme_stately_setting['global']['datetime_format']['date_and_time'], $feedback_item['create_date']) ?></li>
+						</ul>
+						<blockquote class="blockquote mb-0">
+							<?= $feedback_item['excerpt'] ?>
+						</blockquote>
+					</td>
+					<td>
+						<p class="fw-bolder mb-2"><?= $feedback_item['feedback_type'] ?></p>
+						<p class="m-0"><?= $feedback_item['feedback_type'] ?></p>
+					</td>
+					<td><?= $feedback_item_status ?></td>
+					<td>
+						<button type="button" class="btn btn-success" data-modal-url="<?= url('my-feedback_unsolved', ['ssaction' => 'solve_and_feedback', 'fb_id' => $feedback_item['fb_id']]) ?>" data-modal-title="删除对应内容并反馈给用户" data-modal-size="md">删除对应内容并反馈给用户</button><br>
+						<button type="button" class="btn btn-warning" data-modal-url="<?= url('my-feedback_unsolved', ['ssaction' => 'no_solve_and_feedback', 'fb_id' => $feedback_item['fb_id']]) ?>" data-modal-title="不处理并反馈给用户" data-modal-size="md">不处理并反馈给用户</button><br>
+
+					</td>
+				</tr>
+
+
+				<?php endforeach; ?>
+			</tbody>
+		</table>
+	</div>
+	<?php
+	if(!empty($pagination)) {
+		echo $pagination;
+	}
+	?>
+	<?php else: ?>
+	<div class="empty card-body text-center">
+		<span class="empty-icon badge rounded-pill bg-label-secondary fs-xlarge mb-4">
+			<i class="la la-exclamation-triangle fs-1"></i>
+		</span>
+		<p>
+			<?php echo lang('none');?>
+		</p>
+	</div>
+	<?php endif; ?>
+</section>
+
+<?php include _include(APP_PATH . 'view/htm/footer.inc.htm'); ?>

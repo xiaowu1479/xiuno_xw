@@ -1,0 +1,11 @@
+{
+    "name": "禁止邮箱注册",
+    "brief": "一个禁止邮箱注册的插件，主要用于禁止临时邮箱注册，防止恶意刷号行为，有问题请联系 3288813988; Stately主题适配版",
+    "version": "1.1.0",
+    "bbs_version": "4.0.4",
+    "installed": 1,
+    "enable": 1,
+    "hooks_rank": [],
+    "overwrites_rank": [],
+    "dependencies": []
+}

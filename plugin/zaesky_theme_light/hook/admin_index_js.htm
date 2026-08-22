@@ -1,0 +1,44 @@
+<script src="<?php echo '../plugin/zaesky_theme_light/view/js/loading.min.js';?>"></script>
+<script>
+    $('#nav li.home').addClass('active');
+
+$(function() {
+    // 用户组统计（gid>100 的普通用户组）(fixed by XIUNO XW)
+    var seriesData = [<?php
+        foreach($grouplist as $_gid => $_group) {
+            if($_group['gid'] > 100) {
+                $group_num = db_count('user', array('gid' => $_group['gid']));
+                echo $group_num . ',';
+            }
+        }
+    ?>];
+    var labelsData = [<?php
+        foreach($grouplist as $_gid => $_group) {
+            if($_group['gid'] > 100) {
+                echo "'" . $_group['name'] . "',";
+            }
+        }
+    ?>];
+    var pieEl = document.querySelector('#js-chartjs-pie');
+    if(!pieEl) return;
+    // 过滤 0 数据，只保留有用户的用户组，避免空组占位
+    var data = [];
+    for(var i = 0; i < seriesData.length; i++) {
+        if(seriesData[i] > 0) data.push({ v: seriesData[i], l: labelsData[i] });
+    }
+    if(data.length === 0) {
+        pieEl.innerHTML = '<div class="text-muted" style="padding:40px 0;">暂无用户组数据</div>';
+        return;
+    }
+    var options = {
+        series: data.map(function(d) { return d.v; }),
+        chart: { width: 360, height: 320, type: 'donut' },
+        labels: data.map(function(d) { return d.l; }),
+        legend: { position: 'bottom' },
+        dataLabels: { enabled: false },
+        plotOptions: { pie: { donut: { size: '70%' } } }
+    };
+    var chart = new ApexCharts(pieEl, options);
+    chart.render();
+});
+</script>

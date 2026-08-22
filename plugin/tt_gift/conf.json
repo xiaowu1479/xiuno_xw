@@ -1,0 +1,13 @@
+{
+    "name": "礼品卡",
+    "brief": "本插件需要预先安装积分插件！礼品卡，即卡密功能",
+    "version": "1.09",
+    "bbs_version": "4.0.4",
+    "installed": 1,
+    "enable": 1,
+    "hooks_rank": [],
+    "overwrites_rank": [],
+    "dependencies": {
+        "tt_credits": "1.09"
+    }
+}

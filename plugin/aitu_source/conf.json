@@ -1,0 +1,10 @@
+{
+    "name": "转载出处说明",
+    "brief": "简介：文章、帖子底部增加转载出处，避免因转载、采集等带来的版权问题。美化版作者：Tillreetree 2024",
+    "version": "1.0.1",
+    "bbs_version": "4.0.4",
+    "installed": 1,
+    "enable": 1,
+    "hooks_rank": [],
+    "dependencies": []
+}

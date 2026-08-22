@@ -1,0 +1,13 @@
+{
+    "name": "私信",
+    "brief": "本插件依赖与官方消息插件，重要：安装此插件之前要先安装消息插件，否则报错！Stately主题适配版。",
+    "version": "1.0",
+    "bbs_version": "4.0.3",
+    "installed": 1,
+    "enable": 1,
+    "hooks_rank": [],
+    "overwrites_rank": [],
+    "dependencies": {
+        "huux_notice": "1.9"
+    }
+}

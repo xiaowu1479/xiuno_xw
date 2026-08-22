@@ -1,0 +1,15 @@
+{
+    "name": "奇狐搜索插件LIKE强化版",
+    "brief": "在XIUNOBBS官方搜索插件基础上强化了LIKE搜索，支持模糊搜索以及精确搜索，并且分页显示；开启、关闭搜索框以适用于自带搜索框的模版。",
+    "version": "1.1",
+    "bbs_version": "4.0.4",
+    "installed": 1,
+    "enable": 1,
+    "hooks_rank": {
+        "forum_mod_before.htm": 10,
+        "index_site_brief_after.htm": 10,
+        "thread_user_after.htm": 10
+    },
+    "overwrites_rank": [],
+    "dependencies": []
+}

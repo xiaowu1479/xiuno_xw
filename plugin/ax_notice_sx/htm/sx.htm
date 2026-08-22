@@ -1,0 +1,80 @@
+    <div class="card-body ajax-body" style="padding: 0;">
+        <div class="ax-chat-header d-flex align-items-center px-3 py-2 border-bottom">
+            <img class="avatar-3 rounded-circle mr-2" src="<?php echo empty($to_user['avatar_url']) ? $conf['view_url'].'img/avatar.png' : $to_user['avatar_url'];?>">
+            <div>
+                <div class="font-weight-bold"><?php echo empty($to_user['username']) ? '私信' : htmlspecialchars($to_user['username'], ENT_QUOTES);?></div>
+                <div class="text-muted" style="font-size: 12px;">站内私信</div>
+            </div>
+        </div>
+
+        <div class="ax-chat-body p-3" style="max-height: 360px; overflow-y: auto; background: #f7f8fa;">
+            <?php if(empty($chatlist)) { ?>
+                <div class="text-center text-muted py-4">暂无聊天记录，发送第一条私信吧</div>
+            <?php } else { foreach($chatlist as $_chat) { ?>
+                <div class="d-flex <?php echo $_chat['is_mine'] ? 'justify-content-end' : 'justify-content-start';?> mb-3">
+                    <div class="d-flex <?php echo $_chat['is_mine'] ? 'flex-row-reverse' : '';?> align-items-end" style="max-width: 80%;">
+                        <img class="avatar-2 rounded-circle" style="width:28px;height:28px;" src="<?php echo $conf['view_url'];?>img/avatar.png">
+                        <div class="ml-2 mr-2">
+                            <div class="small text-muted text-<?php echo $_chat['is_mine'] ? 'right' : 'left';?>" style="font-size: 11px;"><?php echo $_chat['from_username'];?> · <?php echo $_chat['date_fmt'];?></div>
+                            <div class="ax-chat-bubble px-3 py-2 mt-1 d-inline-block" style="border-radius: 10px; background: <?php echo $_chat['is_mine'] ? '#2d8cf0' : '#ffffff';?>; color: <?php echo $_chat['is_mine'] ? '#fff' : '#1d2129';?>; border: <?php echo $_chat['is_mine'] ? 'none' : '1px solid #e5e6eb';?>; white-space: pre-wrap; word-break: break-word;"><?php echo htmlspecialchars($_chat['content'], ENT_QUOTES);?></div>
+                        </div>
+                    </div>
+                </div>
+            <?php } } ?>
+        </div>
+
+        <form action="<?php echo url("sx");?>" method="post" id="ax_form" class="border-top p-2">
+            <input name="to_uid" type="hidden" class="ax-sx-id" value="<?php echo intval($to_uid);?>" />
+            <div class="d-flex align-items-center">
+                <textarea placeholder="填写私信内容" name="ax_message" class="form-control axinput mr-2" rows="2" style="resize: none;"></textarea>
+                <button type="submit" class="btn btn-primary axbutton" data-loading-text="<?php echo lang('submiting');?>...">发送</button>
+            </div>
+        </form>
+    </div>
+
+<script ajax-eval="true">
+
+// 接受传参
+var args = args || {jmodal: null, callback: null, arg: null};
+var jmodal = args.jmodal;
+var callback = args.callback;
+
+// 兼容：若弹窗内容为 JS 直接传入的 uid，则设置隐藏字段（value 为 0 时也覆盖）
+var curUid = $('.ax-sx-id').val();
+if (args.arg && (curUid === '0' || !curUid)) {
+    $('.ax-sx-id').val(args.arg);
+}
+
+var jform = $('#ax_form');
+var jsubmit = jform.find('button[type="submit"]');
+var jchatbody = $('.ax-chat-body');
+
+// 滚动到底部
+jchatbody.scrollTop(jchatbody[0].scrollHeight);
+
+jform.on('submit', function() {
+    jform.reset();
+    jsubmit.button('loading');
+    var postdata = jform.serializeObject();
+    $.xpost(jform.attr('action'), postdata, function(code, message) {
+        if(code == 0) {
+            // 本地追加一条自己的消息
+            var text = postdata.ax_message || '';
+            if (text) {
+                var html = '<div class="d-flex justify-content-end mb-3"><div class="d-flex flex-row-reverse align-items-end" style="max-width:80%;"><img class="avatar-2 rounded-circle" style="width:28px;height:28px;" src="<?php echo $conf['view_url'];?>img/avatar.png"><div class="ml-2 mr-2"><div class="small text-muted text-right" style="font-size:11px;">我 · 刚刚</div><div class="ax-chat-bubble px-3 py-2 mt-1 d-inline-block" style="border-radius:10px;background:#2d8cf0;color:#fff;white-space:pre-wrap;word-break:break-word;">' + $('<div>').text(text).html() + '</div></div></div></div>';
+                jchatbody.append(html);
+                jchatbody.scrollTop(jchatbody[0].scrollHeight);
+            }
+            jform.find('.axinput').val('');
+            jsubmit.button('reset');
+            if(callback) callback(message);
+        } else {
+            $.alert(message);
+            jsubmit.button('reset');
+        }
+    });
+    
+    return false;
+});
+
+</script>

@@ -1,0 +1,283 @@
+<?php include _include(APP_PATH.'view/htm/header.inc.htm');?>
+
+<!--{hook user_login_start.htm}-->
+<style>
+    body {
+        background-color: #f0f4f8;
+        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 60 60"><path fill="%23e2e8f0" d="M30 10c-5.5 0-10 4.5-10 10s4.5 10 10 10 10-4.5 10-10-4.5-10-10-10zm0 16c-3.3 0-6-2.7-6-6s2.7-6 6-6 6 2.7 6 6-2.7 6-6 6zm-8 4c-4.4 0-8 3.6-8 8v4h16v-4c0-4.4-3.6-8-8-8zm8 12c-2.2 0-4-1.8-4-4v-2h8v2c0 2.2-1.8 4-4 4z"/></svg>');
+        background-size: 80px;
+    }
+    #body {
+        padding-top: 0;
+    }
+    .navbar, .bottom-nav, #footer, .card, .row, .col-lg-8, .col-6 {
+        display: none !important;
+    }
+    /* 核心登录容器 */
+    .login-container {
+        max-width: 500px;
+        margin: 2rem auto;
+        background: #ffffff;
+        border-radius: 16px;
+        padding: 2rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+    /* 顶部人物图标 */
+    .login-avatar {
+        width: 56px;
+        height: 56px;
+        background-color: #eff6ff;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+    }
+    .login-avatar i {
+        font-size: 1.5rem;
+        color: #3b82f6;
+    }
+    .login-title {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+    .login-title h1 {
+        font-size: 2rem;
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+    }
+    .login-title p {
+        color: #6b7280;
+        font-size: 1.125rem;
+    }
+    .form-label {
+        font-size: 1.125rem;
+        font-weight: 500;
+        color: #374151;
+        margin-bottom: 0.75rem;
+        display: block;
+    }
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    /* 输入框 */
+    .input-icon {
+        position: relative;
+    }
+    .input-icon i {
+        position: absolute;
+        left: 0.5rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #6b7280;
+        font-size: 0.95rem;
+        background-color: #f3f4f6;
+        padding: 0.65rem 0.65rem;
+        border-radius: 10px 0 0 10px;
+        width: 40px;
+        text-align: center;
+    }
+    .form-control {
+        border-radius: 10px;
+        padding: 0.85rem 1rem 0.85rem 3.5rem;
+        border: 1px solid #e5e7eb;
+        font-size: 1rem;
+        width: 100%;
+        height: calc(2.8rem + 2px);
+        line-height: 1.2;
+    }
+    .form-control::placeholder {
+        color: #9ca3af;
+        transform: translateY(1px);
+    }
+    .form-control:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+    .btn-primary {
+        background-color: #2563eb;
+        border-color: #2563eb;
+        border-radius: 12px;
+        padding: 0.875rem;
+        font-size: 1.25rem;
+        font-weight: 500;
+        width: 100%;
+        margin: 0.5rem 0 1.5rem;
+    }
+    .btn-primary:hover {
+        background-color: #1d4ed8;
+        border-color: #1d4ed8;
+    }
+    /* 底部链接 */
+    .link-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    .link-item {
+        padding: 0.875rem;
+        background-color: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        text-align: center;
+        font-size: 1rem;
+    }
+    .link-item a {
+        text-decoration: none;
+    }
+    .link-item.user-register a {
+        color: #0d9488;
+        font-weight: 500;
+    }
+    .link-item.forgot-pw a {
+        color: #2563eb;
+        font-weight: 500;
+    }
+    .link-item.browse a {
+        color: #6b7280;
+    }
+    .link-item i {
+        margin-right: 0.5rem;
+    }
+
+    /* 快捷登录按钮样式 */
+    .social-login {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 1rem;
+    }
+    .social-btn {
+        flex: 1;
+        padding: 0.875rem;
+        border-radius: 10px;
+        font-size: 1rem;
+        font-weight: 500;
+        text-align: center;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+    }
+    .social-btn.qq {
+        background-color: #12b7f5;
+        color: #fff;
+    }
+    .social-btn.wechat {
+        background-color: #07c160;
+        color: #fff;
+    }
+    .social-btn:hover {
+        opacity: 0.9;
+    }
+</style>
+
+<div class="login-container">
+    <div class="login-avatar">
+        <i class="fas fa-user"></i>
+    </div>
+    <div class="login-title">
+        <h1>用户登录</h1>
+        <p>输入邮箱/用户名和密码，快速登录</p>
+    </div>
+
+    <form action="<?php echo url('user-login');?>" method="post" id="form">
+        <?php echo csrf_token_hidden();?>
+        <div class="form-group">
+            <div class="input-icon">
+                <i class="fas fa-user"></i>
+                <input type="text" class="form-control" placeholder="邮箱 / 用户名" id="email" name="email">
+            </div>
+            <div class="invalid-feedback"></div>
+        </div>
+        <!--{hook user_login_email_after.htm}-->
+
+        <div class="form-group">
+            <div class="input-icon">
+                <i class="fas fa-lock"></i>
+                <input type="password" class="form-control" placeholder="密码" id="password" name="password">
+            </div>
+            <div class="invalid-feedback"></div>
+        </div>
+        <!--{hook user_login_password_after.htm}-->
+
+        <?php if(!empty($conf['captcha_on']) && !empty($conf['captcha_login_on'])) { ?>
+        <div class="form-group">
+            <div class="input-icon">
+                <i class="fas fa-barcode"></i>
+                <input type="text" class="form-control" placeholder="<?php echo lang('captcha');?>" name="captcha" id="captcha" autocomplete="off">
+                <img src="?captcha.htm" class="rounded captcha-img" alt="<?php echo lang('captcha');?>" title="<?php echo lang('captcha_refresh');?>" style="cursor:pointer;height:38px;position:absolute;right:0.5rem;top:50%;transform:translateY(-50%);border-radius:10px;">
+            </div>
+            <div class="invalid-feedback"></div>
+        </div>
+        <!--{hook user_login_captcha_after.htm}-->
+        <?php } ?>
+
+        <button type="submit" class="btn btn-primary" id="submit" data-loading-text="<?php echo lang('submiting');?>...">登录</button>
+        <!--{hook user_login_submit_after.htm}-->
+    </form>
+
+<?php $oauth_config = kv_get('clogin'); if(!empty($oauth_config['opentype'])) { ?>
+<div class="social-login" style="display:flex;gap:12px;margin-bottom:1rem;">
+    <a href="<?php echo url('oauth',['type'=>'qq']);?>" 
+       style="flex:1;background:#12b7f5;color:#fff;padding:12px;border-radius:10px;text-align:center;text-decoration:none;">
+        <i class="icon-qq"></i> QQ 登录
+    </a>
+    <a href="<?php echo url('oauth',['type'=>'wx']);?>" 
+       style="flex:1;background:#07c160;color:#fff;padding:12px;border-radius:10px;text-align:center;text-decoration:none;">
+        <i class="icon-wechat"></i> 微信登录
+    </a>
+</div>
+<?php } ?>
+
+    <!-- 三个链接容器 -->
+    <div class="link-group">
+        <div class="link-item user-register">
+            <a href="<?php echo url('user-create');?>"><i class="fas fa-user-plus"></i> 用户注册</a>
+        </div>
+        <?php if(!empty($conf['user_resetpw_on'])) { ?>
+        <div class="link-item forgot-pw">
+            <a href="<?php echo url('user-resetpw');?>"><i class="fas fa-key"></i> 忘记密码</a>
+        </div>
+        <?php } ?>
+        <div class="link-item browse">
+            <a href="./"><i class="fas fa-arrow-left"></i> 暂不登录，随便逛逛</a>
+        </div>
+    </div>
+</div>
+
+<!--{hook user_login_end.htm}-->
+
+<?php include _include(APP_PATH.'view/htm/footer.inc.htm');?>
+
+<script src="<?php echo $conf['view_url'];?>js/md5.js"></script>
+<script>
+var jform = $('#form');
+var jsubmit = $('#submit');
+var jemail = $('#email');
+var jpassword = $('#password');
+var referer = '<?php echo $referer;?>';
+jform.find('.captcha-img').on('click', function() {
+    $(this).attr('src', '?captcha.htm&r=' + Math.random());
+});
+jform.on('submit', function() {
+    jform.reset();
+    jsubmit.button('loading');
+    var postdata = jform.serializeObject();
+    $.xpost(jform.attr('action'), postdata, function(code, message) {
+        if(code == 0) {
+            jsubmit.button(message).delay(1000).location(referer);
+        } else if(xn.is_number(code)) {
+            alert(message);
+            jsubmit.button('reset');
+        } else {
+            jform.find('[name="'+code+'"]').alert(message).focus();
+            jsubmit.button('reset');
+            if(code == 'captcha') jform.find('.captcha-img').attr('src', '?captcha.htm&r=' + Math.random());
+        }
+    });
+    return false;
+});
+</script>
+<!--{hook user_login_js.htm}-->

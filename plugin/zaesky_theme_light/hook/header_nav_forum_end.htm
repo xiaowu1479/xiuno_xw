@@ -1,0 +1,29 @@
+<?php if (isset($light_config['nav_search_form']) && $light_config['nav_search_form'] == 1) {?>
+<div class="form-group nav-item hidden-sm hidden-md ml-4 mb-0 d-flex align-items-center">
+	<form action="<?php echo url('search');?>" id="search_form" class="mb-0">
+		<div class="input-group">
+			<input type="text" class="form-control border-0 search_form_input" style="height:35px;" placeholder="<?php echo lang('keyword');?>" name="keyword" autocomplete="off">
+			<div class="input-group-append">
+				<button class="btn btn-light" style="height:35px;" type="submit"><span class="fas fa-search"></span></button>
+			</div>
+		</div>
+	</form>
+</div>
+<script>
+// 导航搜索：跳转到 ?search-关键词.htm（兼容 fox_search 路由）(XIUNO XW)
+// 原生 JS，避免 header 阶段 jQuery 未加载
+document.addEventListener('DOMContentLoaded', function() {
+	var forms = document.querySelectorAll('#search_form');
+	for (var i = 0; i < forms.length; i++) {
+		forms[i].addEventListener('submit', function(e) {
+			e.preventDefault();
+			var input = this.querySelector('input[name="keyword"]');
+			var kw = input ? input.value.replace(/^\s+|\s+$/g, '') : '';
+			if (!kw) return false;
+			window.location.href = '?search-' + encodeURIComponent(kw) + '.htm';
+			return false;
+		});
+	}
+});
+</script>
+<?php } ?>

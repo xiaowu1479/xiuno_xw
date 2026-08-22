@@ -1,0 +1,510 @@
+@charset "utf-8";
+
+/* 统一引用样式 兼容bbs引用 */
+.card.card-thread blockquote,
+.card.card-postlist blockquote:not(.blockquote),
+.mce-content-body blockquote:not(.blockquote) {
+    border-left: 2px solid #ccc;
+    margin-left: 1.5rem;
+    padding-left: 1rem;
+}
+
+/* 编辑器内容-默认字体 */
+.mce-content-body {
+    font-family: Microsoft YaHei, 微软雅黑, SimHei;
+}
+
+/* 编辑器内容-防止图片超宽溢出 */
+.mce-content-body img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* 编辑器对bbs评论引用内容做处理，实际项目中删除这些 */
+.mce-content-body blockquote.blockquote {
+    font-size: 0.8rem;
+    background-color: #e9ecef;
+    padding: 0.5rem 1rem !important;
+    margin: 0;
+}
+
+.mce-content-body blockquote.blockquote .avatar-1 {
+    width: 1.3rem;
+    height: 1.3rem;
+    border-radius: 1.3rem;
+}
+
+.mce-content-body blockquote.blockquote .user {
+    text-decoration: none;
+    color: #868e96 !important;
+    font-size: 12px;
+}
+
+/* 编辑器按钮 */
+.tox .tox-tbtn--bespoke .tox-tbtn__select-label {
+    width: 2.8rem !important;
+}
+
+/* 内容 */
+.message img {
+    border-color: transparent;
+}
+/* 豆瓣/影视信息卡片 */
+.chuan-douban-card,
+.movie-card {
+    background: rgba(255, 255, 255, .95);
+    border: 1px solid rgba(0, 0, 0, .08);
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, .06);
+    box-sizing: border-box;
+    color: #333;
+    font-size: 13px;
+    line-height: 1.6;
+    margin: 16px auto;
+    width: 100%;
+    padding: 20px;
+    text-align: left;
+}
+
+.movie-card__hero {
+    display: flex;
+    gap: 20px;
+}
+
+.movie-card__poster {
+    flex: 0 0 38%;
+    margin-top: 0;
+    min-width: 0;
+}
+
+.movie-card__poster img {
+    aspect-ratio: 2 / 3;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .15);
+    object-fit: cover;
+    transition: transform .18s ease;
+    width: 100%;
+}
+
+.movie-card__poster img:hover,
+.movie-card__stills img:hover {
+    transform: scale(1.02);
+}
+
+.movie-card__main {
+    flex: 1 1 50%;
+    min-width: 0;
+}
+
+.movie-card__head {
+    align-items: center;
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-bottom: 12px;
+}
+
+.movie-card__title {
+    color: #1a1a1a;
+    font-family: inherit;
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1.3;
+    margin: 0;
+    position: relative;
+    display: inline-block;
+    text-align: center;
+}
+
+.movie-card__title::after {
+    content: "";
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: #0084ff;
+}
+
+.movie-card__title a {
+    color: inherit;
+    font-family: inherit;
+    text-decoration: none;
+}
+
+.movie-card__title span {
+    color: #666;
+    font-size: 18px;
+    font-weight: 400;
+    margin-left: 4px;
+}
+
+.movie-card__subtitle {
+    color: #1a1a1a;
+    font-family: inherit;
+    font-size: 17px;
+    font-weight: 400;
+    line-height: 1.5;
+    margin: 8px 0;
+    text-align: center;
+}
+
+.movie-card__rating {
+    align-items: center;
+    background: linear-gradient(135deg, #0084ff, #00aaff);
+    border-radius: 50%;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 auto;
+    justify-content: center;
+    width: 52px;
+    height: 52px;
+    padding: 0;
+    box-shadow: 0 2px 8px rgba(0, 132, 255, .3);
+}
+
+.movie-card__rating strong {
+    display: block;
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.movie-card__rating span {
+    display: none;
+}
+
+.movie-card__rating em {
+    display: none;
+}
+
+.movie-card__meta {
+    margin-top: 12px;
+    border-top: 1px solid #eee;
+    padding-top: 12px;
+}
+
+.movie-card__meta-row {
+    color: #1a1a1a;
+    font-family: inherit;
+    font-size: 17px;
+    font-weight: 400;
+    line-height: 1.7;
+    margin: 4px 0;
+}
+
+.movie-card__meta-row strong {
+    color: #1a1a1a;
+    font-family: inherit;
+    font-weight: 700;
+}
+
+.movie-card__meta-row span {
+    color: #1a1a1a;
+    font-family: inherit;
+    font-weight: 400;
+}
+
+.movie-card__meta--clamp span {
+    display: inline;
+    overflow: visible;
+}
+
+.movie-card__section {
+    border-top: 1px solid #eee;
+    margin-top: 16px;
+    padding-top: 16px;
+}
+
+.movie-card__section h3 {
+    color: #666;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 900 !important;
+    margin: 0 0 10px;
+    padding-left: 8px;
+    border-left: 3px solid #0084ff;
+}
+
+.movie-card__section p {
+    color: #444;
+    font-family: inherit;
+    font-size: 17px;
+    margin: 0;
+    line-height: 1.7;
+}
+
+.movie-card__quote {
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    color: #555;
+    margin-top: 16px;
+    padding: 0;
+}
+
+.movie-card__quote p {
+    font-style: italic;
+    font-family: inherit;
+    font-size: 17px;
+    margin: 0;
+    line-height: 1.6;
+}
+
+.movie-card__stills {
+    display: grid;
+    gap: 10px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.movie-card__stills img {
+    aspect-ratio: 16 / 9;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, .1);
+    object-fit: cover;
+    transition: transform .18s ease;
+    width: 100%;
+}
+
+.movie-info {
+    display: flex;
+    gap: 20px;
+}
+
+.movie-info img {
+    border-radius: 8px;
+    max-width: 160px;
+}
+
+@media (max-width: 767px) {
+    .movie-card__hero,
+    .movie-info {
+        display: block;
+    }
+
+    .movie-card__poster,
+    .movie-card__poster img {
+        width: 150px;
+    }
+
+    .movie-card__poster {
+        margin-bottom: 14px;
+        margin-top: 0;
+        text-align: center;
+    }
+
+    .movie-card__head {
+        display: block;
+        text-align: center;
+    }
+
+    .movie-card__rating {
+        margin: 8px auto 0;
+    }
+
+    .movie-card__stills {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+/*定义标题*/
+.movie-title {
+    font-size: 18px; /* 设置标题字体大小 */
+    color: #333; /* 设置标题字体颜色 */
+    margin-bottom: 10px; /* 下方间距 */
+    position: relative;
+    display: inline-block; /* 以块级形式显示，便于边框适应文本 */
+    border-bottom: 2px solid #0084ff; /* 下划线样式 */
+    padding-bottom: 2px; /* 与下划线的距离 */
+    text-align: center; /* 水平居中对齐文本 */
+}
+/*定义豆瓣评分样式*/
+.badge-vlo1 {
+    background: linear-gradient(90deg, #0084ff, #00aaff); /* 渐变背景 */
+    color: white; /* 文字颜色 */
+    border-radius: 12px; /* 圆角 */
+    padding: 2px 6px; /* 内边距 */
+    margin-left: 9px; /* 与名称的间距 */
+    font-size: 11px; /* 字体大小 */
+    font-weight: bold; /* 加粗文字 */
+    display: inline-block; /* 确保它是块级元素，且可调节大小 */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* 添加阴影 */
+}
+.badge-vlo2 {
+    background: linear-gradient(90deg, #ff0000, #ff7373); /* 红色渐变背景 */
+    color: white; /* 文字颜色 */
+    border-radius: 12px; /* 圆角 */
+    padding: 2px 6px; /* 内边距 */
+    margin-left: 9px; /* 与名称的间距 */
+    font-size: 11px; /* 字体大小 */
+    font-weight: bold; /* 加粗文字 */
+    display: inline-block; /* 确保它是块级元素，且可调节大小 */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* 添加阴影 */
+}
+/*主演隐藏2行*/
+.actor-list {
+   display: -webkit-box; /* 使用 Flexbox 布局 */
+    -webkit-box-orient: vertical; /* 设置为纵向排列 */
+    -webkit-line-clamp: 2; /* 限制显示两行 */
+    overflow: hidden; /* 超出部分隐藏 */
+    text-overflow: ellipsis; /* 使用省略号 */
+    max-height: 3em; /* 设定最大高度，通常行高乘以行数 */
+    line-height: 1.5em; /* 设置行高 */
+}
+/* 添加按钮样式 */
+.tox-dialog__footer-end .tox-button {
+    background: linear-gradient(90deg, #0084ff, #00aaff) !important; /* 强制使用蓝色渐变背景 */
+    color: white !important; /* 强制字体颜色为白色 */
+    border: none !important; /* 强制移除边框 */
+    padding: 6px 20px !important; /* 强制设置内边距 */
+    border-radius: 5px !important; /* 强制设置圆角 */
+    cursor: pointer !important; /* 强制设置光标样式 */
+    transition: background 0.3s, transform 0.3s !important; /* 强制添加过渡效果 */
+}
+
+.tox-dialog__footer-end .tox-button:hover {
+    background: linear-gradient(45deg, #66b3ff, #007bff) !important; /* 悬停时强制使用反向蓝色渐变 */
+    transform: scale(1.05); /* 放大效果 */
+}
+
+/* 针对次级按钮的字体颜色 */
+.tox-dialog__footer-end .tox-button--secondary {
+    background: linear-gradient(90deg, #0084ff, #00aaff) !important; /* 玫红到香槟 */
+    color: white !important; 
+    border: none !important;
+    transition: background 0.3s ease, transform 0.3s ease; /* 添加过渡效果 */
+}
+
+.tox-dialog__footer-end .tox-button--secondary:hover {
+    background: linear-gradient(90deg, #ff1a1a, #ff4d4d) !important; /* 反转渐变 */
+    color: white !important; 
+    transform: scale(1.05); /* 放大效果 */
+}
+
+/* H6标题 */
+.card-body .message h6 {
+    border-left: 3px solid #6293d4;
+    text-indent: 8px;
+    font-weight: bold;
+    padding: 2px 0px;
+    margin: 8px 0px;
+}
+/* H5标题 */
+.card-body .message h5 {
+    border-left: 4px solid #84985a;
+    text-indent: 8px;
+    font-weight: bold;
+    padding: 2px 0px;
+    margin: 8px 0px;
+}
+/* H4标题 */
+.card-body .message h4 {
+    border-left: 5px solid #b55594;
+    text-indent: 8px;
+    font-weight: bold;
+    padding: 2px 0px;
+    margin: 8px 0px;
+}
+/* H3标题 */
+.card-body .message h3 {
+ font-size:18px;
+ font-weight:700;
+ margin:15px 0 20px;
+ border-left:4px solid #007bf5;
+ padding:0 0 0 10px;
+}
+/* H2标题 */
+.card-body .message h2 {
+ position:relative;
+ padding:5px 0 5px;
+ color:#424242;
+ font-size:20px;
+ display:block;
+ cursor:pointer;
+ z-index:16;
+ font-weight:700;
+ line-height:30px;
+}
+.card-body .message h2:before {
+ position:absolute;
+ top:35px;
+ left:0;
+ z-index:-1;
+ width:1em;
+ height:2px;
+ background:#007bf5;
+ content:" ";
+ border-radius:20px;
+ transition:all .5s
+}
+.card-body .message h2:hover:before {
+ width:100%;
+ transition:all .5s
+}
+/* H1标题 */
+.card-body .message h1 {
+ font-size:22px;
+ font-weight:700;
+ margin:15px 0 20px;
+ border-left:4px solid #765df0;
+ padding:0 0 0 10px;
+}
+
+.huux-hide-box {
+    margin: 18px 0;
+    padding: 14px 16px;
+    border: 1px solid #d8e2ef;
+    border-radius: 8px;
+    background: #f8fafc;
+    color: #334155;
+    text-align: center;
+}
+
+.huux-hide-box--locked {
+    border-color: #f2d6a2;
+    background: #fff8ec;
+}
+
+.huux-hide-box--visible {
+    border-color: #b9dbca;
+    background: #f3fbf7;
+}
+
+.huux-hide-box__title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #102a43;
+    line-height: 1.5;
+}
+
+.huux-hide-box__text {
+    margin-top: 6px;
+    color: #64748b;
+    line-height: 1.7;
+}
+
+.huux-hide-box__content {
+    margin-top: 8px;
+    line-height: 1.8;
+}
+
+.huux-hide-box__tag {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: rgba(15, 23, 42, .08);
+    color: #64748b;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.huux-hide-box__reply-link,
+.huux-hide-box__reply-link:hover {
+    text-decoration: none;
+}
+
+.huux-hide-box__reply-link:hover {
+    background: rgba(15, 23, 42, .14);
+    color: #334155;
+}

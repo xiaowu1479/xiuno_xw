@@ -1,0 +1,14 @@
+<?php if(!empty($thread['offerNum'])):
+$set_offer = setting_get('tt_offer');
+    if(!empty($thread['offerStatus'])){ $load_select_btn=1; ?>
+<span class="badge bg-label-warning">
+    <i class="icon-magic" aria-hidden="true" title="有悬赏!"></i>
+    <?= '['.lang('offer').'] '.credits_get_text($set_offer['credits_type'],$thread['offerNum']);?>
+</span>
+<?php } else{ ?>
+<span class="badge bg-label-success">
+    <i class="icon-check" aria-hidden="true" title="悬赏完毕!"></i>
+    <?= '['.lang('offer').'] '.credits_get_text($set_offer['credits_type'],$thread['offerNum']);?>
+</span>
+<?php }
+endif; ?>

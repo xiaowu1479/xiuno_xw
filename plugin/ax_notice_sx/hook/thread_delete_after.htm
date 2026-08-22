@@ -1,0 +1,4 @@
+<?php if ($uid) { ?>
+<a  class="text-grey ml-2" href="javascript:;" data-username="<?php echo $thread['username']; ?>" data-uid="<?php echo $thread['uid']; ?>" data-modal-url="<?php echo url("sx").'&uid='.$thread['uid'];?>" data-modal-title="给 <?php echo $thread['username']; ?> 发送私信" data-modal-size="lg" data-modal-arg="<?php echo $thread['uid']; ?>" title="发送私信"><i class="icon-envelope"></i> 发消息</a>
+<?php } ?>
+

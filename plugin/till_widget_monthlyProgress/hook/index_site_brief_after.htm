@@ -1,0 +1,106 @@
+
+<style>
+.till-monthly-progress {
+    background: var(--bs-primary);
+    border-radius: 1rem;
+    padding: .75rem;
+    color: var(--bs-white);
+    display: flex;
+}
+
+.till-progress-bar {
+    flex: 1;
+    position: relative;
+    background: rgba(0,0,0,.15);
+    border-radius: .5rem;
+    height: 3rem;
+    overflow: hidden;
+}
+
+.till-progress-bar__inner {
+    background: var(--bs-white,var(--white,white));
+    color: var(--bs-primary,var(--primary,#498ef6));
+    width: 100%;
+    height: 100%;
+    clip-path: polygon(0% 0%, calc(var(--the-progress) * 1%) 0%,  calc(var(--the-progress) * 1%) 100%, 0% 100%);
+    z-index: 2;
+    overflow: hidden;
+}
+
+.till-progress-bar__percentage {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: var(--bs-primary,var(--primary,#498ef6));
+
+}
+
+.till-progress-text {
+    display: flex;
+    flex-direction: column;
+    padding: 0 0 0 .5rem;
+    line-height: 1.5;
+}
+
+.till-progress-text__title {
+    font-size: 1.25em;
+    font-weight: 600;
+}
+.till-progress-text__detail {
+    font-size: .9em;
+    font-weight: 400;
+}
+</style>
+
+<aside class="till-monthly-progress">  
+    <div class="till-progress-bar">  
+        <div class="till-progress-bar__inner"></div>  
+        <span class="till-progress-bar__percentage">0%</span>  
+    </div>  
+    <div class="till-progress-text">
+        <span class="till-progress-text__title">...</span>  
+        <span class="till-progress-text__detail">  
+            ... 
+        </span>  
+    </div>  
+</aside> 
+
+<script>
+// 获取当前日期
+const currentDate = new Date();
+
+// 获取当前月份
+const currentMonth = currentDate.getMonth() + 1;
+
+// 获取当前月份最大天数
+const currentYear = currentDate.getFullYear();
+const maxDays = new Date(currentYear, currentMonth, 0).getDate();
+
+// 计算百分比
+const percentage = Math.floor((currentDate.getDate() / maxDays) * 100);
+
+// 获取月份名称
+const monthNames = ["一月", "二月", "三月", "四月", "五月", "六月","七月", "八月", "九月", "十月", "十一月", "十二月"];
+const monthName = monthNames[currentMonth - 1];
+
+// 获取已过天数
+const daysPassed = currentDate.getDate();
+
+// 更新HTML元素
+const progressElement = document.querySelector('.till-monthly-progress');
+progressElement.setAttribute('style','--the-progress:' + percentage);
+
+const progressPercentage = document.querySelector('.till-progress-bar__percentage');
+progressPercentage.textContent = `${percentage}%`;
+
+const progressTextTitle = document.querySelector('.till-progress-text__title');
+progressTextTitle.textContent = monthName;
+
+const progressTextDetail = document.querySelector('.till-progress-text__detail');
+progressTextDetail.textContent = `${daysPassed}天已过`;
+
+</script>
+

@@ -1,0 +1,71 @@
+<div class="m-3">
+    <div class="d-flex justify-content-between mb-2">
+        <div class="font-weight-bold break-all text-truncate"><?php echo $conf['sitename'];?></div>
+        <span class="badge bookmark-badge" onclick="bookmarkSite()" title="给网站点个赞吧~" style="user-select: none;">
+            <i class="fas fa-heart mr-1 text-danger"></i><span class="like_counts"><?php echo kv_cache_get("total_likes") ? kv_cache_get("total_likes") : 0;?></span>
+        </span>
+    </div>
+    <div class="small line-height-3 text-black-50"><?php echo $conf['sitebrief'];?></div>
+
+            <?php if (isset($light_config['site_info_total']) && $light_config['site_info_total'] == 1) { ?> 
+                <div class="forum-metrics">
+                    <div class="metrics-grid">
+                        <div class="metric-item">
+                            <div class="metric-icon-box">
+                                <svg class="metric-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                            </div>
+                            <div class="metric-content">
+                                <div class="metric-number"><?php echo $runtime['threads'];?></div>
+                                <div class="metric-label"><?php echo lang('threads');?></div>
+                            </div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-icon-box">
+                                <svg class="metric-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+                                </svg>
+                            </div>
+                            <div class="metric-content">
+                                <div class="metric-number"><?php echo $runtime['posts'];?></div>
+                                <div class="metric-label"><?php echo lang('posts');?></div>
+                            </div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-icon-box">
+                                <svg class="metric-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                                </svg>
+                            </div>
+                            <div class="metric-content">
+                                <div class="metric-number"><?php echo $runtime['users'];?></div>
+                                <div class="metric-label"><?php echo lang('users');?></div>
+                            </div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-icon-box">
+                                <svg class="metric-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.636 18.364a9 9 0 010-12.728m12.728 0a9 9 0 010 12.728m-9.9-2.829a5 5 0 010-7.07m7.072 0a5 5 0 010 7.07M13 12a1 1 0 11-2 0 1 1 0 012 0z" />
+                                </svg>
+                            </div>
+                            <div class="metric-content">
+                                <div class="metric-number"><?php echo online_count() > 0 ? online_count() : 0;?></div>
+                                <div class="metric-label"><?php echo lang('online');?></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <?php } ?>
+
+            <!-- <?php if($uid) { ?>
+                <a role="button" class="btn btn-primary btn-block rounded-pill jb-blue mt-2" href="<?php echo url('thread-create-'.$fid);?>"><?php echo lang('thread_create_new');?></a>
+                <?php }else{?>
+                    <div class="d-flex justify-content-center mt-2">
+                        <a role="button" class="btn btn-primary mr-2 rounded-pill jb-blue" style="flex: 1;"  href="<?php echo url('user-login');?>"><?php echo lang('login');?></a>
+                        <a role="button" class="btn btn-outline-primary rounded-pill" style="flex: 1;"  href="<?php echo url('user-create');?>"><?php echo lang('register');?></a>
+                    </div>
+                    <?php }?> -->
+
+            
+</div>

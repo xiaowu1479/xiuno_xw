@@ -1,0 +1,9 @@
+<?php if($uid && empty($group['see_check']) && (!isset($user['OK']) || $user['OK']!='1')){ ?>
+<div class="alert alert-info" role="alert">
+    <?php if(!isset($user['OK']) || $user['OK']=='0'){ ?>
+    <i class="icon icon-coffee icon-lg" aria-hidden="true"></i> 管理员正在审核您的账号！审核期间您将无法发表主题、回复主题，请您耐心等待！
+    <?php } elseif ($user['OK']=='-1'){?>
+    <i class="icon icon-exclamation-circle icon-lg" aria-hidden="true"></i> 您的账号未审核通过！您无法发表主题、回复主题！
+    <?php }?>
+</div>
+<?php }?>

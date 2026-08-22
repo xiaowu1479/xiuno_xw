@@ -1,0 +1,28 @@
+<style>
+    #quick_reply_message{
+        margin-top:5px;
+    }
+</style>
+<?php
+    //快速回复select
+    $quick_reply_message_select = '';
+    
+    $thread_quick_reply_message_config = setting_get('thread_quick_reply_message');
+    $default_reply_message = array($thread_quick_reply_message_config['quick_reply_message_default']);
+    
+    //是否开启快速回复
+    $is_quick_reply_message = isset($thread_quick_reply_message_config['is_quick_reply_message']) ? intval($thread_quick_reply_message_config['is_quick_reply_message']):0;
+    if($is_quick_reply_message){
+        $quick_reply_message = $thread_quick_reply_message_config['quick_reply_message'];
+        $quick_reply_message_arr = explode('#',$quick_reply_message);
+        if($quick_reply_message_arr){
+            
+            $quick_reply_message_arr = array_merge($default_reply_message,$quick_reply_message_arr);
+            $quick_reply_message_select = form_select('quick_reply_message',$quick_reply_message_arr,0,true);
+        }
+    }
+    if($quick_reply_message_select){
+        echo $quick_reply_message_select;
+    }
+?>
+    

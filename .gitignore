@@ -7,7 +7,11 @@ upload/avatar/*
 upload/forum/*
 conf/conf.php
 conf/smtp.conf.php
-# 插件目录不纳入仓库，插件单独分发
-plugin/
+# 插件目录纳入仓库（随发行版分发）
+plugin/*.zip
+plugin/.test
+plugin/huux_tinymce/cache/*
+plugin/pandown/cache/*
+plugin/pandown/includes/phpqrcode/cache/*
 # 发行版打包产物
 *.tar.gz

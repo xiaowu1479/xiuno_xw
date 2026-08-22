@@ -1,0 +1,5 @@
+<?php 
+$msg = $_post['message_fmt']; 
+$msg = preg_replace("/\[em_([0-9]*)\]/i","<img src='/plugin/zaesky_theme_light/view/img/emoicon/$1.png' class='mb-0 mx-1 border-0' width='25px'/>",$msg);
+$_post['message_fmt']=	$msg					
+?>

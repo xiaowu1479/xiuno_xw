@@ -1,0 +1,11 @@
+
+<?php if($post['source']){ ?>
+	<div class="form-group">
+		<input type="text" class="form-control" placeholder="转载出处" name="source" value="<?php echo htmlspecialchars($post['source']);?>" id="source">
+	</div>	
+<?php } else{ ?>
+	<div class="form-group">
+	<input type="text" class="form-control" placeholder="转载出处" name="source" value="" id="source">
+	</div>	
+<?php } ?>
+		

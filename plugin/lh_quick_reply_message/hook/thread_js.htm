@@ -1,0 +1,19 @@
+
+<?php
+//是否开启快速回复
+if($quick_reply_message_select){
+?>
+<script>
+    //快速回复
+    $("#quick_reply_message").change(function(){
+         if($(this).find('option:selected').val() != 0){
+             var quick_reply_message = $(this).find('option:selected').text();
+             $("#message").val(quick_reply_message);
+            $("#quick_reply_form").submit();
+         }
+    });
+    </script>
+<?php
+    }
+?>
+    

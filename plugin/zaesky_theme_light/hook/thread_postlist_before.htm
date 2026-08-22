@@ -1,0 +1,34 @@
+<?php if (isset($light_config['pre_next_thread']) && $light_config['pre_next_thread'] == 1) { ?>
+<div class="d-flex justify-content-between">
+    <div style="width: 49%;">
+        <div class="card card-thread">
+            <div class="card-body">
+                <div class="updown">
+                <?php 
+                $arrlist_p = db_find_one('thread', array('fid'=>$fid, 'tid'=>array('<'=>$tid)), array('tid'=>-1));
+                if($arrlist_p){
+                	echo '<a href="'.url("thread-".$arrlist_p['tid']).'"><div class="text-muted mb-2"><span class="mr-3"><i class="fas fa-arrow-left"></i></span>上一篇</div><div class="text-truncate">'.$arrlist_p['subject'].'</div></a>';
+                }else{
+                	echo '<div class="text-muted mb-2"><span class="mr-3"><i class="fas fa-arrow-left"></i></span>上一篇</div><div>无更多文章</div>';
+                }?>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div style="width: 49%;">
+        <div class="card card-thread">
+            <div class="card-body">
+                <div class="updown">
+                <?php
+                $arrlist_n = db_find_one('thread', array('fid'=>$fid, 'tid'=>array('>'=>$tid)), array('tid'=>1));
+                if($arrlist_n){
+                	echo '<a href="'.url("thread-".$arrlist_n['tid']).'"><div class="text-muted text-right mb-2">下一篇<span class="ml-3"><i class="fas fa-arrow-right"></i></span></div><div class="text-truncate">'.$arrlist_n['subject'].'</div></a>';
+                }else{
+                	echo '<div class="text-muted mb-2">下一篇<span class="ml-3"><i class="fas fa-arrow-right"></i></span></div><div>无更多文章</div>';
+                }?>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<?php } ?>

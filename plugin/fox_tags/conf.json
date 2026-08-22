@@ -1,0 +1,19 @@
+{
+    "name": "奇狐网 · 标签插件定制版",
+    "brief": "发布、编辑帖子时添加标签，帖子页显示标签以及相关帖子。<a href='https://bbs.oddfox.cn' target='_blank' class='text-danger'>更多精品插件请访问奇狐官网</a>",
+    "version": "9.0",
+    "bbs_version": "4.0.4",
+    "uid": "20394",
+    "username": "༺凨影༻",
+    "installed": 1,
+    "enable": 1,
+    "hooks_rank": {
+        "header_link_after.htm": -999,
+        "thread_subject_after.htm": -999,
+        "thread_message_after.htm": 999,
+        "thread_create_thread_start.php": 999,
+        "post_update_post_start.php": 999
+    },
+    "overwrites_rank": [],
+    "dependencies": []
+}

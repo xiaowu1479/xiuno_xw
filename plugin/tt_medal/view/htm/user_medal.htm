@@ -1,0 +1,24 @@
+<?php if(empty($_uid)) die();
+    $num_pid = medal_user_count($_uid);
+	$page = param(2,1);
+	$medallist = medal_user_read_fmt($_uid);
+	$pagination = pagination(url("user-medal-".$_uid."-{page}"), $num_pid, $page, 20);
+?>
+<template include="./view/htm/user.template.htm">
+	<slot name="user_body">
+		<div class="col-md-10 mx-auto">
+			<table class="table" style="text-align:center;vertical-align:middle;"><tr><th width="20%"><?php echo lang('medal') ?></th><th width="80%">介绍</th></tr>
+				<?php foreach($medallist as $m){?><tr>
+					<td><img width="18px" height="18px" src="plugin/tt_medal/img/<?php echo $m['filename'];?>"/><br><?php echo $m['name'];?></td>
+					<td><?php echo $m['description'];?></td>
+				</tr><?php }?>
+			</table>
+			<?php if($pagination) { ?>
+			<nav><ul class="pagination justify-content-center flex-wrap"><?php echo $pagination; ?></ul></nav>
+			<?php } ?>
+		</div>
+	</slot>
+</template>
+<script>
+$('a[data-active="user-medal"]').addClass('active');
+</script>

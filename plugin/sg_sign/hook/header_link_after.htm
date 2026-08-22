@@ -1,0 +1,81 @@
+<?php if(!isset($sg_sign_kv) || empty($sg_sign_kv['sign10'])) $sg_sign_kv = kv_get('sg_sign'); ?>
+<style>
+/* ===== 每日签到 - Typecho 清爽风适配 (XIUNO XW) ===== */
+
+/* 首页签到面板：与系统主色统一（清爽蓝渐变） */
+.sg_sign.card {
+    border: none;
+    border-radius: 10px;
+    overflow: hidden;
+    padding: 0;
+    background: linear-gradient(135deg, #2d8cf0, #6fb1ff);
+    box-shadow: 0 4px 14px rgba(45, 140, 240, 0.18);
+    cursor: pointer;
+    transition: transform .15s ease, box-shadow .15s ease;
+}
+
+.sg_sign.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(45, 140, 240, 0.28);
+}
+
+.sg_sign .mibbs_signpanel {
+    display: block;
+    padding: 18px 16px 16px;
+    color: #fff !important;
+    background: transparent !important;
+    text-align: center;
+}
+
+.sg_sign .font {
+    font-size: 1.2rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.sg_sign .font .icon-calendar { font-size: 1.4rem; }
+
+.sg_sign .fblock {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 12px;
+}
+
+.sg_sign .all, .sg_sign .line {
+    font-size: .82rem;
+    opacity: .95;
+}
+
+.sg_sign .all i, .sg_sign .line i { margin-right: 4px; }
+
+/* 签到页 - 统计列表 */
+.profile-stats {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    gap: 1.2rem;
+}
+
+.profile-stats li {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    line-height: 1.5;
+}
+
+.profile-stats li span:first-child { color: var(--xc-text-3, #86909c); font-size: .8rem; }
+.profile-stats li span:last-child { font-weight: 600; color: var(--xc-text, #1d2129); }
+.profile-stats li span small { color: var(--xc-text-3, #86909c); font-weight: normal; }
+
+/* 补齐 Sneat 模板工具类 */
+.w-px-40 { width: 40px !important; height: 40px !important; }
+.fs-1 { font-size: 2rem; }
+.fs-2 { font-size: 1.5rem; }
+.fs-xlarge { font-size: 1.25rem; }
+.rounded-pill { border-radius: 50rem !important; }
+.bg-label-info { background-color: var(--xc-primary-bg, #e8f3ff) !important; color: var(--xc-primary, #2d8cf0) !important; }
+</style>

@@ -1,0 +1,14 @@
+{
+    "name": "积分插件·风信子修复版",
+    "brief": "积分插件完整版。积分规则、升级用户组、付费主题、兑换、转账、消费记录、积分查询面板。<br><b>修复</b>：触发BUG付费内容变成免费<br><b>修复</b>：设置负数刷金币漏洞<br><b>修改</b>：修改RMB积分比例<br><b>修改</b>：修改币种名称前后端同步<br><b>修改</b>：更改付费内容插入样式弹窗版<br>添加用户购买主题（附件）发私信给作者<br><b>适配</b>:TinyMCE6内核编辑器适配版<br/>关注更多精品插件请访问><a href='https://yanpao.cn/' class='badge badge-primary' style='color: #fff;background-color: #56d5f8;'>颜泡之家</a>",
+    "version": "2.5.6",
+    "bbs_version": "4.0.4",
+    "installed": 1,
+    "enable": 1,
+    "hooks_rank": {
+        "post_post_end.php": -10,
+        "thread_create_thread_end.php": -10
+    },
+    "overwrites_rank": [],
+    "dependencies": []
+}

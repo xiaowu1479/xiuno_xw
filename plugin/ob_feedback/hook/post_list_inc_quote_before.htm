@@ -1,0 +1,17 @@
+<span class="btn-group ob-feedback-report">
+    <?php 
+    $ob_feedarray = [
+        $_post['uid'], /* to_uid */
+        $thread['tid'], /* ob_tid */
+        $_post['pid'], /* ob_pid */
+        0, /* ob_isfirst */
+        $thread['subject'], /* ob_thread_subject */
+        mb_substr(strip_tags(htmlspecialchars_decode($_post['message_fmt'])),0,128), /* ob_excerpt */
+    ];
+
+    $ob_imp = implode('Ȼ', $ob_feedarray);
+    $ob_imp = htmlspecialchars($ob_imp);
+    ?>
+    <a class="text-danger ob-feedback-report-button mx-2" href="javascript:;" data-username="<?php echo $_post['username']; ?>" data-uid="<?php echo $_post['uid']; ?>" data-modal-url="<?php echo url('feedback'); ?>" data-modal-title="举报违规信息" data-modal-arg="<?php echo $ob_imp; ?>" title="举报违规信息">
+        <i class="icon-exclamation-triangle"></i>举报</a>
+</span>

@@ -1,0 +1,8 @@
+<?php
+    if($route == 'thread'){
+        if((!$content_pay)  && ($thread['uid'] != $uid) && !empty($thread['content_buy']) && !empty($thread['files'])){ ?>
+            <fieldset class="fieldset m-0">
+            <legend>本帖中包含<span class="text-danger">附件</span></legend>
+            <i class="icon-bell"></i> 如需下载请先<span class="text-danger">购买主题</span>！
+           </fieldset>
+        <?php }else{ ?>        

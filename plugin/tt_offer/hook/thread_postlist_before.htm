@@ -1,0 +1,29 @@
+<!---->
+<?php 
+if(!empty($thread['offerNum']) && !empty($thread['offerStatus'])):
+$_post = post_read($thread['offerStatus']);
+?>
+<div class="card border border-success mb-3">
+    <div class="card-body">
+        <div class="card-title">
+            <div class="d-flex justify-content-between">
+                <div><b>
+                        <?php echo lang('offerAnswer');?>
+                    </b></div>
+            </div>
+        </div>
+        <?php 
+        if(!isset($abs_theme_stately_setting)) {
+        $abs_theme_stately_setting = setting_get('abs_theme_stately_setting');
+        }
+        $stately_thread_style = (isset($abs_theme_stately_setting['ui_style']['threadlist']['style_for_forum'][$fid]) && $abs_theme_stately_setting['ui_style']['threadlist']['style_for_forum'][$fid] !== '_inherit' ) ? $abs_theme_stately_setting['ui_style']['threadlist']['style_for_forum'][$fid] : $abs_theme_stately_setting['ui_style']['thread']['style_global'];
+        switch($stately_thread_style):
+        case 'vintage_v1':?>
+        <!--{hook stately_layout_postlist__vintage_v1.htm}-->
+        <?php break; default: ?>
+        <!--{hook stately_layout_postlist__classic_v1.htm}-->
+        <?php 
+        break; endswitch;?>
+    </div>
+</div>
+<?php endif; ?>

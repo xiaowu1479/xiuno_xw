@@ -1,0 +1,81 @@
+<?php if($uid) : $ob_feedback_setting = setting_get('ob_feedback_setting'); ?>
+<div class=" ajax-body">
+    <form action='<?php echo url("my-feedback_unsolved"); ?>' method="post" id="ob_form">
+        <input type="hidden" name="fb_id" value="<?= param('fb_id',0) ?>">
+        <input type="hidden" name="ssaction" value="no_solve_and_feedback">
+
+        <div class="form-group mb-3">
+            <label for="notice_text">赠言</label>
+            <textarea name="notice_text" id="notice_text" rows="3" class="form-control w-100 "><?= $ob_feedback_setting['default_notice_text_no_solve'] ?></textarea>
+            <p class="form-text text-info">不填写则不向对方发送赠言。</p>
+        </div>
+        <label>奖励给用户积分</label>
+        <div class="row g-1">
+            <div class="col-lg-4">
+                <div class="input-group">
+                    <div class="input-group-prepend" style="width:5em"><span class="input-group-text" style="width:100%"><?php echo lang('credits1'); ?></span></div>
+                    <input type="number" min="0" max="2048" step="1" class="form-control" name="credits1" id="credits1" value="<?= $ob_feedback_setting['default_credits1_no_solve'] ?>" />
+                </div>
+                <small class="form-text">现有:<samp><?= $user['credits'] ?></samp></small>
+            </div>
+            <div class="col-lg-4">
+                <div class="input-group">
+                    <div class="input-group-prepend" style="width:5em"><span class="input-group-text" style="width:100%"><?php echo lang('credits2'); ?></span></div>
+                    <input type="number" min="0" max="2048" step="1" class="form-control" name="credits2" id="credits2" value="<?= $ob_feedback_setting['default_credits2_no_solve'] ?>" />
+                </div>
+                <small class="form-text">现有:<samp><?= $user['golds'] ?></samp></small>
+            </div>
+            <div class="col-lg-4">
+                <div class="input-group">
+                    <div class="input-group-prepend" style="width:5em"><span class="input-group-text" style="width:100%"><?php echo lang('credits3'); ?></span></div>
+                    <input type="number" min="0" max="204800" step="1" class="form-control" name="credits3" id="credits3" value="<?= $ob_feedback_setting['default_credits3_no_solve'] ?>" />
+                </div>
+                <small class="form-text">现有:<samp><?= $user['rmbs'] ?></samp></small>
+            </div>
+        </div>
+        <p class="form-text text-info">注意：若您的积分不足，则不会向用户奖励积分。</p>
+
+        <button type="submit" class="btn btn-block btn-primary" data-loading-text="<?php echo lang('submiting'); ?>...">提交反馈</button>
+    </form>
+</div>
+<script ajax-eval="true">
+    // 接受传参
+    var args = args || {
+        jmodal: null,
+        callback: null,
+        arg: null,
+    };
+    var jmodal = args.jmodal;
+    var callback = args.callback;
+
+    var jform = $('#ob_form');
+    var jsubmit = jform.find('button[type="submit"]');
+    var jcancel = jform.find('button[type="button"]');
+
+    jform.on('submit', function () {
+        jform.reset();
+        jsubmit.button('loading');
+        var postdata = jform.serializeObject();
+        $.xpost(jform.attr('action'), postdata, function (code, message) {
+            if (code == 0) {
+                jsubmit.button(message);
+                setTimeout(function () {
+                    if (jmodal) jmodal.dispose();
+                    if (callback) callback(message);
+                    window.location.reload();
+                }, 1000);
+            } else {
+                $.alert(message);
+                jsubmit.button('reset');
+            }
+        });
+
+        return false;
+    });
+    jcancel.on('click', function () {
+        if (jmodal) jmodal.dispose();
+    });
+</script>
+<?php else: ?>
+Bad Request
+<?php endif; ?>

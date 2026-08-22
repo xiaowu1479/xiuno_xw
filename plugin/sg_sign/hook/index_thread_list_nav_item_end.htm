@@ -1,0 +1,10 @@
+<?php if( !empty($uid) && $fid == 0 ){
+    $sg_sign = db_find_one('sg_sign', array('uid'=>$uid));
+    $sg_sign_set = db_find_one('sg_sign_set', array('id'=>1)); 
+    if($sg_sign['stime'] > strtotime('today')) { 
+        echo '<a id="sg_sign" role="button" class="sg_sign_button d-lg-none btn btn-outline-primary" href="' . url('sg_sign') . '"><i class="icon-calendar-check-o"></i> '.lang('sg_checked').'</a>';
+    }else{ 
+        echo '<a id="sg_sign" role="button" class="sg_sign_button d-lg-none btn btn-primary" href="' . url('sg_sign') . '"><i class="icon-calendar"></i> '.lang('sg_check in').'</a></li>';
+    }
+}
+?>

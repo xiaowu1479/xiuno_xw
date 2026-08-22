@@ -1,0 +1,30 @@
+<script>
+	$("#fox_tag").bind("input propertychange", function(e) {
+		var i = $("#fox_tag").val(),
+			a = $("#tag_loading .heading"),
+			ajaxurl = xn.url('tag-ajax');
+		i && ($.post(ajaxurl, {
+			text: i
+		}, function(e) {
+			var n = $("#tag-ajax-res");
+			if (e.length > 0) {
+				$("#tag_loading").show();
+				a.html("[ <span class='text-danger'>" + i + "</span> ] 的相关标签：");
+				n.empty().show();
+				for (var o = 0; o < e.length; o++) {
+					if (e[o].keywords) {
+						n.append('<li><a class="list-link" href="javascript:;">' + e[o].keywords +
+							"</a></li>")
+					} else {
+						return
+					}
+				}
+			}
+		})), $(document).on("click", "#tag-ajax-res a", function() {
+			$('#tag_loading').hide();
+			$('#fox_tag').val($(this).text())
+		}), $(document).click(function(e) {
+			$('#tag_loading').hide()
+		})
+	});
+</script>

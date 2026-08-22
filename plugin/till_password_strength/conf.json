@@ -1,0 +1,11 @@
+{
+    "name": "密码强度显示",
+    "brief": "适合注册和找回密码框。附加“禁止密码和用户名相同”功能。如需限制用户登录次数，请安装“每日 IP 限制”（xn_ipaccess）插件。",
+    "version": "2.1",
+    "bbs_version": "4.0.4",
+    "installed": 1,
+    "enable": 1,
+    "hooks_rank": [],
+    "overwrites_rank": [],
+    "dependencies": []
+}

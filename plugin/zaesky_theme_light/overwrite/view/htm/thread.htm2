@@ -1,0 +1,401 @@
+<?php include _include(APP_PATH.'view/htm/header.inc.htm');?>
+
+<style>
+/* 全局统一圆润卡片美化 - 全套一体柔和圆角 */
+.card,.card-thread,.card-postlist,#comment_input{
+    border-radius:20px !important;
+    border:none !important;
+    box-shadow:0 2px 14px rgba(0,0,0,0.06) !important;
+    margin-bottom:16px !important;
+    overflow:hidden !important;
+}
+.breadcrumb{
+    border-radius:14px !important;
+    background:#f8f9fa !important;
+}
+.avatar-1,.avatar-3,.avatar-4{
+    border-radius:50% !important;
+    object-fit:cover;
+}
+.pagination li a{
+    border-radius:12px !important;
+    margin:0 3px;
+}
+.xn-back{
+    border-radius:14px !important;
+}
+</style>
+
+<!--{hook thread_start.htm}-->
+<div class="row position-relative">
+	<!--{hook thread_row_start.htm}-->
+	<div class="col-lg-1 pr-0 d-none <?php echo $thread_left_l;?> position-relative aside">
+		<div class="thread_left_container">
+	<!--{hook thread_left.htm}-->
+</div>
+	</div>
+	<div class="<?php echo $thread_left_m;?> main thread-main">
+		<!--{hook thread_breadcrumb_before.htm}-->
+		<?php if(empty($hide_breadcrumb)) { ?>
+		<ol class="breadcrumb  <?php echo $thread_nav_switch;?>">
+			<li class="breadcrumb-item"><a href="./" aria-label="<?php echo lang('index_page');?>"><i
+						class="icon-home"></i></a></li>
+			<li class="breadcrumb-item"><a href="<?php echo url("forum-$fid");?>"><?php echo $forum['name'];?></a></li>
+			<li class="breadcrumb-item active"><a href="<?php echo url("thread-$tid");?>"
+					title="<?php echo lang('index_page');?>返回主题第一页"><?php echo $thread['subject'];?></a></li>
+			<!--{hook thread_breadcrumb.htm}-->
+		</ol>
+		<?php } ?>
+		<!--{hook thread_breadcrumb_after.htm}-->
+
+		<div class="card card-thread">
+			<div class="card-header">
+				<div class="media">
+					<div class="media-body">
+						<!--{hook thread_subject_before.htm}-->
+						<h4 class="break-all font-weight-bold ">
+							<!--{hook thread_subject_start.htm}-->
+							<?php echo $thread['subject'];?>
+							<!--{hook thread_subject_end.htm}-->
+						</h4>
+						<!--{hook thread_subject_after.htm}-->
+						<div>
+								<div class="media">
+									<div class="media-body">
+										<a href="<?php echo url("user-$thread[uid]");?>" tabindex="-1">
+											<img class="avatar-1" src="<?php echo $thread['user_avatar_url'];?>">
+										</a>
+										<!--{hook thread_username_before.htm}-->
+										<span class="username  font-weight-bold small">
+											<a href="<?php echo url("user-$thread[uid]");?>" class="text-muted"><?php echo $thread['username'];?></a>
+<!--{hook thread_username_before1.htm}-->										
+<!--{hook thread_views_after1.htm}-->												</span>
+										<!--{hook thread_username_after.htm}-->
+								<div class="d-flex justify-content-between small mt-1">
+									<div>
+									<!--{hook thread_create_date_after.htm}-->
+										<span class="date text-grey small"><span class="hidden-md hidden-sm"><?php echo lang('post_time');?></span> <?php echo $thread['create_date_fmt'];?></span>
+									<!--{hook thread_create_date_after.htm}-->
+										<span class="text-grey ml-2" data-toggle="tooltip" data-placement="top" data-html="true" title="<?php echo lang('thread_views');?>"><i class="icon-eye"></i>
+											<?php echo $thread['views'];?></span>
+											<a href="#comments" class="hidden-md hidden-sm"  data-toggle="tooltip" data-placement="top" data-html="true" title="<?php echo lang('thread_reply');?>"><span class="text-grey ml-2" ><i class="far fa-comment-dots"></i>
+											<?php echo $thread['posts'];?></span>
+										</a>
+										<!--{hook thread_views_after.htm}-->
+									</div>
+									<div>
+										<!--{hook thread_update_before.htm}-->
+										<span class="hidden-sm hidden-md">
+										<?php if($allowupdate || $first['allowupdate'] ) { ?>
+											<a href="<?php echo url("post-update-$thread[firstpid]");?>"
+												class="text-grey mr-2 post_update"><i class="icon-edit"></i>
+												<?php echo lang('edit');?></a>
+											<?php }  ?>
+			
+											<?php if($allowdelete || $first['allowdelete']) { ?>
+											<a data-href="<?php echo url("post-delete-$thread[firstpid]");?>"
+												href="javascript:void(0);" class="text-grey post_delete" isfirst="1"><i
+													class="icon-remove"></i> <?php echo lang('delete');?></a>
+											<?php } ?>
+										</span>
+											<!--{hook thread_delete_after.htm}-->
+										</div>
+									
+								</div>
+									</div>
+								</div>
+						</div>
+						
+					</div>
+				</div>
+				
+			</div>
+			<div class="card-body">
+				<div class="message  break-all"  isfirst="1">
+					<?php if($page == 1) { ?>
+
+					<!--{hook thread_message_before.htm}-->
+					<?php echo $first['message_fmt'];?>
+					<!--{hook thread_message_after.htm}-->
+
+					<?php echo post_file_list_html($first['filelist']);?>
+					<!--{hook thread_filelist_after.htm}-->
+
+					<?php } else { ?>
+
+					<!--{hook thread_message_more_before.htm}-->
+					<p><a href="<?php echo url("thread-$tid");?>"><?php echo lang('view_thread_message');?></a></p>
+					<!--{hook thread_message_more_after.htm}-->
+
+					<?php } ?>
+				</div>
+				<!--{hook thread_plugin_before.htm}-->
+			</div>
+			<div class="card-footer">
+				<div class="plugin d-flex justify-content-center">
+					<!--{hook thread_plugin_body.htm}-->
+				</div>
+				<!--{hook thread_plugin_after.htm}-->
+			</div>
+		</div>
+	<!--{hook thread_postlist_before.htm}-->
+	<?php if(isset($light_config['post_form_position']) && $light_config['post_form_position'] == 1) { ?>
+		<?php if(!empty($user)) {?>
+			<div class="card" id="comment_input">
+				<div class="card-body" >
+					<!--{hook thread_quick_reply_before.htm}-->
+				<div class="post newpost media" style="border-bottom: none;">
+					<a href="<?php echo url("user-$user[uid]");?>" class="mr-3 post_avatar d-none d-lg-block" tabindex="-1">
+						<img class="avatar-3" src="<?php echo $user['avatar_url'];?>">
+					</a>
+					<div class="media-body">
+						<div class="post_user_info">
+						<div class="d-flex justify-content-between text-muted ">
+							<div>
+								<div class="mb-2">
+									<a href="<?php echo url("user-$user[uid]");?>" class="mr-1 post_avatar d-lg-none" tabindex="-1">
+										<img class="avatar-1" src="<?php echo $user['avatar_url'];?>">
+									</a>
+									<?php echo $user['username'];?>
+									<!--{hook thread_quick_reply_name_end.htm}-->
+									
+								</div>
+							</div>
+							<div >
+								<span class="badge-secondary badge">
+								<span class="floor" id="newfloor"><?php echo ($thread['posts'] + 2);?></span><?php echo lang('floor');?>
+							</span>
+							</div>
+						</div>
+					</div>
+						<div>
+							<form action="<?php echo url("post-create-$tid-1");?>" method="post"
+								id="quick_reply_form" class="d-block">
+								<input type="hidden" name="doctype" value="1" />
+								<input type="hidden" name="return_html" value="1" />
+								<input type="hidden" name="quotepid" value="0" />
+		
+								<div class="message mt-1">
+									<textarea class="form-control" style="border-radius:14px;" placeholder="<?php echo lang('message');?>"
+										name="message" id="message"></textarea>
+								</div>
+								<div class="text-muted mt-2 small">
+									<div class="d-flex justify-content-between">
+										<div>
+											<!--{hook thread_quick_reply_left_start.htm}-->
+											<button type="submit" class="btn btn-primary jb-blue" style="border-radius:12px;" id="submit"
+												data-loading-text="<?php echo lang('submiting');?>...">
+												<?php echo lang('post_create');?> </button>
+											<!--{hook thread_quick_reply_left_end.htm}-->
+										</div>
+										<div>
+											<!--{hook thread_quick_reply_right_start.htm}-->
+											<a class="icon-mail-forward text-muted"
+												href="<?php echo url("post-create-$tid");?>" id="advanced_reply">
+												<?php echo lang('advanced_reply');?></a>
+											<!--{hook thread_quick_reply_right_end.htm}-->
+										</div>
+									</div>
+									<!--{hook thread_quick_reply_after.htm}-->
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+			</div>
+		<?php }else{ ?>
+			<div class="card">
+			<div class="card-body text-center">
+			 <p><?php echo lang('thread_please_after_login_reply');?></p>
+			 <div class="mt-3">
+				<a href="<?php echo url('user-login');?>" class="btn btn-primary" style="border-radius:12px;"><i class="fas fa-user-alt"></i> <?php echo lang('login');?></a> 
+			<a href="<?php echo url('user-create');?>" class="btn btn-outline-primary" style="border-radius:12px;"><i class="fas fa-user-plus"></i> <?php echo lang('register');?></a> 
+			</div>
+			</div>
+			</div>
+			<?php } } ;?>
+		<div class="card card-postlist" id="comments">
+			<div class="card-header">
+				<div class="d-flex justify-content-between" >
+					<div>
+						<i class="fas fa-comment-dots text-primary"></i>
+						<b><?php echo lang('new_post');?></b> (<span
+							class="posts"><?php echo $thread['posts'];?></span>)
+
+							<a class="collapse_toggle"  data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+								<i class="fas fa-angle-down"></i>
+							</a>
+					</div>
+					<!--{hook thread_post_list_title_middle.htm}-->
+					<div>
+						<!--{hook thread_post_list_title_right.htm}-->
+					</div>
+				</div>
+			</div>
+			<div class="card-body py-1 collapse show" id="collapseExample">
+				<ul class="list-unstyled  postlist">
+					
+					<?php include _include(APP_PATH.'view/htm/post_list.inc.htm'); ?>
+					
+				</ul>
+			</div>
+		</div>
+		<?php if($pagination) { ?>
+			<nav>
+				<ul class="pagination my-4 justify-content-center flex-wrap"><?php echo $pagination; ?></ul>
+			</nav>
+		<?php }?>
+		<?php if( isset($light_config['post_form_position']) && $light_config['post_form_position'] == 0) { ?>
+			<?php if(!empty($user)) {?>
+			<div class="card" id="comment_input">
+			<div class="card-body" >
+				<!--{hook thread_quick_reply_before.htm}-->
+			<div class="post newpost media" style="border-bottom: none;">
+				<a href="<?php echo url("user-$user[uid]");?>" class="mr-3 post_avatar d-none d-lg-block" tabindex="-1">
+					<img class="avatar-3" src="<?php echo $user['avatar_url'];?>">
+				</a>
+				<div class="media-body">
+					<div class="post_user_info">
+					<div class="d-flex justify-content-between text-muted ">
+						<div>
+							<div class="mb-2">
+								<a href="<?php echo url("user-$user[uid]");?>" class="mr-1 post_avatar d-lg-none" tabindex="-1">
+									<img class="avatar-1" src="<?php echo $user['avatar_url'];?>">
+								</a>
+								<?php echo $user['username'];?>
+								<!--{hook thread_quick_reply_name_end.htm}-->
+								
+							</div>
+						</div>
+						<div>
+							<span class="badge-secondary badge">
+							<span class="floor" id="newfloor"><?php echo ($thread['posts'] + 2);?></span><?php echo lang('floor');?>
+						</span>
+						</div>
+					</div>
+				</div>
+					<div>
+						<form action="<?php echo url("post-create-$tid-1");?>" method="post"
+							id="quick_reply_form" class="d-block">
+							<input type="hidden" name="doctype" value="1" />
+							<input type="hidden" name="return_html" value="1" />
+							<input type="hidden" name="quotepid" value="0" />
+	
+							<div class="message mt-1">
+								<textarea class="form-control" style="border-radius:14px;" placeholder="<?php echo lang('message');?>"
+									name="message" id="message"></textarea>
+							</div>
+							<div class="text-muted mt-2 small">
+								<div class="d-flex justify-content-between">
+									<div>
+										<!--{hook thread_quick_reply_left_start.htm}-->
+										<button type="submit" class="btn btn-primary jb-blue" style="border-radius:12px;" id="submit"
+											data-loading-text="<?php echo lang('submiting');?>...">
+											<?php echo lang('post_create');?> </button>
+										<!--{hook thread_quick_reply_left_end.htm}-->
+									</div>
+									<div>
+										<!--{hook thread_quick_reply_right_start.htm}-->
+										<a class="icon-mail-forward text-muted"
+											href="<?php echo url("post-create-$tid");?>" id="advanced_reply">
+											<?php echo lang('advanced_reply');?></a>
+										<!--{hook thread_quick_reply_right_end.htm}-->
+									</div>
+								</div>
+								<!--{hook thread_quick_reply_after.htm}-->
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+		</div>
+			<?php } else {?>
+				<div class="card">
+				<div class="card-body text-center">
+				 <p><?php echo lang('thread_please_after_login_reply');?></p>
+				 <div class="mt-3">
+					<a href="<?php echo url('user-login');?>" class="btn btn-primary" style="border-radius:12px;"><i class="fas fa-user-alt"></i> <?php echo lang('login');?></a> 
+				<a href="<?php echo url('user-create');?>" class="btn btn-outline-primary" style="border-radius:12px;"><i class="fas fa-user-plus"></i> <?php echo lang('register');?></a> 
+				</div>
+				</div>
+				</div>
+				<?php } };?>
+		<!--{hook thread_postlist_after.htm}-->
+
+		<div class="d-none threadlist"><input type="checkbox" name="modtid" value="<?php echo $thread['tid']; ?>"
+				checked /></div>
+		<?php include _include(APP_PATH.'view/htm/thread_list_mod.inc.htm');?>
+
+		
+
+		<!--{hook thread_page_after.htm}-->
+
+		<a role="button" class="btn btn-secondary btn-block xn-back col-lg-6 mx-auto mb-3"
+			href="javascript:history.back();"><?php echo lang('back');?></a>
+
+	</div>
+	<div class="col-lg-3 d-none d-lg-block aside">
+		
+		<div class="card card-user-info overflow-hidden">
+				<?php if (isset($light_config['thread_user_bg']) && $light_config['thread_user_bg'] == 1 ) { ?>
+			<div class=" rounded-0 mb-0 index-siteInfo-bg" <?php if($user && isset($light_config['user_bg_switch']) && $light_config['user_bg_switch'] == 1){ ;?> style="background-image: url('./plugin/zaesky_theme_light/view/img/bgimg/bg-<?php echo $thread['user']['bgimg'];?>.png');"<?php }else{ ?> style="background-image: url('./plugin/zaesky_theme_light/view/img/bgimg/bg-0.png');" <?php }?>>
+			</div>
+			<?php }?>
+			<div class="card-body py-4">
+				<div class="text-center " <?php if (isset($light_config['thread_user_bg']) && $light_config['thread_user_bg'] == 1 ) { ?> style="margin-top: -54px;" <?php }?>>
+					<a href="<?php echo url("user-$thread[uid]");?>" tabindex="-1">
+						<img class="avatar-4" src="<?php echo $thread['user_avatar_url'];?>"
+							style="border: 2px solid var(--white);">
+					</a>
+					<div>
+						<div class="font-weight-bold my-3">
+							<a href="<?php echo url("user-".$thread['user']['uid']);?>"><?php echo $thread['user']['username'];?></a>
+							<!--{hook thread_user_username_after.htm}-->
+						</div>
+						<div class="mt-2"><span class="badge badge-primary mr-1"><?php echo lang('user_uid');?>:<?php echo $thread['user']['uid'];?></span>
+							<span class="badge badge-info"><?php echo $thread['user']['groupname'];?></span>
+							<!--{hook thread_user_groupname_end.htm}-->
+						</div>
+						<div class="mt-3">
+						<!--{hook thread_user_info_after.htm}-->
+					</div>
+					</div>
+				</div>
+			</div>
+			<div class="card-footer d-flex justify-content-around">
+				<table class="w-100 small">
+					<tr align="center" class="justify-content-around d-flex">
+						<td>
+							<span class="text-muted"><?php echo lang('threads');?></span><br>
+							<b><?php echo $thread['user']['threads'];?></b>
+						</td>
+						<!--{hook thread_user_threads_after.htm}-->
+						<td>
+							<span class="text-muted"><?php echo lang('posts');?></span><br>
+							<b><?php echo $thread['user']['posts'];?></b>
+						</td>
+						<!--{hook thread_user_posts_after.htm}-->
+					</tr>
+				</table>
+			</div>
+		</div>
+
+		<!--{hook thread_user_after.htm}-->
+
+	</div>
+</div>
+
+<!--{hook thread_end.htm}-->
+
+<?php include _include(APP_PATH.'view/htm/footer.inc.htm');?>
+
+
+
+<?php if($thread['closed'] && ($gid == 0 || $gid > 5)) { ?>
+<script>
+	jmessage.val('<?php echo lang('thread_has_already_closed ');?>').attr('readonly', 'readonly');
+</script>
+<?php } ?>
+<!--{hook thread_js.htm}-->

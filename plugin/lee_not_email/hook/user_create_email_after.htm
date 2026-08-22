@@ -1,0 +1,25 @@
+<?php 
+    $conf_email = include "plugin/lee_not_email/conf.php";
+?>
+<?php if($conf_email['b_or_w'] == 'b'){ ?>
+    <a href="javascript:;" class="btn btn-primary btn-sm mb-3" data-target="#the_email">查看禁用邮箱列表</a>
+    <?php }elseif($conf_email['b_or_w'] == 'w'){ ?>
+    <a href="javascript:;" class="btn btn-primary btn-sm mb-3" data-target="#the_email">查看可用邮箱列表</a>
+    <?php } ?>
+<script>
+// 页面正文里的脚本先于 jQuery 加载，这里用原生事件委托（点击时才使用 jQuery/Bootstrap）
+document.addEventListener('click', function(e) {
+    var btn = e.target.closest ? e.target.closest('[data-target="#the_email"]') : null;
+    if (!btn) return;
+    e.preventDefault();
+    var el = document.getElementById('the_email');
+    if (el && !el.classList.contains('show')) {
+        // 兼容 Bootstrap 4（当前系统使用）与 Bootstrap 5 两种弹窗 API
+        if (window.bootstrap && bootstrap.Modal && bootstrap.Modal.getOrCreateInstance) {
+            bootstrap.Modal.getOrCreateInstance(el).show();
+        } else if (window.jQuery && jQuery.fn.modal) {
+            jQuery(el).modal('show');
+        }
+    }
+});
+</script>

@@ -1,0 +1,217 @@
+<?php include _include(APP_PATH.'view/htm/header.inc.htm');?>
+<div id="discoveryPage">
+<!--{hook discovery_start.htm}-->
+<div class="row">
+	<div class="col-12 mb-lg-3">
+		<!--{hook discovery_before.htm}-->
+	</div>
+</div>
+<div class="row">
+	<div class="col-md-6 col-xl-4">
+		<div class="card mb-3 overflow-hidden">
+		  <div class="card-header py-4 border-0 text-center" style="background: url('./plugin/zaesky_theme_light/view/img/itemBg3.png');background-position: center;background-size: cover;">
+			<!-- <div class="p-3 mb-2">
+			  <i class="fab fa-3x fa-steam text-white-75"></i>
+			</div> -->
+			<p class="font-weight-bold mb-0">
+				新鲜发布
+			</p>
+		  </div>
+		  <div class="card-body">
+			<div class="site-top">
+				<ul class="site-list-ul discovery-rank-list">
+					<?php 
+					$new_list = get_new_threadlist(); //获取最新的帖子
+				thread_list_access_filter($new_list, $gid);//过滤没有权限访问的帖子，必须要做
+					if($new_list) {
+						foreach($new_list as $thread) {
+							$avatar_url = 'upload/avatar/000/'.$thread['uid'].'.png';
+						if(file_exists($avatar_url)==false){
+							$avatar_url = 'view/img/avatar.png';
+						}
+							?>
+					<li class="d-flex justify-content-between">
+						<div class="text-truncate">
+							<a href="<?php echo url("user-$thread[uid]");?>"><img src="<?php echo $avatar_url;?>" alt="用户头像" class="avatar-1 mr-1"></a>
+							<a href="<?php echo url("thread-$thread[tid]");?>"><?php echo $thread['subject'];?></a>
+						</div>
+						<div class="text-nowrap">
+							<span class="date text-grey"><?php echo humandate($thread['create_date'])?></span>
+						</div>
+					</li>
+					<?php }} else { ?>
+						<?php echo lang('none');?>
+					<?php } ?>
+			</ul>	
+			</div>
+		  </div>
+		  <!-- <div class="block-content block-content-full text-center bg-body-light">
+			<a class="btn btn-alt-primary" href="javascript:void(0)">
+			  <i class="far fa-eye opacity-50 me-1"></i> Show all..
+			</a>
+		  </div> -->
+		</div>
+	  </div>
+	  <div class="col-md-6 col-xl-4">
+		<div class="card mb-3 overflow-hidden">
+		  <div class="card-header py-4 border-0 block-content-full text-center" style="background: url('./plugin/zaesky_theme_light/view/img/itemBg1.png');;background-position: center;background-size: cover;">
+			<!-- <div class="p-3 mb-2">
+			  <i class="fa fa-3x fa-film text-white-75"></i>
+			</div> -->
+			<p class="font-weight-bold mb-0">
+				最新讨论
+			</p>
+		  </div>
+		  <div class="card-body block-content-full">
+			<div class="site-top">
+				<ul class="site-list-ul discovery-rank-list">
+					<?php 
+					$newReplylist = get_new_reply_threadlist(); //获取精华二的帖子
+				thread_list_access_filter($newReplylist, $gid);//过滤没有权限访问的帖子，必须要做
+					if($newReplylist) {
+						foreach($newReplylist as $thread) {
+							$avatar_url = 'upload/avatar/000/'.$thread['uid'].'.png';
+						if(file_exists($avatar_url)==false){
+							$avatar_url = 'view/img/avatar.png';
+						}
+							?>
+					<li class="d-flex justify-content-between">
+						<div class="text-truncate">
+							<a href="<?php echo url("user-$thread[uid]");?>"><img src="<?php echo $avatar_url;?>" alt="用户头像" class="avatar-1 mr-1"></a>
+							<a href="<?php echo url("thread-$thread[tid]");?>"><?php echo $thread['subject'];?></a>
+						</div>
+						<div class="text-nowrap">
+							<span class="date text-grey"><?php echo humandate($thread['create_date'])?></span>
+						</div>
+					</li>
+					<?php }} else { ?>
+						<?php echo lang('none');?>
+					<?php } ?>
+			</ul>	
+			</div>
+		  </div>
+		  <!-- <div class="block-content block-content-full text-center bg-body-light">
+			<a class="btn btn-alt-primary" href="javascript:void(0)">
+			  <i class="far fa-eye opacity-50 me-1"></i> Show all..
+			</a>
+		  </div> -->
+		</div>
+	  </div>
+	  <div class="col-md-6 col-xl-4">
+		<div class="card overflow-hidden mb-3">
+		  <div class="card-header py-4 border-0 block-content-full text-center" style="background: url('./plugin/zaesky_theme_light/view/img/itemBg4.jpg');background-position: center;background-size: cover;">
+			<!-- <div class="p-3 mb-2">
+			  <i class="fab fa-3x fa-youtube text-white-75"></i>
+			</div> -->
+			<p class="  font-weight-bold mb-0">
+				互动评论
+			</p>
+		  </div>
+		  <div class="card-body block-content-full">
+			<div class="site-top">
+				<ul class="site-list-ul discovery-rank-list">
+					<?php
+					$ax_posts = discovery_get_comment_list();
+					 if($ax_posts) {
+						foreach($ax_posts as &$post){ ?>
+					<li class="d-flex justify-content-between">
+						<div class="text-truncate">
+							<span><a href="<?php echo url("user-$post[uid]")?>" tabindex="-1" class="mr-2">
+									<img class="avatar-1" src="<?php echo $post['user_avatar_url'];?>">
+									<span class="username font-weight-bold mx-1"><?php echo $post['username']?></span>
+								</a>
+							</span>
+								<a href="<?php echo url("thread-$post[tid]")?>"><?php echo strip_tags(xn_substr($post['message_fmt'], 0, 25));?></a>
+							</div>
+							<div class="text-nowrap">
+								<span class="date text-grey"><?php echo $post['create_date_fmt']?></span>
+							</div>
+							</li>
+					<?php }} else { ?>
+						<?php echo lang('none');?>
+					<?php } ?>
+			</ul>	
+			</div>
+		  </div>
+		  <!-- <div class="block-content block-content-full text-center bg-body-light">
+			<a class="btn btn-alt-primary" href="javascript:void(0)">
+			  <i class="far fa-eye opacity-50 me-1"></i> Show all..
+			</a>
+		  </div> -->
+		</div>
+	  </div>
+</div>
+		<div class="row">
+			<div class="col-lg-9 pr-lg-0">
+				<!--{hook discovery_forum_mian_start.htm}-->
+				<div class="card mb-lg-3">
+					<div class="card-header">
+						<i class="fas fa-list mr-2"></i>
+						<?php echo lang('discovery_allforum');?>
+					</div>
+					<div class="card-body py-2">
+						<div class="row row-cols-1 row-cols-md-1 row-cols-lg-2">
+						<?php foreach($forumlist_show as $_forum) { ?>
+							<!--{hook header_nav_forumlist_loop_start.htm}-->
+							<div class="col px-2 py-2">
+								<div class="card p-3 rounded discovery_forum overflow-hidden">
+								<div class="  media " fid="<?php echo $_forum['fid'];?>" data-active="fid-<?php echo $_forum['fid'];?>">
+								<img class="avatar-4 rounded mr-2" src="<?php echo $_forum['icon_url'];?>">
+								<div class="media-body">
+									<h5><a href="<?php echo url("forum-$_forum[fid]");?>"><?php echo $_forum['name'];?></a><span class="badge badge-primary ml-2"><?php if($_forum['todayposts']>0) echo $_forum['todayposts'];?></span></h5>
+									<div class="small mb-2">
+									<span class="text-muted"><?php echo lang('mb_threads');?>：<?php echo $_forum['threads'];?></span>
+										<span class="text-muted ml-2"><?php echo lang('today_threads');?>：<?php echo $_forum['todaythreads'];?></span>
+									</div>
+										<p class="text-grey mb-0 small discovery-forum-brief"><?php echo $_forum['brief'];?></p>
+								</div>
+							</div>
+							<hr>
+							<div class="d-flex justify-content-between small">
+								<div>
+									<div class="text-small">
+										<span class=" text-muted"><?php echo lang('forum_moderator');?>：</span>
+										<?php if($_forum['modlist']) { ?>
+										<?php foreach ($_forum['modlist'] as $mod) { ?>
+										<a href="<?php echo url("user-$mod[uid]");?>"><img src="<?php echo $mod['avatar_url'];?>"
+												class="avatar-1" data-toggle="tooltip" data-placement="top"
+												title="<?php echo $mod['username'];?>"></a>
+										<?php } ?>
+										<?php  } else {?>
+										<span class="text-gray"><?php echo lang('no_moderator');?></span>
+										<?php } ?>
+									</div>
+								</div>
+								<div>
+									<span class="into_forum">
+										<a class="text-grey rounded into_forum_link" href="<?php echo url("forum-$_forum[fid]");?>"><?php echo lang('discovery_intoforum');?></a>
+									</span>
+								</div>
+							</div>
+						</div>
+						</div>
+							<!--{hook header_nav_forumlist_loop_end.htm}-->
+							<?php } ?>
+						</div>
+					</div>
+				</div>
+				<!--{hook discovery_forum_end.htm}-->
+			</div>
+		
+			<div class="col-lg-3">
+				<!--{hook discovery_forum_right.htm}-->
+				</div>
+		
+		</div>
+	
+	</div>
+
+
+<?php include _include(APP_PATH.'view/htm/footer.inc.htm');?>
+
+<script>
+$('li[data-active="<?php echo empty($light_config['disc_page_index'] && $light_config['disc_page']) ? 'discovery' : 'index'; ?>"]').addClass('active');
+$('a[data-active="<?php echo empty($light_config['disc_page_index'] && $light_config['disc_page']) ? 'discovery' : 'index'; ?>"]').addClass('active');
+</script>
+
+<!--{hook discovery_js.htm}-->

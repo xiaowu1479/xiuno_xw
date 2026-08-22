@@ -1,0 +1,11 @@
+{
+    "name": "消息",
+    "brief": "消息系统<br />v1.9 头部导航细节微调<br />(FOR 4.0 正式版)",
+    "version": "1.9",
+    "bbs_version": "4.0.3",
+    "installed": 1,
+    "enable": 1,
+    "hooks_rank": [],
+    "overwrites_rank": [],
+    "dependencies": []
+}

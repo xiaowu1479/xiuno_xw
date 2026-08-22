@@ -1,0 +1,10 @@
+<?php 
+//这个文件是手机端显示，如果需要开启请把后缀改为htm
+$_medallist=medal_user_read_fmt($thread['uid']);
+if(count($_medallist)>0){?>
+<div class="hidden-lg" style="text-align:center;">
+    <?php foreach($_medallist as $_m){?>
+    <img width="20px" height="35px" src="plugin/tt_medal/img/<?php echo $_m['filename'];?>" title="<?php echo $_m['fmt_description'];?>"/>
+    <?php }?>
+</div>
+<?php }?>

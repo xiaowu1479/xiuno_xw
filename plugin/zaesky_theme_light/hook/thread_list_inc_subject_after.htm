@@ -1,0 +1,7 @@
+<?php if (isset($light_config['new_thread']) && $light_config['new_thread'] == 1) { ?>  
+<?php  
+	if (date('Y-m-d', $_thread['create_date']) == date('Y-m-d')) {
+	?>
+	<span class="badge jb-pink badge-pill"><?= lang('new_post_icon') ?></span>
+	<?php  }  ?>
+    <?php  }  ?>

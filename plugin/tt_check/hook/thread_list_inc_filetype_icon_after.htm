@@ -1,0 +1,7 @@
+<?php if(!empty($group['see_check'])) {
+    if(!isset($_thread['OK']) || $_thread['OK'] =='0'){ ?>
+    <i class="icon-coffee" style="color:rebeccapurple;" aria-hidden="true" title="审核主题"></i>
+    <?php } elseif($_thread['OK'] =='-2') { ?>
+    <i class="icon-recycle" style="color:lawngreen;" aria-hidden="true" title="回收站中的主题"></i>
+    <?php } ?>
+<?php }?>

@@ -1,0 +1,14 @@
+{
+    "name": "小黑屋",
+    "brief": "小黑屋，主要用于把指定用户拉进禁止用户组，同时屏蔽所有主题帖和回帖内容，屏蔽内容管理员可见。",
+    "version": "1.01",
+    "bbs_version": "4.0.4",
+    "installed": 1,
+    "enable": 1,
+    "hooks_rank": {
+        "admin_user_update_group_after.htm": 99999,
+        "post_list_inc_message_before.htm": -99999
+    },
+    "overwrites_rank": [],
+    "dependencies": []
+}

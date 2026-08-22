@@ -1,0 +1,7 @@
+<?php if(!empty($uid)) { $unread = isset($user['unread_notices']) ? $user['unread_notices'] : 0; ?>
+	<li class="nav-item usernotice <?php echo $unread !=0 ? 'current':''; ?>" id="nav-usernotice">
+		<a class="nav-link" href="<?php echo url("my-notice");?>"><i class="icon icon-bell"></i> <?php echo lang('notice');?> <span class="d-none unread badge badge-danger badge-pill" id="nav-usernotice-unread-notices"><?php echo $unread; ?></span>			
+		</a>
+	</li>
+<?php }?>
+			

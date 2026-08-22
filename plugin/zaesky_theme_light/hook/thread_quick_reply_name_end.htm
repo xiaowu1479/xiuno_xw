@@ -1,0 +1,16 @@
+
+<?php if (isset($light_config['post_show_first_floor']) && $light_config['post_show_first_floor'] == 1) { ?>	
+	<?php if (isset($thread) && ($user['uid'] == $thread['uid'])) { ?>
+
+		<span class="badge badge-primary badge-pill"><?= lang('post_author') ?></span>
+
+	<?php } ?>
+<?php } ?>
+
+
+  <?php if (isset($light_config['groupicon_display']) && $light_config['groupicon_display'] == 1) {
+    $groupImg = './plugin/zaesky_theme_light/view/img/groupicon/'.$user['gid'].'.png';
+    if(file_exists($groupImg))
+      echo '<img src="./plugin/zaesky_theme_light/view/img/groupicon/'.$user['gid'].'.png" class="user-group-icon" data-toggle="tooltip" data-placement="top" title="'.$user['groupname'].'">';
+    }?>
+  

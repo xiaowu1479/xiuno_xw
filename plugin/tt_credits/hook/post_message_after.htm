@@ -1,0 +1,93 @@
+<?php if($isfirst&&$group['allowsell']=="1") {?>
+<!-- 外层卡片容器 -->
+<div style="margin:15px 0;padding:15px;background:#fff;border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,0.05);">
+    <!-- 1. 购买（是否）区域——完全照搬收取费用的UI结构 -->
+    <div class="form-group" style="margin-bottom:15px;">
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+            <!-- 标签：和“收取费用”标签样式完全一样 -->
+            <span style="padding:6px 12px;background:#e9ecef;border:1px solid #ced4da;border-radius:.25rem;"><?php echo lang('pay');?></span>
+            
+            <!-- 是/否选项容器：直接用收取费用输入框的样式 -->
+            <div style="padding:6px 12px;border:1px solid #ced4da;border-radius:.25rem;background:#fff;min-width:100px;/* 和输入框宽度统一 */">
+                <?php 
+                // 调整是/否选项内部样式，让单选框和文字对齐
+                $statusHtml = $input['content_num_status'];
+                // 统一单选框大小和间距，和输入框内文字视觉匹配
+                $statusHtml = str_replace(
+                    'type="radio"', 
+                    'type="radio" style="width:16px;height:16px;margin:0 5px 0 8px;vertical-align:middle;"', 
+                    $statusHtml
+                );
+                // 统一选项文字样式
+                $statusHtml = str_replace(
+                    ['<label', '</label>'], 
+                    ['<label style="margin:0 10px 0 0;vertical-align:middle;"', '</label>'], 
+                    $statusHtml
+                );
+                echo $statusHtml;
+                ?>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. 收取费用区域——作为基准样式保留 -->
+    <div class="form-group" id="content_num_input" style="margin-bottom:15px;">
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+            <span style="padding:6px 12px;background:#e9ecef;border:1px solid #ced4da;border-radius:.25rem;">收取费用</span>
+            <input type="tel" name="content_num" id="content_number" placeholder="0" value="<?php echo $content_num;?>" 
+                   maxlength="5" style="width:100px;padding:6px 12px;border:1px solid #ced4da;border-radius:.25rem;"
+                   oninput="if(!/^[0-9]+$/.test(value)) value=value.replace(/\D/g,'');if(value>9999)value=9999;if(value<0)value=null">
+            <select name="content_type" id="content_type" 
+                    style="padding:6px 12px;border:1px solid #ced4da;border-radius:.25rem;background:#fff;">
+                <option value="<?php echo lang('credits1');?>"><?php echo lang('credits1');?></option>
+                <option value="<?php echo lang('credits2');?>"><?php echo lang('credits2');?></option>
+                <option value="<?php echo lang('credits3');?>"><?php echo lang('credits3');?></option>
+            </select>
+            <a class="btn btn-sm btn-primary" href="javascript:void(0);" role="button" 
+               data-toggle="modal" data-target="#text_f_modal">插入付费内容</a>
+        </div>
+    </div>
+
+    <!-- 提示文字区 -->
+    <div style="padding:10px;background:#f8f9fa;border-radius:4px;margin-top:10px;">
+        <span class="small">一定要记得<span class="text-danger font-weight-bold">插入付费内容</span>和设置好<span class="text-danger font-weight-bold">收取费用</span>才能够生效哦！</span>
+        <!--{hook post_message_credits_after.htm}-->
+    </div>
+</div>
+
+<!-- 付费内容模态框（保持原有） -->
+<div class="modal fade" id="text_f_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" style="max-width:600px!important; margin-top:150px!important;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">付费功能</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group input-group">
+                    <textarea style="min-height:160px;" type="text" name="text_f" id="text_f" placeholder="请输入付费内容" class="form-control"></textarea>
+                </div>
+            </div>
+            <div style="margin-top:-40px;margin-bottom:-15px;" class="modal-body">
+                <div style="border:1px;border-radius:3px;color:#ddd;padding:0 10px;margin-top:5px;"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" onclick="text_f_submit_modal()">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+function text_f_submit_modal(){
+    $("#text_f_modal").modal("hide");  
+    var text_f = $('#text_f').val();
+    <?php if( !empty($cc_wymusic_kv['api_url']) ){?>
+    var http_url = $('#http_url').val();<?php }?>
+    if(text_f){
+        if (window.tinymce && tinymce.activeEditor) { tinymce.activeEditor.insertContent('[ttPay]'+text_f+'[/ttPay]', 1); } else { var jm = jQuery('#message'); if (jm.length) jm.val(jm.val() + '[ttPay]'+text_f+'[/ttPay]'); }
+        $('#text_f').val('');
+    }
+}
+</script>
+<?php } ?>

@@ -1,0 +1,4 @@
+<?php if ($user && $uid != $_user['uid']) { ?>
+<a role="button" class="btn btn-secondary" href="javascript:;" data-username="<?php echo $_user['username']; ?>" data-uid="<?php echo $_user['uid']; ?>" data-modal-url="<?php echo url("sx").'&uid='.$_user['uid'];?>" data-modal-title="给 <?php echo $_user['username']; ?> 发送私信" data-modal-size="lg" data-modal-arg="<?php echo $_user['uid']; ?>" title="发送私信">发消息</a>
+
+<?php } ?>

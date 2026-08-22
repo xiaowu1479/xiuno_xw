@@ -1,0 +1,104 @@
+<?php if(empty($uid)) die();
+    $num_pid = db_count('medal',array());
+	$page = param(2,1);
+	$medallist =  medal_list_get($page,20);
+	$pagination = pagination(url("my-medal-{page}"), $num_pid, $page,20);
+	$medal_user = medal_user_read($uid);
+?>
+<template include="./plugin/tt_medal/view/htm/my_medal.template.htm">
+	<slot name="my_body"><div class="col-md-10 mx-auto">
+	<table class="table" style="text-align:center;vertical-align:middle;"><tr><th width="20%"><?php echo lang('medal') ?>列表</th><th width="55%">介绍</th><th width="25%">购买</th></tr>
+		<?php foreach($medallist as $m){?><tr>
+			<td><img width="18px" height="18px" src="plugin/tt_medal/img/<?php echo $m['filename'];?>"/><br><?php echo $m['name'];?></td>
+			<td><?php echo $m['description'];?></td>
+			<td>
+				<?php if(medal_user__havemedal($m['mid'],$medal_user)){ ?>
+				<span style="color:limegreen;"><button type="button" class="btn btn-outline-success">已拥有</button></span>
+				<?php }elseif($m['isbuy']==1) {?>
+				<button type="button" class="btn btn-outline-primary" onclick="buy_medal('<?php echo $m["mid"];?>');"><?php echo credits_get_text($m['money_type'],$m['money']);?>&nbsp;购买<?php echo $m['time']==0 ?'永久':$m['time'].'天' ?></button>
+				<?php }elseif($m['isbuy']==0){ 
+				    $mcListOne=db_count('medal_check',array('uid'=>$uid,'mid'=>$m['mid']));
+				    if($mcListOne==0){
+				?>
+				<button type="button" id="btn_apply" class="btn btn-outline-secondary" data-toggle="modal" data-target="#applyModal" onclick="click_apply('<?php echo $m["mid"];?>','<?php echo $m["name"];?>')">申请勋章</button>
+				<?php }else{ ?>
+				    <span style="color:red;"><button type="button" class="btn btn-outline-secondary">正在申请中</button></span>
+				<?php }}else{ ?>
+				<span style="color:red;"><button type="button" class="btn btn-outline-info">未拥有</button></span>				
+				<?php } ?>
+			</td>
+		</tr><?php }?>
+	</table>
+		<?php if($pagination) { ?>
+		<nav><ul class="pagination justify-content-center flex-wrap"><?php echo $pagination; ?></ul></nav>
+		<?php } ?>
+	</div></slot></template>
+	<!--弹出框，申请勋章-->
+	<div class="modal fade" id="applyModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    	<div class="modal-dialog">
+    		<div class="modal-content">
+    			<div class="modal-header">
+    				<span id="apply_headLable"></span>
+    			</div>
+    			<div class="modal-body">
+    				<form action="<?php echo url('my-medal_open');?>" method="post" id="AMform">
+                      <div class="form-group">
+                        <label for="name" style="color:Red;">请输入申请理由</label>
+                        <textarea class="form-control" rows="3" id="txt_reason"></textarea>
+                      </div>
+                    </form>
+    			</div>
+    			<div class="modal-footer">
+    				<button type="button" class="btn btn-default" 
+    						data-dismiss="modal">关闭
+    				</button>
+    				<button type="button" class="btn btn-primary" id="applyTrue">
+    					立即申请
+    				</button>
+    			</div>
+    		</div>
+    	</div>
+    </div>
+<script>
+    $('a[data-active="my-medal"]').addClass('active');
+</script>
+<script>
+    var mid=""
+    var applyTrue = $("#applyTrue");
+    var AMform = $("#AMform");
+	function buy_medal(mid){
+		$.confirm('您确定要购买该<?php echo lang("medal") ?>吗？',function(){
+		    var postdata ="mid="+mid;
+		    $.xpost(xn.url('my-medal'),postdata,function(code,message){
+				$.alert(message);
+				if(code==0)
+				    setInterval(function(){
+				        location.reload();
+				    },2000);
+			});
+		});
+	}
+	function click_apply(id,name){
+	    mid=id
+	    $('#apply_headLable').text("申请<?php echo lang('medal') ?>-"+name)
+	}
+	applyTrue.on('click',function(){
+	    if($("#txt_reason").val()===""){
+	        $.alert("申请理由不能为空");
+	        $('#applyModal').modal("hide");
+	        return;
+	    }
+        var postdata={"mid":mid,"reason":$("#txt_reason").val()}
+        $.xpost(xn.url('my-medal_apply'),postdata,function(code,message){
+            $.alert(message);
+			$('#applyModal').modal("hide");
+			if(code==0)
+			    setInterval(function(){
+			        location.reload();
+			    },2000);
+        })
+    });
+    $('#applyModal').on('hide.bs.modal', function () {
+        $("#txt_reason").val("");
+    });
+</script>

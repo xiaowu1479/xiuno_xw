@@ -1,0 +1,26 @@
+
+<?php if($_user['gid'] != 7){?>
+<script>
+var jgid = $("#_gid");
+var sgid = $("#_gid").val();
+jgid.on('change', function(){
+    var sgid = jgid.val();
+    fid_on_change(sgid);
+});
+function fid_on_change(sgid){
+    if(sgid == 7){
+        $("#prison").fadeIn("fast");
+    }else{
+        $("#prison").fadeOut("fast");
+    }
+}
+//fid_on_change(sgid);
+$("#endtime").bind("input propertychange",function(event){
+    if(this.value.length == 1) {
+        this.value = this.value.replace(/[^1-9]/g, '1');
+    } else {
+        this.value = this.value.replace(/\D/g, '0');
+    }
+})
+</script>
+<?php }?>

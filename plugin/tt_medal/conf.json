@@ -1,0 +1,14 @@
+{
+    "name": "勋章中心",
+    "brief": "本插件需要预先安装积分插件v1.20或更高版本以及消息插件！<br>支持展示勋章、购买勋章、查看他人勋章,后台设置勋章<br>1.1版本新增销毁勋章<br>1.2版本新增申请勋章<br>1.3版本新增勋章时效<br>考虑到效率问题，勋章最多设置50个。<br/>说明、此版未适配主题（xiuno origin）更多插件下载请访问><a class='text-danger' href='https://xiu.no/'>XIU.NO</a>",
+    "version": "1.3.1",
+    "bbs_version": "4.0.4",
+    "installed": 1,
+    "enable": 1,
+    "hooks_rank": [],
+    "overwrites_rank": [],
+    "dependencies": {
+        "tt_credits": "1.20",
+        "huux_notice": "1.9"
+    }
+}

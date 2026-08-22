@@ -1,0 +1,11 @@
+{
+    "name": "热门主题插件",
+    "brief": "基于“乐客热门主题插件”改进。主页新增“热门”标签，展示本周被点击最多的主题（只有一页，是特意的设计）；首页右侧与帖子详情页右侧，展示本周被点击最多的5条主题。",
+    "version": "3.0",
+    "bbs_version": "4.0.4",
+    "installed": 1,
+    "enable": 1,
+    "hooks_rank": [],
+    "overwrites_rank": [],
+    "dependencies": []
+}

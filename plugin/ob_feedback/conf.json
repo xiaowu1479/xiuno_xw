@@ -1,0 +1,13 @@
+{
+    "name": "反馈插件",
+    "brief": "用户可以向管理员举报帖子与回帖。收到举报后可进行处理与奖励。",
+    "version": "2.0.0",
+    "bbs_version": "4.0.3",
+    "installed": 1,
+    "enable": 1,
+    "hooks_rank": [],
+    "overwrites_rank": [],
+    "dependencies": {
+        "huux_notice": "1.0.0"
+    }
+}

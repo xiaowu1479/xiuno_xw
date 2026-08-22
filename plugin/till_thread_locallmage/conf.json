@@ -1,0 +1,11 @@
+{
+    "name": "编辑器辅助 - TinyMCE专用版",
+    "brief": "编辑器中增加图片本地化功能",
+    "version": "1.0.0",
+    "bbs_version": "4.0.4",
+    "installed": 0,
+    "enable": 0,
+    "hooks_rank": [],
+    "overwrites_rank": [],
+    "dependencies": []
+}

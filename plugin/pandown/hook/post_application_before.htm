@@ -1,0 +1,37 @@
+<div class="mb-3">
+	<div class="small font-weight-bold mb-2">网盘链接</div>
+	<textarea class="form-control form-control-sm mb-2" name="pandown_url_s" id="pandown_url_s" rows="3" placeholder="粘贴分享内容（含链接），自动识别"></textarea>
+	<div class="mb-2" id="pandown_preview_s" style="display:none;">
+		<small class="text-success">识别到链接：</small>
+		<code id="pandown_url_preview_s" class="text-break"></code>
+	</div>
+	<button type="button" class="btn btn-sm btn-primary" onclick="pandown_sidebar_submit()">插入到正文</button>
+</div>
+<script>
+function pandown_sidebar_submit() {
+	var text = $('#pandown_url_s').val().trim();
+	if (!text) {
+		$.alert('请输入分享内容');
+		return;
+	}
+	var url = pandown_extract_url(text);
+	if (!url) {
+		$.alert('未识别到有效链接，请确认包含网盘链接');
+		return;
+	}
+	add_pandown_insert('[pd url="' + url + '"]');
+	$('#pandown_url_s').val('');
+	$('#pandown_preview_s').hide();
+}
+$(document).on('input', '#pandown_url_s', function() {
+	var text = $(this).val().trim();
+	if (!text) { $('#pandown_preview_s').hide(); return; }
+	var url = pandown_extract_url(text);
+	if (url && url !== text) {
+		$('#pandown_url_preview_s').text(url);
+		$('#pandown_preview_s').show();
+	} else {
+		$('#pandown_preview_s').hide();
+	}
+});
+</script>

@@ -1,0 +1,349 @@
+<!--禁止打开控制台-->
+	<div class="form-group row">
+	<label class="col-md-2 form-control-label text-md-right pr-0" for="window_no_console">
+		<b class="text-dark"><?php echo lang('admin_setting_config_no_console'); ?>：</b>
+	</label>
+	<div class="col-md-8">
+		<div class="no-console" id="window_no_console">
+			<label class="custom-input custom-radio mr-3">
+				<input type="radio" name="window_no_console" value="1" checked="checked"> <?php echo lang('admin_on'); ?>
+			</label>
+
+
+			<label class="custom-input custom-radio mr-3">
+				<input type="radio" name="window_no_console" value="0" <?php if (isset($light_config['window_no_console']) && $light_config['window_no_console'] == 0) { ?>  checked="checked" <?php }?> > <?php echo lang('admin_off'); ?>
+			</label>
+		</div>
+		<div class="figure-caption mt-2">
+			<?php echo lang('window_no_console_tip'); ?>
+		</div>
+	</div>
+	</div>	
+					<!--用户组图标显示-->
+					<div class="form-group row">
+						<label class="col-md-2 form-control-label text-md-right pr-0" for="groupicon_display">
+							<b class="text-dark"><?php echo lang('admin_setting_config_groupicon_display'); ?>：</b>
+						</label>
+						<div class="col-md-8">
+							<div class="groupicon-display" id="groupicon_display">
+	
+								<label class="custom-input custom-radio mr-3">
+									<input type="radio" name="groupicon_display" value="1" checked="checked"> <?php echo lang('admin_on'); ?>
+								</label>
+	
+								<label class="custom-input custom-radio mr-3">
+									<input type="radio" name="groupicon_display" value="0" <?php if (isset($light_config['groupicon_display']) && $light_config['groupicon_display'] == 0) { ?>  checked="checked" <?php }?> > <?php echo lang('admin_off'); ?>
+								</label>
+							</div>
+							<div class="figure-caption mt-2">
+								<?php echo lang('groupicon_display_tip'); ?>
+							</div>
+						</div>
+				</div>	
+				<!--用户在线标识-->
+				<div class="form-group row">
+					<label class="col-md-2 form-control-label text-md-right pr-0" for="user_online">
+						<b class="text-dark"><?php echo lang('admin_setting_config_user_online'); ?>：</b>
+					</label>
+					<div class="col-md-8">
+						<div class="user-online" id="user_online">
+
+							<label class="custom-input custom-radio mr-3">
+								<input type="radio" name="user_online" value="1" checked="checked"> <?php echo lang('admin_on'); ?>
+							</label>
+
+							<label class="custom-input custom-radio mr-3">
+								<input type="radio" name="user_online" value="0" <?php if (isset($light_config['user_online']) && $light_config['user_online'] == 0) { ?>  checked="checked" <?php }?> > <?php echo lang('admin_off'); ?>
+							</label>
+						</div>
+					</div>
+			</div>
+			<!--用户信息卡片显示-->
+			<div class="form-group row">
+				<label class="col-md-2 form-control-label text-md-right pr-0" for="user_info_card">
+					<b class="text-dark"><?php echo lang('admin_setting_config_user_info_card'); ?>：</b>
+				</label>
+				<div class="col-md-8">
+					<div class="user-info-card" id="user_info_card">
+
+						<label class="custom-input custom-radio mr-3">
+							<input type="radio" name="user_info_card" value="1" checked="checked"> <?php echo lang('admin_on'); ?>
+						</label>
+
+						<label class="custom-input custom-radio mr-3">
+							<input type="radio" name="user_info_card" value="0" <?php if (isset($light_config['user_info_card']) && $light_config['user_info_card'] == 0) { ?>  checked="checked" <?php }?> > <?php echo lang('admin_off'); ?>
+						</label>
+					</div>
+					<div class="figure-caption mt-2">
+						<?php echo lang('user_info_card_tip'); ?>
+					</div>
+				</div>
+		</div>		
+			<!--返回顶部-->
+			<div class="form-group row">
+				<label class="col-md-2 form-control-label text-md-right pr-0" for="back_top">
+					<b class="text-dark"><?php echo lang('admin_setting_config_back_top'); ?>：</b>
+				</label>
+				<div class="col-md-8">
+					<div class="back-top" id="back_top">
+
+						<label class="custom-input custom-radio mr-3">
+							<input type="radio" name="back_top" value="1" checked="checked"> <?php echo lang('admin_on'); ?>
+						</label>
+
+						<label class="custom-input custom-radio mr-3">
+							<input type="radio" name="back_top" value="0" <?php if (isset($light_config['back_top']) && $light_config['back_top'] == 0) { ?>  checked="checked" <?php }?> > <?php echo lang('admin_off'); ?>
+						</label>
+					</div>
+					
+				</div>
+		</div>	
+		<!--置顶帖子独立模块-->
+		<div class="form-group row">
+			<label class="col-md-2 form-control-label text-md-right pr-0" for="thread_top_ind">
+				<b class="text-dark"><?php echo lang('admin_setting_thread_top_ind'); ?>：</b>
+			</label>
+			<div class="col-md-8">
+				<div class="thread-top-ind" id="thread_top_ind">
+
+					<label class="custom-input custom-radio mr-3">
+						<input type="radio" name="thread_top_ind" value="1" checked="checked"> <?php echo lang('admin_on'); ?>
+					</label>
+
+					<label class="custom-input custom-radio mr-3">
+						<input type="radio" name="thread_top_ind" value="0" <?php if (isset($light_config['thread_top_ind']) && $light_config['thread_top_ind'] == 0) { ?>  checked="checked" <?php }?> > <?php echo lang('admin_off'); ?>
+					</label>
+				</div>
+				<div class="figure-caption mt-2">
+					<?php echo lang('thread_top_ind_tip'); ?>
+				</div>
+			</div>
+	</div>	
+	
+										
+						<hr>
+						<!--底栏开关-->
+						<div class="form-group row">
+							<label class="col-md-2 form-control-label text-md-right pr-0" for="dock_switch">
+								<b class="text-dark"><?php echo lang('admin_setting_config_dock_switch'); ?>：</b>
+							</label>
+							<div class="col-md-8">
+								<div class="dock-switch" id="dock_switch">
+		
+									<label class="custom-input custom-radio mr-3">
+										<input type="radio" name="dock_switch" value="1" checked="checked"> <?php echo lang('admin_on'); ?>
+									</label>
+		
+									<label class="custom-input custom-radio mr-3">
+										<input type="radio" name="dock_switch" value="0" <?php if (isset($light_config['dock_switch']) && $light_config['dock_switch'] == 0) { ?>  checked="checked" <?php }?> > <?php echo lang('admin_off'); ?>
+									</label>
+								</div>
+							</div>
+						</div>
+						<!--底栏第三个功能-->
+						<div class="form-group row">
+							<label class="col-md-2 form-control-label text-md-right pr-0" for="dock_func_3">
+								<b class="text-dark"><?php echo lang('admin_setting_config_dock_func_3'); ?>：</b>
+							</label>
+							<div class="col-md-8">
+								<div class="dock_func" id="dock_func_3">
+		
+									<label class="custom-input custom-radio mr-3">
+										<input type="radio" name="dock_func_3" value="1" checked="checked"> <?php echo lang('dock_notice'); ?>
+									</label>
+		
+									<label class="custom-input custom-radio mr-3">
+										<input type="radio" name="dock_func_3" value="0" <?php if (isset($light_config['dock_func_3']) && $light_config['dock_func_3'] == 0) { ?>  checked="checked" <?php }?> > <?php echo lang('dock_search'); ?>
+									</label>
+								</div>
+							</div>
+						</div>
+						<hr>
+						<!--主题版权标识显示-->
+						<div class="form-group row">
+							<label class="col-md-2 form-control-label text-md-right pr-0" for="theme_copyright_switch">
+								<b class="text-dark"><?php echo lang('admin_setting_config_theme_copyright_switch'); ?>：</b>
+							</label>
+							<div class="col-md-8">
+								<div class="theme-copyright-switch" id="theme_copyright_switch">
+		
+									<label class="custom-input custom-radio mr-3">
+										<input type="radio" name="theme_copyright_switch" value="1" checked="checked"> <?php echo lang('admin_on'); ?>
+									</label>
+		
+									<label class="custom-input custom-radio mr-3">
+										<input type="radio" name="theme_copyright_switch" value="0" <?php if (isset($light_config['theme_copyright_switch']) && $light_config['theme_copyright_switch'] == 0) { ?>  checked="checked" <?php }?> > <?php echo lang('admin_off'); ?>
+									</label>
+								</div>
+							</div>
+						</div>
+						<!--图片懒加载-->
+						<div class="form-group row">
+							<label class="col-md-2 form-control-label text-md-right pr-0" for="pic_lazyload_switch">
+								<b class="text-dark"><?php echo lang('admin_setting_config_pic_lazyload_switch'); ?>：</b>
+							</label>
+							<div class="col-md-8">
+								<div class="pic-lazyload-switch" id="pic_lazyload_switch">
+		
+									<label class="custom-input custom-radio mr-3">
+										<input type="radio" name="pic_lazyload_switch" value="1" checked="checked"> <?php echo lang('admin_on'); ?>
+									</label>
+		
+									<label class="custom-input custom-radio mr-3">
+										<input type="radio" name="pic_lazyload_switch" value="0" <?php if (isset($light_config['pic_lazyload_switch']) && $light_config['pic_lazyload_switch'] == 0) { ?>  checked="checked" <?php }?> > <?php echo lang('admin_off'); ?>
+									</label>
+								</div>
+							</div>
+						</div>
+						<hr>
+						<!--用户背景设置功能开关-->
+						<div class="form-group row">
+							<label class="col-md-2 form-control-label text-md-right pr-0" for="user_bg_switch">
+								<b class="text-dark"><?php echo lang('admin_setting_config_user_bg_switch'); ?>：</b>
+							</label>
+							<div class="col-md-8">
+								<div class="user-bg-switch" id="user_bg_switch">
+		
+									<label class="custom-input custom-radio mr-3">
+										<input type="radio" name="user_bg_switch" value="1" checked="checked"> <?php echo lang('admin_on'); ?>
+									</label>
+		
+									<label class="custom-input custom-radio mr-3">
+										<input type="radio" name="user_bg_switch" value="0" <?php if (isset($light_config['user_bg_switch']) && $light_config['user_bg_switch'] == 0) { ?>  checked="checked" <?php }?> > <?php echo lang('admin_off'); ?>
+									</label>
+								</div>
+								<div class="figure-caption mt-2">
+									<?php echo lang('admin_setting_config_user_bg_switch_tip'); ?>
+								</div>
+							</div>
+						</div>
+						
+						<!--可供背景选择数量-->
+					<div class="form-group row">
+	<label class="col-md-2 form-control-label text-md-right pr-0" for="user_bg_num">
+		<b class="text-dark"><?php echo lang('admin_setting_config_user_bg_num'); ?>：</b>
+	</label>
+					<div class="col-md-8">
+							<input type="number" name="user_bg_num" value="<?php echo $light_config['user_bg_num'] ;?>" class="form-control" id="user_bg_num" >
+				</div>
+				</div>
+				<hr>
+				<!--夜间模式功能开关-->
+				<div class="form-group row">
+					<label class="col-md-2 form-control-label text-md-right pr-0" for="dark_mode_switch">
+						<b class="text-dark"><?php echo lang('admin_setting_config_dark_mode_switch'); ?>：</b>
+					</label>
+					<div class="col-md-8">
+						<div class="dark-mode-switch" id="dark_mode_switch">
+
+							<label class="custom-input custom-radio mr-3">
+								<input type="radio" name="dark_mode_switch" value="1" checked="checked"> <?php echo lang('admin_on'); ?>
+							</label>
+
+							<label class="custom-input custom-radio mr-3">
+								<input type="radio" name="dark_mode_switch" value="0" <?php if (isset($light_config['dark_mode_switch']) && $light_config['dark_mode_switch'] == 0) { ?>  checked="checked" <?php }?> > <?php echo lang('admin_off'); ?>
+							</label>
+						</div>
+					</div>
+				</div>
+				<!--夜间模式时间段-->
+				<div class="form-group row">
+					<label class="col-md-2 form-control-label text-md-right pr-0" >
+						<b class="text-dark"><?php echo lang('admin_setting_config_dark_mode_time'); ?>：</b>
+					</label>
+									<div class="col-md-8 form-inline">
+											<input type="number" name="dark_mode_time_1" value="<?php echo $light_config['dark_mode_time_1'] ;?>" class="form-control w-25" id="dark_mode_time_1" ><span class="ml-3"><?php echo lang('admin_setting_config_dark_mode_time_clock'); ?></span><span class="mx-3">-</span>
+											<input type="number" name="dark_mode_time_2" value="<?php echo $light_config['dark_mode_time_2'] ;?>" class="form-control w-25" id="dark_mode_time_2" ><span class="ml-3"><?php echo lang('admin_setting_config_dark_mode_time_clock'); ?></span>
+										</div>
+								</div>
+								<hr>
+								<!--字体设置-->
+						<div class="form-group row">
+							<label class="col-md-2 form-control-label text-md-right pr-0" for="body_font_style">
+								<b class="text-dark"><?php echo lang('admin_setting_config_font_style'); ?>：</b>
+							</label>
+							<div class="col-md-8">
+								<div class="font-style" id="body_font_style">
+		
+									<select name="body_font_style" class="form-control form-control-sm">
+										<option  value="0" <?php if (isset($light_config['body_font_style']) && $light_config['body_font_style'] == 0) { ?>  selected <?php }?>><?php echo lang('admin_setting_config_default'); ?></option>
+										<option  value="1" <?php if (isset($light_config['body_font_style']) && $light_config['body_font_style'] == 1) { ?>  selected <?php }?>><?php echo lang('admin_setting_config_font_HarmonySanc'); ?></option>
+										<option  value="2" <?php if (isset($light_config['body_font_style']) && $light_config['body_font_style'] == 2) { ?>  selected <?php }?>><?php echo lang('admin_setting_config_font_SmileySans'); ?></option>
+									</select>
+								</div>
+							</div>
+						</div>	
+						<hr>
+						<!--站点背景自定义-->
+						<div class="form-group row">
+							<label class="col-md-2 form-control-label text-md-right pr-0" for="site_bg_custom">
+								<b class="text-dark"><?php echo lang('admin_setting_config_site_bg_custom'); ?>：</b>
+							</label>
+							<div class="col-md-8">
+								<div class="site-bg-custom" id="site_bg_custom">
+		
+									<label class="custom-input custom-radio mr-3">
+										<input type="radio" name="site_bg_custom" value="1" checked="checked"> <?php echo lang('admin_on'); ?>
+									</label>
+		
+									<label class="custom-input custom-radio mr-3">
+										<input type="radio" name="site_bg_custom" value="0" <?php if (isset($light_config['site_bg_custom']) && $light_config['site_bg_custom'] == 0) { ?>  checked="checked" <?php }?> > <?php echo lang('admin_off'); ?>
+									</label>
+								</div>
+							</div>
+						</div>
+						<!--站点背景自适应-->
+						<div class="form-group row">
+							<label class="col-md-2 form-control-label text-md-right pr-0" for="site_bg_cover">
+								<b class="text-dark"><?php echo lang('admin_setting_config_site_bg_cover'); ?>：</b>
+							</label>
+							<div class="col-md-8">
+								<div class="site-bg-cover" id="site_bg_cover">
+		
+									<label class="custom-input custom-radio mr-3">
+										<input type="radio" name="site_bg_cover" value="1" checked="checked"> <?php echo lang('admin_on'); ?>
+									</label>
+		
+									<label class="custom-input custom-radio mr-3">
+										<input type="radio" name="site_bg_cover" value="0" <?php if (isset($light_config['site_bg_cover']) && $light_config['site_bg_cover'] == 0) { ?>  checked="checked" <?php }?> > <?php echo lang('admin_off'); ?>
+									</label>
+								</div>
+							</div>
+						</div>
+						<!--站点背景随网页滚动-->
+						<div class="form-group row">
+							<label class="col-md-2 form-control-label text-md-right pr-0" for="site_bg_scroll">
+								<b class="text-dark"><?php echo lang('admin_setting_config_site_bg_scroll'); ?>：</b>
+							</label>
+							<div class="col-md-8">
+								<div class="site-bg-scroll" id="site_bg_scroll">
+		
+									<label class="custom-input custom-radio mr-3">
+										<input type="radio" name="site_bg_scroll" value="1" checked="checked"> <?php echo lang('admin_on'); ?>
+									</label>
+		
+									<label class="custom-input custom-radio mr-3">
+										<input type="radio" name="site_bg_scroll" value="0" <?php if (isset($light_config['site_bg_scroll']) && $light_config['site_bg_scroll'] == 0) { ?>  checked="checked" <?php }?> > <?php echo lang('admin_off'); ?>
+									</label>
+								</div>
+							</div>
+						</div>
+						<!--站点背景图片-->
+						<div class="form-group row">
+							<label class="col-md-2 form-control-label text-md-right pr-0" for="site_bg_custom_img">
+								<b class="text-dark"><?php echo lang('admin_setting_config_site_bg_custom_img'); ?>：</b>
+							</label>
+							<div class="col-md-8">
+								<input type="text" name="site_bg_custom_img" value="<?php echo $light_config['site_bg_custom_img'] ;?>" class="form-control" id="site_bg_custom_img" placeholder="图片url地址或本地图片路径">
+							</div>
+						</div>
+						<hr>
+						<!--登录背景图片-->
+						<div class="form-group row">
+							<label class="col-md-2 form-control-label text-md-right pr-0" for="login_page_banner">
+								<b class="text-dark"><?php echo lang('admin_setting_config_login_bg_custom_img'); ?>：</b>
+							</label>
+							<div class="col-md-8">
+								<input type="text" name="login_page_banner" value="<?php echo $light_config['login_page_banner'] ;?>" class="form-control" id="login_page_banner" placeholder="图片url地址或本地图片路径">
+							</div>
+						</div>

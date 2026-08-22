@@ -1,0 +1,11 @@
+{
+    "name": "回帖排序",
+    "brief": "可以选择回帖按正序和倒序，可以只看楼主发帖",
+    "version": "1.2",
+    "bbs_version": "4.0",
+    "installed": 1,
+    "enable": 1,
+    "hooks_rank": [],
+    "overwrites_rank": [],
+    "dependencies": []
+}

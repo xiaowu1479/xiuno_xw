@@ -1,0 +1,10 @@
+<?php if(!empty($_thread['offerNum'])){
+    if($_thread['offerStatus']==0){ ?>
+<span class="badge badge-center rounded-pill bg-label-warning">
+    <i class="icon-magic" aria-hidden="true" title="有悬赏!" data-toggle="tooltip"></i>
+</span>
+<?php } else{ ?>
+<span class="badge badge-center rounded-pill bg-label-success">
+    <i class="icon-check" aria-hidden="true" title="悬赏完毕!" data-toggle="tooltip"></i>
+</span>
+<?php }} ?>

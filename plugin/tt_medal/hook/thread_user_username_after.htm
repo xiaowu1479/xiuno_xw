@@ -1,0 +1,5 @@
+<?php 
+$_medallist=medal_user_read_fmt($thread['uid']);
+foreach($_medallist as $_m){?>
+<img width="18px" height="18px" src="plugin/tt_medal/img/<?php echo $_m['filename'];?>" title="<?php echo $_m['fmt_description'];?>"/>
+<?php }?>

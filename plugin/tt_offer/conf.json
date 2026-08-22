@@ -1,0 +1,13 @@
+{
+    "name": "悬赏帖子",
+    "brief": "本插件需要预先安装积分插件商业版v1.15或更高版本！允许发表悬赏帖子并选出悬赏答案。",
+    "version": "1.02",
+    "bbs_version": "4.0.4",
+    "installed": 1,
+    "enable": 1,
+    "hooks_rank": [],
+    "overwrites_rank": [],
+    "dependencies": {
+        "tt_credits": "1.15"
+    }
+}

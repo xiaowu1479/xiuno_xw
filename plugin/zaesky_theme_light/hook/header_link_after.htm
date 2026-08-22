@@ -1,0 +1,158 @@
+<script src="<?php echo 'plugin/zaesky_theme_light/view/js/mSlider.min.js';?>"></script>
+<?php if (isset($light_config['dark_mode_switch']) && $light_config['dark_mode_switch'] == 1): ?>
+<script type="text/javascript">
+// Cookie 操作函数
+const Cookie = {
+  set: function(cname, cvalue, exdays) {
+    const d = new Date();
+    d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+    document.cookie = `${cname}=${cvalue};expires=${d.toUTCString()};path=/`;
+  },
+  get: function(cname) {
+    const name = `${cname}=`;
+    const decodedCookie = decodeURIComponent(document.cookie);
+    const ca = decodedCookie.split(';');
+    for (let i = 0; i < ca.length; i++) {
+      let c = ca[i].trim();
+      if (c.indexOf(name) === 0) return c.substring(name.length);
+    }
+    return "";
+  }
+};
+
+// 资源加载管理
+const Resource = {
+  load: function(filename, filetype) {
+    const element = filetype === "js" 
+      ? document.createElement('script') 
+      : document.createElement('link');
+    
+    if (filetype === "js") {
+      element.type = "text/javascript";
+      element.src = filename;
+    } else {
+      element.rel = "stylesheet";
+      element.type = "text/css";
+      element.href = filename;
+    }
+    
+    document.head.appendChild(element);
+    return element;
+  },
+  remove: function(filename, filetype) {
+    const elements = document.querySelectorAll(
+      filetype === "js" ? `script[src*="${filename}"]` : `link[href*="${filename}"]`
+    );
+    elements.forEach(el => el.remove());
+  }
+};
+
+// 主题管理
+const ThemeManager = {
+  DARK_CSS: "./plugin/zaesky_theme_light/view/css/darktheme.min.css",
+  init: function() {
+    this.applyTheme();
+    window.addEventListener('load', this.updateTinyMCETheme.bind(this));
+  },
+  getCurrentTheme: function() {
+    let theme = Cookie.get('Theme');
+    if (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      theme = "2";
+      Cookie.set('Theme', theme, 365);
+    }
+    return theme || "1"; // 默认为自动模式
+  },
+  applyTheme: function() {
+    const theme = this.getCurrentTheme();
+    const isAutoMode = theme === "1";
+    
+    // 移除现有主题
+    Resource.remove(this.DARK_CSS, "css");
+    
+    // 应用新主题
+    if (theme === "3" || (isAutoMode && this.isNightTime())) {
+      Resource.load(this.DARK_CSS, "css");
+    }
+  },
+  isNightTime: function() {
+    const hours = new Date().getHours();
+    return hours >= <?php echo $light_config['dark_mode_time_1']; ?> || 
+           hours <= <?php echo $light_config['dark_mode_time_2']; ?>;
+  },
+  updateTinyMCETheme: function() {
+    const iframe = document.getElementById("message_ifr");
+    if (!iframe) return;
+    
+    const isDark = this.getCurrentTheme() === "3" || 
+                  (this.getCurrentTheme() === "1" && this.isNightTime());
+    
+    const style = isDark 
+      ? '.mce-content-body{color:#FFFFFF!important}' 
+      : '.mce-content-body{color:#000000!important}';
+    
+    iframe.contentWindow.document.head.innerHTML = `
+      <style>
+        .mce-content-body:before {
+          color: #868e96 !important;
+          content: attr(data-mce-placeholder);
+          position: absolute;
+        }
+        ${style}
+      </style>
+    `;
+  },
+  switchTheme: function() {
+    const currentTheme = this.getCurrentTheme();
+    let newTheme, message, icon;
+    
+    switch(currentTheme) {
+      case "1": // 自动 -> 日间
+        newTheme = "2";
+        message = "日间模式！";
+        icon = "far fa-sun";
+        break;
+      case "2": // 日间 -> 夜间
+        newTheme = "3";
+        message = "夜间模式！";
+        icon = "far fa-moon";
+        break;
+      default: // 夜间 -> 自动
+        newTheme = "1";
+        message = "自动切换模式！";
+        icon = "fas fa-adjust";
+    }
+    
+    Cookie.set('Theme', newTheme, 365);
+    document.getElementById("theme").innerHTML = 
+      `<i class='${icon} nav-right-icons' data-toggle='tooltip' data-placement='bottom'></i>`;
+    
+    this.applyTheme();
+    this.updateTinyMCETheme();
+    
+    if (typeof cocoMessage !== 'undefined') {
+      cocoMessage.success(message, 3000);
+    }
+  }
+};
+
+// 初始化主题管理器
+ThemeManager.init();
+
+// 暴露切换函数到全局
+window.theme_switch = ThemeManager.switchTheme.bind(ThemeManager);
+</script>
+<?php endif; ?>
+
+<?php if (isset($light_config['site_bg_custom']) && $light_config['site_bg_custom'] == 1): ?>
+<style>
+  body {
+    background-image: url('<?php echo $light_config['site_bg_custom_img']; ?>');
+    <?php if (isset($light_config['site_bg_cover']) && $light_config['site_bg_cover'] == 1): ?>
+    background-size: cover;
+    <?php endif; ?>
+    <?php if (isset($light_config['site_bg_scroll']) && $light_config['site_bg_scroll'] == 0): ?>
+    background-attachment: fixed;
+    <?php endif; ?>
+  }
+</style>
+<?php endif; ?>

@@ -1,0 +1,1 @@
+case 'iqismart_localimg': include _include(APP_PATH.'plugin/till_thread_localImage/route/localimg.php'); break;

@@ -1,0 +1,11 @@
+{
+    "name": "楼主标记",
+    "brief": "如其他论坛程序一样，在帖子里显示“楼主标记”",
+    "version": "1",
+    "bbs_version": "4.0",
+    "installed": 1,
+    "enable": 1,
+    "hooks_rank": [],
+    "overwrites_rank": [],
+    "dependencies": []
+}

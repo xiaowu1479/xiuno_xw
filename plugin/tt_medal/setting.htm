@@ -1,0 +1,170 @@
+<?php include _include(ADMIN_PATH.'view/htm/header.inc.htm');?>
+
+<div class="row">
+    <div class="col-lg-10 mx-auto">
+        <div class="card" >
+	        <div class="card-body" >
+                欢迎加入xiuno粉丝交流论坛吹水:1107254698<br>
+                本插件在使用过程发现明显问题请联系我:1413647809,谢谢<br>
+                <b>1.1版本：</b>支持用户自行销毁拥有的蚀刻并返回一半的购买费用(暂不支持自行设置返还比例)<br>
+                <b>1.2版本：</b>支持用户在个人主页申请蚀刻，管理员可在后台进行通过过拒绝操作<br>
+                <b>1.2.1版本：</b>修复了一些文字显示错误,后台允许设置销毁的返还比例(0-10),申请将有消息提醒<br>
+                <b>1.3版本：</b>修复了上个版本的一些问题,支持给勋章设置有效期了，到期将自动删除<br>
+                <b>1.31版本：</b>修复了消息发送的问题,在顶部菜单栏增加了审核快捷入口
+            </div>
+	    </div>
+        <div class="card">
+            <div class="card-body">
+                <h4>管理用户<?php echo lang('medal') ?></h4>
+                <form method="POST" action="<?php echo url('medal_user');?>">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend"><span class="input-group-text">用户名</span></div>
+                    <input type="text" class="form-control" name="username" id="username" value="admin"/>
+                </div>
+                <button type="submit" class="btn btn-outline-success btn-block">管理</button>
+                </form>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body" ><a href="<?php echo url("medal_check");?>"><h3>审核用户<?php echo lang('medal') ?>申请</h3></a></div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <h3>销毁<?php echo lang('medal') ?>的返还比例</h3>
+                请输入0-10的整数,0代表不返还,5代表返还50%(向上取整),10代表全部返还
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend"><span class="input-group-text">返还比例</span></div>
+                    <input type="text" class="form-control" name="proportion" id="proportion" value="<?php echo setting_get('tt_medal')['proportion'] ?>"/>
+                </div>
+                <button type="submit" id="submit_p" class="btn btn-outline-success btn-block">保存</button>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <form action="<?php echo url('plugin-setting-tt_medal');?>" method="POST" id="form">
+                    <h4 class="card-title"><?php echo lang('medal') ?>列表</h4>
+                    请将<?php echo lang('medal') ?>图片上传至./plugin/tt_medal/img/下，然后填写文件名<br>
+                    购买处填写0:禁止购买,只能管理员手动颁发或用户申请; 1:可以购买,也可以管理员手动颁发不可用户申请<br>
+                    积分类别：<?php echo '1'.lang('credits1').',2'.lang('credits2').',3'.lang('credits3').'(单位:分)' ?><br>
+                    <?php echo lang('medal') ?>最多设置50个<br>
+                    有效期：填写0代表无限时长，30代表30天
+                    <div class="table-responsive arrlist">
+                        <table class="table">
+                            <thead>
+                            <tr align="center">
+                                <th width="7%">mid</th>
+                                <th width="11%">名称</th>
+                                <th width="12%">文件名</th>
+                                <th width="20%">描述</th>
+                                <th width="10%">购买</th>
+                                <th width="10%">价格</th>
+                                <th width="10%">积分类别</th>
+                                <th width="10%">有效期</th>
+                                <th width="10%" class="text-center">删除</th>
+                            </tr>
+                            <thead>
+                            <tbody>
+                            <?php foreach($medallist as $arr) { ?>
+                            <?php $rowid = $arr['mid'];?>
+                            <tr align="center" rowid="<?php echo $rowid; ?>">
+                                <td><input type="text" class="form-control" name="rowid[<?php echo $rowid;?>]" value="<?php echo $rowid; ?>" placeholder="mid"/></td>
+                                <td><input type="text" class="form-control" name="name[<?php echo $rowid;?>]" value="<?php echo $arr['name']; ?>" placeholder="名称"/></td>
+                                <td><input type="text" class="form-control" name="filename[<?php echo $rowid;?>]" value="<?php echo $arr['filename']; ?>" placeholder="文件名"/></td>
+                                <td><input type="text" class="form-control" name="description[<?php echo $rowid;?>]" value="<?php echo $arr['description']; ?>" placeholder="描述"/></td>
+                                <td><input type="text" class="form-control" name="isbuy[<?php echo $rowid;?>]" value="<?php echo $arr['isbuy']; ?>" placeholder="购买"/></td>
+                                <td><input type="text" class="form-control" name="money[<?php echo $rowid;?>]" value="<?php echo $arr['money']; ?>" placeholder="价格"/></td>
+                                <td><input type="text" class="form-control" name="money_type[<?php echo $rowid;?>]" value="<?php echo $arr['money_type']; ?>" placeholder="积分类别"/></td>
+                                <td><input type="text" class="form-control" name="time[<?php echo $rowid;?>]" value="<?php echo $arr['time']; ?>" placeholder="有效期"/></td></td>
+                                <td><a class="btn row_delete" role="btn">删除</a></td>
+                            </tr>
+                            <?php } ?>
+                            <tr align="center" rowid="<?php echo !empty($rowid) ? $rowid : 0; ?>" class="d-none">
+                                <td><input type="text" class="form-control" name="rowid[0]" value="" placeholder="mid" /></td>
+                                <td><input type="text" class="form-control" name="name[0]" value="" placeholder="名称" /></td>
+                                <td><input type="text" class="form-control" name="filename[0]" value="" placeholder="文件名" /></td>
+                                <td><input type="text" class="form-control" name="description[0]" value="" placeholder="描述" /></td>
+                                <td><input type="text" class="form-control" name="isbuy[0]" value="" placeholder="购买" /></td>
+                                <td><input type="text" class="form-control" name="money[0]" value="" placeholder="价格" /></td>
+                                <td><input type="text" class="form-control" name="money_type[0]" value="" placeholder="积分类别" /></td>
+                                <td><input type="text" class="form-control" name="time[0]" value="" placeholder="有效期" /></td>
+                                <td><a class="btn row_delete" role="btn">删除</a></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p><a role="button" class="btn row_add">[+]增加一行</a></p>
+                    <p class="text-center">
+                        <button type="submit" class="btn btn-primary btn-block" id="submit" data-loading-text="<?php echo lang('submiting');?>..."><?php echo lang('confirm');?></button>
+                    </p>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<?php include _include(ADMIN_PATH.'view/htm/footer.inc.htm');?>
+
+<script>
+    var maxid = <?php echo $maxid;?>;
+    var jform = $("#form");
+    var jsubmit = $("#submit");
+    var jarrlist = $('.arrlist');
+    jform.base64_encode_file();
+
+    jform.on('submit', function() {
+        jform.reset();
+        var postdata = jform.serialize()+'&op=0';
+        jsubmit.button('loading');
+        $.xpost(jform.attr('action'), postdata, function(code, message) {
+            if (code == 0) {
+                $.alert(message);
+                jsubmit.text(message).delay(3000).location();
+                return;
+            } else {
+                $.alert(message);
+                jsubmit.button('reset');
+            }
+        });
+        return false;
+    });
+    var jdelete = $('a.row_delete');
+    jarrlist.on('click', 'a.row_delete', function() {
+        var jthis = $(this);
+        var jtr = jthis.parents('tr');
+        var rowid = jtr.attr('rowid');
+        if (jform.find('tbody').find('tr').length <= 2) {
+            $.alert('不能删除系统保留的<?php echo lang("medal") ?>。').delay(1000).location();
+            return;
+        }
+        jtr.remove();
+        return false;
+    });
+    var jadd = $('a.row_add');
+    jadd.on('click', function() {
+        var jclone = jarrlist.find('tr').last().clone();
+        jclone.insertAfter(jarrlist.find('tr').last()).removeClass('d-none');
+        var jrowid = jclone.find('input[name^="rowid"]');
+        var rowid = ++maxid;
+        jrowid.val(rowid);
+        jclone.attr('rowid', rowid);
+        jclone.find('input').not('[name^="rowid"]').val('');
+        jclone.find('input').attr_name_index(rowid);
+        return false;
+    });
+    $('#nav_pc li.plugin, #nav_mobile li.plugin').addClass('active');
+    
+    $("#submit_p").on('click',function(){
+        var proportion = $("#proportion").val();
+        if(new RegExp("^0?$|^([1-9][0-9]*)?$").test(proportion)){
+            var postdata = {"proportion":proportion,"op":3};
+             $.xpost(jform.attr('action'), postdata, function(code, message) {
+                $.alert(message);
+                setInterval(function(){
+			        location.reload();
+			    },2000);
+            });
+        }else{
+            $.alert("输入的值不合法")
+        }
+    })
+</script>

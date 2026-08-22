@@ -1,0 +1,13 @@
+<?php if(!isset($_post['OK']) || $_post['OK']!='1') {?>
+<div class="alert alert-secondary" role="alert">
+    <?php if($_post['OK']=='-1') {?>
+    <i class="icon icon-exclamation-circle icon-lg" aria-hidden="true"></i> 该回帖未审核通过！
+    <?php } elseif($_post['OK']=='0') {?>
+    <i class="icon icon-coffee icon-lg" aria-hidden="true"></i> 该回帖正在由管理员审核中……
+    <?php } if($group['see_check']=='1'){$load_check_js=1;?><hr>
+    <button type="button" class="btn btn-outline-secondary" onclick="set_post_check('<?php echo $_post['pid'];?>',1);">通过</button>
+    <button type="button" class="btn btn-outline-secondary" onclick="set_post_check('<?php echo $_post['pid'];?>',-1);">拒绝</button>
+    <button type="button" class="btn btn-outline-secondary" onclick="set_post_check('<?php echo $_post['pid'];?>',-2);">删除</button>
+    <?php }?>
+</div>
+<?php }?>

@@ -1,0 +1,20 @@
+<script>
+	// 只看楼主 Just look at the author
+	$('.postlist-orderby-uid').on('click', function() {
+		$.cookie('postlist_orderby_uid', $(this).data('uid'));
+		window.location.reload();
+	});	
+    // 帖子排序 postlist sort
+	$('.postlist-sort').on('click', function() {
+	    $.cookie('postlist_orderby', $(this).data("orderby"));
+	    window.location.reload();
+	});
+	if($.cookie('postlist_orderby') == 'desc'){
+		jsubmit.on('click', function() {
+			var tid = $('.postlist-sort').data("tid");
+			window.location.replace(xn.url("thread-"+tid));
+			$('.postlist .post').eq(-2).remove();
+		});
+	}
+
+</script>

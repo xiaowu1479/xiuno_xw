@@ -1,0 +1,99 @@
+<?php
+include _include(APP_PATH . 'view/htm/header.inc.htm');
+
+// 未登录校验
+if (empty($uid)) {
+    message(-1, '请先登录后再查看购买记录!');
+}
+
+// 参数获取
+$tid  = param(2, 0);
+$page = param(3, 1);
+
+// 主题信息查询与校验
+$_thread = db_find_one('thread', array('tid' => $tid));
+empty($_thread) AND message(-1, '主题不存在');
+thread_format($_thread);
+
+// 购买记录数据查询
+$data       = db_find('paylist', array('tid' => $tid), array('paytime' => 1), $page, $pagesize = 20);
+$list_count = db_count('paylist', array('tid' => $tid));
+$pagination = pagination(url("thread-sPay-{$tid}-{page}"), $list_count, $page, $pagesize = 20);
+
+// 用户信息查询函数
+function get_user($uid) {
+    $user = db_find_one('user', array('uid' => $uid));
+    return $user;
+}
+
+// 判断是否为人民币支付
+$is_rmb = $_thread['content_buy_type'] == '3' ? 1 : 0;
+?>
+
+<div class="row">
+    <div class="col-lg-10 mx-auto">
+        <div class="card">
+            <div class="card-body">
+                <h4>购买记录 - <?php echo $_thread['subject']; ?></h4>
+                <div style="margin-bottom:8px;">
+                    <a href="<?php echo url("user-$_thread[uid]"); ?>" class="mr-3" tabindex="-1">
+                        <img class="avatar-1" src="<?php echo $_thread['user']['avatar_url']; ?>">&nbsp;<?php echo $_thread['user']['username']; ?>
+                    </a>
+                </div>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">数量</span>
+                    </div>
+                    <input type="text" class="form-control" readonly style="background-color: white;" value="<?php echo $list_count; ?>">
+                </div>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">金额</span>
+                    </div>
+                    <input type="text" class="form-control" readonly style="background-color: white;" value="<?php echo ($is_rmb ? $_thread['content_buy']/1 : $_thread['content_buy']) . ' ' . lang('credits' . $_thread['content_buy_type']); ?>">
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <table class="table">
+                    <tr>
+                        <th style="width:30%;">时间</th>
+                        <th style="width:70%;">用户</th>
+                    </tr>
+                    <?php foreach ($data as $v) { 
+                        $__user = get_user($v['uid']);
+                        user_format($__user); 
+                        // 拆分时间：上排年月日，下排时分秒
+                        $date = date('Y-m-d', $v['paytime']);
+                        $time = date('H:i:s', $v['paytime']);
+                    ?>
+                        <tr style="<?php echo $v['uid'] == $uid ? 'font-weight:bold;' : ''; ?>">
+                            <td style="vertical-align: middle; padding: 8px 0;">
+                                <div><?php echo $date; ?></div>
+                                <div><?php echo $time; ?></div>
+                            </td>
+                            <!-- 仅增加头像与用户名间距（从&nbsp;调整为margin-right: 8px），其余保持不变 -->
+                            <td>
+                                <a href="<?php echo url("user-$v[uid]"); ?>" class="mr-3" tabindex="-1" style="margin-right: 8px;">
+                                    <img class="avatar-1" src="<?php echo $__user['avatar_url']; ?>">
+                                </a>
+                                <a href="<?php echo url("user-$v[uid]"); ?>" class="mr-3" tabindex="-1">
+                                    <?php echo $__user['username']; ?>
+                                </a>
+                            </td>
+                        </tr>
+                    <?php } ?>
+                </table>
+                <nav class="text-center">
+                    <ul class="pagination">
+                        <?php echo $pagination; ?>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+
+<?php include _include(APP_PATH . 'view/htm/footer.inc.htm'); ?>

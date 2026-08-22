@@ -1,0 +1,17 @@
+<template include="./view/htm/my.common.template.htm">
+	<slot name="my_nav">
+		<ul class="nav nav-tabs card-header-tabs">
+			<!--{hook my_nav_medal_before.htm}-->
+			<li class="nav-item">
+				<a class="nav-link" href="<?php echo url("my-medal");?>" data-active="my-medal"><?php echo lang('medal');?></a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" href="<?php echo url("my-medal_my");?>" data-active="my-medal_my"><?php echo lang('my_medal');?></a>
+			</li>
+			<!--{hook my_nav_medal_after.htm}-->
+		</ul>
+	</slot>
+</template>
+<script>
+$('a[data-active="menu-my-medal"]').addClass('active');
+</script>

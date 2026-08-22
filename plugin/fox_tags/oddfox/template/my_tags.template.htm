@@ -1,0 +1,12 @@
+<template include="./view/htm/my.common.template.htm">
+    <slot name="my_nav">
+        <ul class="nav nav-tabs card-header-tabs">
+            <!--{hook my_nav_tags_before.htm}-->
+            <li class="nav-item">
+                <a class="nav-link" href="<?php echo url("my-tags");?>" data-active="my-tags">关注的TAG</a>
+            </li>
+            <!--{hook my_nav_tags_after.htm}-->
+        </ul>
+    </slot>
+</template>
+<script>$('a[data-active="menu-my-tags"]').addClass('active');</script>

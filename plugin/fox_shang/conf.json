@@ -1,0 +1,15 @@
+{
+    "name": "奇狐网_贴内二维码打赏",
+    "brief": "贴内二维码打赏，可自定义二维码URL。<a href='https://bbs.oddfox.cn' target='_blank' class='text-danger'>更多精品插件请访问奇狐官网</a>",
+    "version": "2.0",
+    "bbs_version": "4.0.4",
+    "uid": "20394",
+    "username": "༺凨影༻",
+    "installed": 1,
+    "enable": 1,
+    "hooks_rank": {
+        "thread_plugin_body.htm": -99999
+    },
+    "overwrites_rank": [],
+    "dependencies": []
+}

@@ -1,0 +1,24 @@
+<style>
+/*
+box-shadow: 0 0 5px red;
+*/
+@keyframes xndigest {
+	0% { color: red; text-shadow: 0 0 3px #FF8D8D;} 
+	20% { color: orange; text-shadow: 0 0 3px #FFE1AD;} 
+	40% { color: green; text-shadow: 0 0 3px #B3FFAF;} 
+	65% { color: blue; text-shadow: 0 0 3px #AFE4FF;} 
+	80% { color: purple; text-shadow: 0 0 3px #FFC9F3;} 
+	100% { color: red; text-shadow: 0 0 3px #FF8D8D;} 
+}
+
+/*水晶闪烁效果 占内存*/
+i.icon-diamond.flash{color: #D53D38;  animation: xndigest 5s linear infinite;}
+
+/*i.icon-digest-1 {  text-shadow: 0 0 3px #AFE4FF; }
+i.icon-digest-2 {  text-shadow: 0 0 3px #FFF177; }
+i.icon-digest-3 {  text-shadow: 0 0 3px #FF8D8D; }*/
+.icon-digest-1:before { content: "荐";color: #5BC0DE;border-radius: 3px;border:1px solid #5BC0DE;padding:0 4px;}
+.icon-digest-2:before { content: "精";  color: #ECA541;border-radius: 3px;border:1px solid #ECA541;padding:0 4px;}
+.icon-digest-3:before {content:'热';color: #ff1414;border-radius: 3px;border:1px solid #ff1414;padding:0 4px;}
+.icon-digest-3:afteer { content: "精"; color: #D53D38;}
+</style>

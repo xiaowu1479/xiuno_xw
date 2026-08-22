@@ -1,0 +1,128 @@
+<nav id="sidebar">
+  <!-- Sidebar Content -->
+  <div class="sidebar-content">
+    <!-- Side Header -->
+    <div class="content-header justify-content-lg-center">
+      <!-- Logo -->
+      <div>
+        <a class="link-fx fw-bold tracking-wide mx-auto" href="./">
+          <span class="smini-hidden">
+            <span class="fs-4 text-dual">后台</span><span class="fs-4 text-primary">管理</span>
+          </span>
+        </a>
+      </div>
+      <!-- END Logo -->
+
+      <!-- Options -->
+      <div>
+        <!-- Close Sidebar, Visible only on mobile screens -->
+        <!-- Layout API, functionality initialized in Template._uiApiLayout() -->
+        <button type="button" class="btn btn-sm btn-alt-danger d-lg-none" onclick="sidebar_close()">
+          <i class="fa fa-fw fa-times"></i>
+        </button>
+        <!-- END Close Sidebar -->
+      </div>
+      <!-- END Options -->
+    </div>
+    <!-- END Side Header -->
+
+    <!-- Sidebar Scrolling -->
+    <div class="js-sidebar-scroll">
+      <!-- Side User -->
+      <div class="content-side content-side-user px-0 py-0">
+        <!-- Visible only in mini mode -->
+        <div class="smini-visible-block animated fadeIn px-2">
+          <img class="img-avatar img-avatar32" src="<?php echo (strpos($user['avatar_url'], '//') === FALSE ? '../' : '').$user['avatar_url'];?>" alt="">
+        </div>
+        <!-- END Visible only in mini mode -->
+
+        <!-- Visible only in normal mode -->
+        <div class="smini-hidden text-center mx-auto">
+          <a class="img-link" href="./">
+            <img class="img-avatar" src="<?php echo (strpos($user['avatar_url'], '//') === FALSE ? '../' : '').$user['avatar_url'];?>" alt="">
+          </a>
+          <ul class="list-inline mt-3 mb-0">
+            <li class="list-inline-item">
+              <a class="link-fx text-dual fs-sm fw-semibold text-uppercase" href="../<?php echo url('my');?>"><?php echo isset($user['username']) ? $user['username'] : '';?></a>
+            </li>
+            <li class="list-inline-item">
+              <a class="link-fx text-dual" href="<?php echo url('index-logout');?>">
+                <i class="fa fa-sign-out-alt"></i>
+              </a>
+            </li>
+          </ul>
+        </div>
+        <!-- END Visible only in normal mode -->
+      </div>
+      <!-- END Side User -->
+
+      <!-- Side Navigation -->
+      <div class="content-side content-side-full">
+        <ul class="nav-main" id="nav">
+          <!--{hook admin_header_nav_start.htm}-->
+					<li class="nav-item home">
+						<a class="nav-link" href="./"><i class="icon-home"></i> <?php echo lang('admin_index_page');?></a>
+					</li>
+					<?php foreach ($menu as $k=>$v) { ?>
+					<li class="nav-item nav-item-<?php echo $k;?>">
+						<a class="nav-link" href="<?php echo $v['url'];?>"><i class="<?php echo $v['icon'];?>"></i> <?php echo $v['text'];?></a>
+					</li>
+					<?php  } ?>
+					
+					<!--{hook admin_header_nav_end.htm}-->
+        </ul>
+      </div>
+      <!-- END Side Navigation -->
+    </div>
+    <!-- END Sidebar Scrolling -->
+  </div>
+  <!-- Sidebar Content -->
+</nav>
+<!-- END Sidebar -->
+
+<!-- Header -->
+<header id="page-header">
+  <!-- Header Content -->
+  <div class="content-header">
+    <!-- Left Section -->
+    <div class="space-x-1">
+      <!-- Toggle Sidebar -->
+      <!-- Layout API, functionality initialized in Codebase() -> uiApiLayout() -->
+      <button type="button" class="btn btn-sm btn-alt-secondary" onclick="sidebar_toggle()">
+        <i class="fa fa-fw fa-bars"></i>
+      </button>
+      <!-- END Toggle Sidebar -->
+
+    
+    </div>
+    <!-- END Left Section -->
+
+    <!-- Right Section -->
+    <div class="space-x-1">
+      <a type="button" class="btn btn-sm btn-alt-secondary" href="../">
+        <?php echo lang('front_index_page');?>
+      </a>
+    </div>
+    <!-- END Right Section -->
+  </div>
+  <!-- END Header Content -->
+</header>
+<!-- END Header -->
+
+<script>
+  function sidebar_toggle() {
+    if (window.innerWidth > 991) {
+      document.getElementById("page-container").classList.toggle("sidebar-o");
+        } else {
+          document.getElementById("page-container").classList.toggle("sidebar-o-xs");
+        }
+      }
+
+      function sidebar_close() {
+        if (window.innerWidth > 991) {
+          document.getElementById("page-container").classList.remove("sidebar-o");
+        } else {
+          document.getElementById("page-container").classList.remove("sidebar-o-xs");
+        }
+      }
+</script>

@@ -1,0 +1,54 @@
+<?php include _include(APP_PATH.'view/htm/header.inc.htm');
+$pid = param(2, 0); $floor__=1;
+$page =  param(3, 1); $pagenum=20;
+$_post=db_find_one('post',array('pid'=>$pid));
+empty($_post) AND message(-1, lang('post_not_exists:'));
+$all_quotes = post_find(array('quotepid'=>$pid),array('create_date'=>1),$page,$pagenum);
+$all_auotes_count = post_count(array('quotepid'=>$pid));
+$pagination = pagination(url("post-tt_show_all_reply-{$pid}-{page}"), $all_auotes_count, $page, $pagenum);
+$Head = post_read($pid); post_format($Head);
+?>
+<li class="media">
+    <a href="<?php echo url("user-$Head[uid]");?>" class="mr-3" tabindex="-1">
+    <img class="avatar-3" src="<?php echo $Head['user_avatar_url'];?>"> </a>
+    <div class="media-body">
+        <div class="d-flex justify-content-between small text-muted">
+            <span class="username">
+			<a href="<?php echo url("user-$Head[uid]");?>" class="text-muted font-weight-bold"><?php echo $Head['username'];?></a></span>
+            <span class="date text-grey ml-2"><?php echo $Head['create_date_fmt'],' #楼主';?></span>
+        </div>
+        <?php 
+$post_msg_fmt = $Head['message']; 
+$post_msg_fmt = preg_replace("/\[em_([0-9]*)\]/i","<img src='/plugin/zaesky_theme_light/view/img/emoicon/$1.png' class='border-0 mx-1 mb-0'/ width='25px'>",$post_msg_fmt);
+$Head['message'] = $post_msg_fmt;
+?>
+
+        <div class="message mt-1 break-all">
+            <?php $_post['message'] = $Head['message'];?>
+            <?php echo $_post['message'];?></div>
+    </div>
+</li>
+<?php if($all_quotes) { foreach ($all_quotes as $_post) { post_format($_post);?>
+<li class="media" style="margin:12px 24px;">
+    <a href="<?php echo url("user-$_post[uid]");?>" class="mr-3" tabindex="-1">
+    <img class="avatar-3" src="<?php echo $_post['user_avatar_url'];?>"> </a>
+    <div class="media-body">
+        <div class="d-flex justify-content-between small text-muted">
+            <span class="username">
+			<a href="<?php echo url("user-$_post[uid]");?>" class="text-muted font-weight-bold"><?php echo $_post['username'];?><i class="fa fa-share mx-1" aria-hidden="true"></i><?php echo $Head['username'];?></a></span>
+            <span class="date text-grey ml-2"><?php echo $_post['create_date_fmt'],' #',$_post['floor'];?></span>
+        </div>
+        <div class="message mt-1 break-all">
+            <?php 
+            $_post_msg_fmt = $_post['message']; 
+            $_post_msg_fmt = preg_replace("/\[em_([0-9]*)\]/i","<img src='/plugin/zaesky_theme_light/view/img/emoicon/$1.png' class='border-0 mx-1 mb-0'/ width='25px'>",$_post_msg_fmt);
+            $_post['message'] = $_post_msg_fmt;
+            ?>
+            <?php echo $_post['message'];?>
+        </div>
+    </div>
+</li>
+<?php }?>
+<nav class="text-center"><ul class="pagination" style="width:auto;margin-left:auto;margin-left:auto;"><?php echo $pagination; ?></ul></nav>
+<?php } else { ?><div class="text-center text-gray font-weight-bold my-5">没有其他人回复哦！</div><?php }?>
+<?php include _include(APP_PATH.'view/htm/footer.inc.htm');?>

@@ -1,0 +1,649 @@
+<template include="./plugin/tt_credits/view/htm/my_credits.template.htm">
+    <slot name="my_body">
+        <div class="col-md-10 mx-auto">
+            <?php 
+            $set = setting_get('tt_credits');
+            $convert = $set['convert_exchange'];
+            $rmb_unit_info = credits_get_rmb_unit_info();
+            $user_info = user_read($uid);
+            ?>
+
+            <!-- 页面标题 -->
+            <div class="card border-0 shadow-sm mb-4" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                <div class="card-body p-4 text-white">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-exchange-alt fa-2x me-3"></i>
+                        <div>
+                            <h4 class="mb-0 font-weight-bold">积分兑换</h4>
+                            <p class="mb-0 opacity-75">管理您的数字资产转换</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 当前余额展示 -->
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body text-center">
+                            <i class="fas fa-yen-sign fa-2x text-success mb-2"></i>
+                            <h6 class="text-muted mb-1"><?php echo lang('credits3'); ?></h6>
+                            <h4 class="text-success font-weight-bold">
+                                <?php echo credits_get_rmb_display($user_info['rmbs'], false); ?>
+                            </h4>
+                            <small class="text-muted">当前余额</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body text-center">
+                            <i class="fas fa-coins fa-2x text-warning mb-2"></i>
+                            <h6 class="text-muted mb-1"><?php echo lang('credits2'); ?></h6>
+                            <h4 class="text-warning font-weight-bold"><?php echo number_format($user_info['golds']); ?></h4>
+                            <small class="text-muted">当前余额</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body text-center">
+                            <i class="fas fa-info-circle fa-2x text-info mb-2"></i>
+                            <h6 class="text-muted mb-1">RMB模式</h6>
+                            <h6 class="text-info font-weight-bold">
+                                <?php 
+                                if($rmb_unit_info['is_yuan']) {
+                                    echo '元制';
+                                } elseif($rmb_unit_info['is_jiao']) {
+                                    echo '角制';
+                                } else {
+                                    echo $rmb_unit_info['unit_name'].'制';
+                                }
+                                ?>
+                            </h6>
+                            <small class="text-muted">
+                                1元=<?php echo $rmb_unit_info['rate']; ?><?php echo $rmb_unit_info['system_unit_name']; ?>
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RMB兑换金币 -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-transparent border-0">
+                    <div class="d-flex align-items-center">
+                        <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                        <div>
+                            <h5 class="mb-0"><?php echo lang('credits3'); ?> → <?php echo lang('credits2'); ?></h5>
+                            <small class="text-muted">兑换比例：1 <?php echo lang('credits3'); ?> = <?php echo $set['exchange_n']; ?> <?php echo lang('credits2'); ?></small>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form id="form1" class="exchange-form">
+                        <div class="row align-items-center">
+                            <div class="col-md-3">
+                                <label class="form-label text-muted small">消耗 <?php echo lang('credits3'); ?></label>
+                                <div class="input-group">
+                                    <input type="number" 
+                                           id="e_rmb" 
+                                           name="e_rmb" 
+                                           class="form-control" 
+                                           placeholder="输入数量"
+                                           min="1" 
+                                           max="999999">
+                                    <span class="input-group-text small"><?php echo lang('credits3'); ?></span>
+                                </div>
+                            </div>
+                            <div class="col-md-1 text-center">
+                                <i class="fas fa-arrow-right fa-2x text-primary"></i>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label text-muted small">获得 <?php echo lang('credits2'); ?></label>
+                                <div class="exchange-result-simple">
+                                    <span id="e_golds" class="h5 text-warning">0</span>
+                                    <small class="text-muted"> <?php echo lang('credits2'); ?></small>
+                                </div>
+                            </div>
+                            <div class="col-md-2 text-center">
+                                <small class="text-muted d-block">约 ¥<span id="show_rmb_yuan">0</span></small>
+                            </div>
+                            <div class="col-md-3">
+                                <button type="button" 
+                                        id="submit1" 
+                                        class="btn btn-primary w-100"
+                                        data-active="<?php echo url('my-trade'); ?>">
+                                    <i class="fas fa-exchange-alt me-1"></i>立即兑换
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <?php if($convert == 1): ?>
+            <!-- 金币兑换RMB -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-transparent border-0">
+                    <div class="d-flex align-items-center">
+                        <div class="rounded-circle bg-warning text-white d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                            <i class="fas fa-arrow-left"></i>
+                        </div>
+                        <div>
+                            <h5 class="mb-0"><?php echo lang('credits2'); ?> → <?php echo lang('credits3'); ?></h5>
+                            <small class="text-muted">兑换比例：1 <?php echo lang('credits2'); ?> = <?php echo $set['exchange_c']; ?> <?php echo lang('credits3'); ?></small>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form id="form2" class="exchange-form">
+                        <div class="row align-items-center">
+                            <div class="col-md-3">
+                                <label class="form-label text-muted small">消耗 <?php echo lang('credits2'); ?></label>
+                                <div class="input-group">
+                                    <input type="number" 
+                                           id="e_golds_c" 
+                                           name="e_golds_c" 
+                                           class="form-control" 
+                                           placeholder="输入数量"
+                                           min="1" 
+                                           max="999999">
+                                    <span class="input-group-text small"><?php echo lang('credits2'); ?></span>
+                                </div>
+                            </div>
+                            <div class="col-md-1 text-center">
+                                <i class="fas fa-arrow-right fa-2x text-warning"></i>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label text-muted small">获得 <?php echo lang('credits3'); ?></label>
+                                <div class="exchange-result-simple">
+                                    <span id="e_rmbs_c" class="h5 text-success">0</span>
+                                    <small class="text-muted"> <?php echo lang('credits3'); ?></small>
+                                </div>
+                            </div>
+                            <div class="col-md-2 text-center">
+                                <small class="text-muted d-block">约 ¥<span id="e_rmbs_c_yuan">0</span></small>
+                            </div>
+                            <div class="col-md-3">
+                                <button type="button" 
+                                        id="submit2" 
+                                        class="btn btn-warning w-100"
+                                        data-active="<?php echo url('my-trade'); ?>">
+                                    <i class="fas fa-exchange-alt me-1"></i>立即兑换
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <?php endif; ?>
+
+            <!-- 转账功能 -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-transparent border-0">
+                    <div class="d-flex align-items-center">
+                        <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                            <i class="fas fa-paper-plane"></i>
+                        </div>
+                        <div>
+                            <h5 class="mb-0">积分转账</h5>
+                            <small class="text-muted">向其他用户转账积分</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form id="transfer-form" class="exchange-form">
+                        <div class="row align-items-center">
+                            <div class="col-md-3">
+                                <label class="form-label text-muted small">接收用户</label>
+                                <input type="text" 
+                                       id="to_username" 
+                                       name="to_username" 
+                                       class="form-control" 
+                                       placeholder="输入用户名"
+                                       maxlength="32">
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label text-muted small">积分类型</label>
+                                <select id="credits_type" name="credits_type" class="form-control">
+                                    <option value="golds"><?php echo lang('credits2'); ?></option>
+                                    <option value="rmbs"><?php echo lang('credits3'); ?></option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label text-muted small">转账金额</label>
+                                <input type="number" 
+                                       id="to_num" 
+                                       name="to_num" 
+                                       class="form-control" 
+                                       placeholder="输入金额"
+                                       min="1" 
+                                       max="999999">
+                            </div>
+                            <div class="col-md-1 text-center">
+                                <i class="fas fa-paper-plane fa-2x text-success"></i>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label text-muted small">&nbsp;</label>
+                                <button type="button" 
+                                        id="transfer-submit" 
+                                        class="btn btn-success w-100"
+                                        data-active="<?php echo url('my-trade'); ?>">
+                                    <i class="fas fa-paper-plane me-1"></i>转账
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- 兑换说明 -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-transparent border-0 pb-0">
+                    <h5 class="mb-0">
+                        <i class="fas fa-info-circle text-info"></i> 兑换说明
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="text-primary mb-3">
+                                <i class="fas fa-info-circle"></i> 兑换规则
+                            </h6>
+                            <ul class="list-unstyled">
+                                <li class="mb-2">
+                                    <i class="fas fa-check text-success me-2"></i>
+                                    最低兑换金额：<?php echo isset($set['min']) ? $set['min'] : 1; ?> <?php echo lang('credits3'); ?>
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check text-success me-2"></i>
+                                    兑换后立即到账
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check text-success me-2"></i>
+                                    支持批量兑换操作
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-primary mb-3">
+                                <i class="fas fa-calculator"></i> 兑换比例
+                            </h6>
+                            <div class="bg-light p-3 rounded">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>RMB → 金币：</span>
+                                    <strong>1:<?php echo $set['exchange_n']; ?></strong>
+                                </div>
+                                <?php if($convert == 1): ?>
+                                <div class="d-flex justify-content-between">
+                                    <span>金币 → RMB：</span>
+                                    <strong>1:<?php echo $set['exchange_c']; ?></strong>
+                                </div>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 快捷操作 -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-transparent border-0 pb-0">
+                    <h5 class="mb-0">
+                        <i class="fas fa-bolt text-warning"></i> 快捷操作
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 col-lg-3 mb-3">
+                            <a href="<?php echo url('my-credits'); ?>" class="text-decoration-none">
+                                <div class="card border function-card h-100">
+                                    <div class="card-body text-center p-3">
+                                        <i class="fas fa-coins fa-2x text-warning mb-2"></i>
+                                        <h6 class="mb-1">积分中心</h6>
+                                        <small class="text-muted">查看积分详情</small>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-6 col-lg-3 mb-3">
+                            <a href="<?php echo url('my-record'); ?>" class="text-decoration-none">
+                                <div class="card border function-card h-100">
+                                    <div class="card-body text-center p-3">
+                                        <i class="fas fa-history fa-2x text-info mb-2"></i>
+                                        <h6 class="mb-1">消费记录</h6>
+                                        <small class="text-muted">查看兑换记录</small>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-6 col-lg-3 mb-3">
+                            <a href="<?php echo url('my-purchased'); ?>" class="text-decoration-none">
+                                <div class="card border function-card h-100">
+                                    <div class="card-body text-center p-3">
+                                        <i class="fas fa-shopping-bag fa-2x text-success mb-2"></i>
+                                        <h6 class="mb-1">已购内容</h6>
+                                        <small class="text-muted">查看购买记录</small>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-6 col-lg-3 mb-3">
+                            <div class="card border function-card h-100 opacity-75">
+                                <div class="card-body text-center p-3">
+                                    <i class="fas fa-chart-line fa-2x text-primary mb-2"></i>
+                                    <h6 class="mb-1">兑换统计</h6>
+                                    <small class="text-muted">敬请期待</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!--{hook my_trade_after.htm}-->
+        </div>
+    </slot>
+</template>
+
+<style>
+.exchange-form {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-radius: 10px;
+    padding: 20px;
+    margin: -15px;
+}
+
+.exchange-result {
+    text-align: center;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 8px;
+    border: 2px dashed #dee2e6;
+}
+
+.exchange-result-simple {
+    text-align: center;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 6px;
+    border: 1px solid #e9ecef;
+    min-height: 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.function-card {
+    transition: all 0.3s ease;
+    border-color: #e9ecef !important;
+}
+
+.function-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1) !important;
+    border-color: #007bff !important;
+}
+
+.form-control:focus {
+    border-color: #4facfe;
+    box-shadow: 0 0 0 0.2rem rgba(79, 172, 254, 0.25);
+}
+
+.input-group-text {
+    background-color: #f8f9fa;
+    border-color: #ced4da;
+}
+
+.opacity-75 {
+    opacity: 0.75;
+}
+
+.text-decoration-none {
+    text-decoration: none !important;
+}
+
+.text-decoration-none:hover {
+    text-decoration: none !important;
+}
+
+@media (max-width: 768px) {
+    .exchange-form {
+        margin: -10px;
+        padding: 15px;
+    }
+    
+    .col-md-4 {
+        margin-bottom: 1rem;
+    }
+}
+
+/* 加载动画 */
+.btn.loading {
+    position: relative;
+    color: transparent !important;
+}
+
+.btn.loading::after {
+    content: "";
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    margin: auto;
+    border: 2px solid transparent;
+    border-top-color: #ffffff;
+    border-radius: 50%;
+    animation: button-loading-spinner 1s ease infinite;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+}
+
+@keyframes button-loading-spinner {
+    from {
+        transform: rotate(0turn);
+    }
+    to {
+        transform: rotate(1turn);
+    }
+}
+		</style>
+
+<script>
+$(document).ready(function() {
+    // 设置TAB激活状态
+    $('a[data-active="my-trade"]').addClass('active');
+    
+    // RMB兑换金币
+    var jinput = $("#e_rmb");
+    var jsubmit1 = $('#submit1');
+    var jgolds = $("#e_golds");
+    
+    jinput.on('input', function() {
+        ONInput(jinput);
+    });
+    
+    jsubmit1.on('click', function() {
+        var amount = jinput.val();
+        if(!amount || amount == '0') {
+            $.alert('请输入有效的兑换金额！');
+            return false;
+        }
+        
+        $.confirm('确定要兑换 ' + amount + ' <?php echo lang('credits3'); ?> 吗？', function() {
+            jsubmit1.addClass('loading').prop('disabled', true);
+            
+            var postdata = "e_rmb=" + amount + "&op=n";
+            $.xpost(jsubmit1.attr('data-active'), postdata, function(code, message) {
+                jsubmit1.removeClass('loading').prop('disabled', false);
+                
+                if(code == 0) {
+                    $.alert(message, function() {
+                        location.reload();
+                    });
+                } else {
+                    $.alert(message);
+                }
+            });
+        });
+    });
+    
+    function ONInput(input) {
+        var value = input.val().replace(/[^0-9]/g, '');
+        input.val(value);
+        
+        var rmb_input = value == '' ? 0 : parseInt(value);
+        var golds_get = rmb_input * parseFloat("<?php echo $set['exchange_n']; ?>");
+        var rmb_unit_rate = parseFloat("<?php echo $rmb_unit_info['rate']; ?>");
+        
+        jgolds.text(golds_get.toFixed(1));
+        $("#show_rmb_yuan").text((rmb_input / rmb_unit_rate).toFixed(3));
+        
+        // 添加动画效果
+        if(golds_get > 0) {
+            jgolds.addClass('text-warning').removeClass('text-muted');
+        } else {
+            jgolds.addClass('text-muted').removeClass('text-warning');
+        }
+    }
+    
+    <?php if($convert == 1): ?>
+    // 金币兑换RMB
+    var jinput2 = $("#e_golds_c");
+    var jsubmit2 = $('#submit2');
+    var jrmbs = $("#e_rmbs_c");
+    
+    jinput2.on('input', function() {
+        ONInput2(jinput2);
+	});
+    
+    jsubmit2.on('click', function() {
+        var amount = jinput2.val();
+        if(!amount || amount == '0') {
+            $.alert('请输入有效的兑换金额！');
+            return false;
+        }
+        
+        $.confirm('确定要兑换 ' + amount + ' <?php echo lang('credits2'); ?> 吗？', function() {
+            jsubmit2.addClass('loading').prop('disabled', true);
+            
+            var postdata = "e_golds_c=" + amount + "&op=c";
+            $.xpost(jsubmit2.attr('data-active'), postdata, function(code, message) {
+                jsubmit2.removeClass('loading').prop('disabled', false);
+                
+                if(code == 0) {
+                    $.alert(message, function() {
+                        location.reload();
+                    });
+                } else {
+                    $.alert(message);
+                }
+        });
+    });
+    });
+    
+    function ONInput2(input) {
+        var value = input.val().replace(/[^0-9]/g, '');
+        input.val(value);
+        
+        var golds_input = value == '' ? 0 : parseInt(value);
+        var rmb_get = golds_input * parseFloat("<?php echo $set['exchange_c']; ?>");
+        var rmb_unit_rate = parseFloat("<?php echo $rmb_unit_info['rate']; ?>");
+        
+        jrmbs.text(rmb_get.toFixed(1));
+        $("#e_rmbs_c_yuan").text((rmb_get / rmb_unit_rate).toFixed(3));
+        
+        // 添加动画效果
+        if(rmb_get > 0) {
+            jrmbs.addClass('text-success').removeClass('text-muted');
+        } else {
+            jrmbs.addClass('text-muted').removeClass('text-success');
+        }
+    }
+    <?php endif; ?>
+    
+    // 转账功能
+    var jtransfer_submit = $('#transfer-submit');
+    
+    jtransfer_submit.on('click', function() {
+        var username = $('#to_username').val().trim();
+        var credits_type = $('#credits_type').val();
+        var amount = $('#to_num').val();
+        
+        // 验证输入
+        if(!username) {
+            $.alert('请输入接收用户名！');
+            return false;
+        }
+        
+        if(username.length > 32) {
+            $.alert('用户名长度不能超过32个字符！');
+            return false;
+        }
+        
+        if(!amount || amount == '0') {
+            $.alert('请输入有效的转账金额！');
+            return false;
+        }
+        
+        var credits_name = credits_type == 'golds' ? '<?php echo lang('credits2'); ?>' : '<?php echo lang('credits3'); ?>';
+        
+        $.confirm('确定要转账 ' + amount + ' ' + credits_name + ' 给用户 "' + username + '" 吗？<br><small class="text-danger">转账后无法撤销！</small>', function() {
+            jtransfer_submit.addClass('loading').prop('disabled', true);
+            
+            var postdata = "to_username=" + username + "&credits_type=" + credits_type + "&to_num=" + amount + "&op=t";
+            $.xpost(jtransfer_submit.attr('data-active'), postdata, function(code, message) {
+                jtransfer_submit.removeClass('loading').prop('disabled', false);
+                
+                if(code == 0) {
+                    $.alert(message, function() {
+                        // 清空表单
+                        $('#to_username').val('');
+                        $('#to_num').val('');
+                        $('#credits_type').val('golds');
+                        location.reload();
+                    });
+                } else {
+                    $.alert(message);
+                }
+            });
+        });
+    });
+    
+    // 转账表单验证
+    $('#to_username').on('input', function() {
+        var value = $(this).val();
+        // 移除特殊字符，只保留字母数字中文下划线
+        value = value.replace(/[^\w\u4e00-\u9fa5]/g, '');
+        $(this).val(value);
+    });
+    
+    $('#to_num').on('input', function() {
+        var value = $(this).val().replace(/[^0-9]/g, '');
+        $(this).val(value);
+    });
+    
+    // 功能卡片悬停效果
+    $('.function-card').hover(
+        function() {
+            $(this).find('i').addClass('fa-pulse');
+        },
+        function() {
+            $(this).find('i').removeClass('fa-pulse');
+        }
+    );
+    
+    // 输入框聚焦效果
+    $('.form-control').on('focus', function() {
+        $(this).closest('.input-group').addClass('shadow-sm');
+    }).on('blur', function() {
+        $(this).closest('.input-group').removeClass('shadow-sm');
+    });
+});
+</script>
+
+<!--{hook my_trade_script_after.htm}-->

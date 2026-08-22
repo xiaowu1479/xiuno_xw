@@ -1,0 +1,45 @@
+<?php include _include(ADMIN_PATH.'view/htm/header.inc.htm');$set=setting_get('tt_check'); ?>
+<div class="row"><div class="col-lg-10 mx-auto"><div class="card"><div class="card-body" ><table class="table">
+    <tr><td><a href="<?php echo url('check_thread');?>">批量审核主题</a></td><td><a href="<?php echo url('check_uthread');?>">管理未通过主题</a></td></tr>
+    <tr><td><a href="<?php echo url('check_post');?>">批量审核回帖</a></td><td><a href="<?php echo url('check_upost');?>">管理未通过回帖</a></td></tr>
+    <tr><td><a href="<?php echo url('check_user');?>">批量审核用户</a></td><td><a href="<?php echo url('check_uuser');?>">管理未通过用户</a></td></tr>
+    <tr><td><a href="<?php echo url('check_recycle');?>">主题回收站</a></td></tr>
+</table>
+</div></div><div class="card"><div class="card-body" ><h4>审核设置</h4><form action="<?php echo url('plugin-setting-tt_check');?>" method="post" id="form">
+    <h5>一般设置</h5>
+    <label for="cREG">用户注册需要审核，且未通过审核不得发帖回帖（0关闭，1开启）：</label><input id="cREG" type="input" class="form-control" name="cREG" value="<?php echo $set['user_check'];?>"/><br>
+    <label for="cRECYCLE">开启主题帖子回收站（0关闭，1开启）：</label><input id="cRECYCLE" type="input" class="form-control" name="cRECYCLE" value="<?php echo $set['recycle'];?>"/>
+    <hr><h5>用户组设置</h5>
+<table class="table"><tr><th>用户组</th><th>发帖需要审核</th><th>回帖需要审核</th><th>编辑需要审核</th><th>查看、审核、操作回收站</th></tr>
+    <?php foreach($grouplist as $_g) {?><tr><th><?php echo $_g['name'];?></th>
+        <td><input type="checkbox" class="form-control" name="gTHREAD[<?php echo $_g['gid']; ?>]" value="1" <?php echo $_g['thread_check']=='1'?'checked':'' ;?>/></td>
+        <td><input type="checkbox" class="form-control" name="gPOST[<?php echo $_g['gid']; ?>]" value="1" <?php echo $_g['post_check']=='1'?'checked':'' ;?>/></td>
+        <td><input type="checkbox" class="form-control" name="gEDIT[<?php echo $_g['gid']; ?>]" value="1" <?php echo $_g['edit_check']=='1'?'checked':'' ;?>/></td>
+        <td><input type="checkbox" class="form-control" name="gSEE[<?php echo $_g['gid']; ?>]" value="1" <?php echo $_g['see_check']=='1'?'checked':'' ;?>/></td>
+    </tr><?php }?></table>
+    <hr><h5>板块设置</h5>
+    <table class="table"><tr><th>板块</th><th>发帖需要审核</th><th>回帖需要审核</th><th>编辑需要审核</th></tr>
+        <?php foreach($forumlist as $_f) {?><tr><th><?php echo $_f['name'];?></th>
+            <td><input type="checkbox" class="form-control" name="fTHREAD[<?php echo $_f['fid']; ?>]" value="1" <?php echo $_f['thread_check']=='1'?'checked':'' ;?>/></td>
+            <td><input type="checkbox" class="form-control" name="fPOST[<?php echo $_f['fid']; ?>]" value="1" <?php echo $_f['post_check']=='1'?'checked':'' ;?>/></td>
+            <td><input type="checkbox" class="form-control" name="fEDIT[<?php echo $_f['fid']; ?>]" value="1" <?php echo $_f['edit_check']=='1'?'checked':'' ;?>/></td>
+        </tr><?php }?></table>
+<button type="submit" class="btn btn-primary btn-block" id="submit" data-loading-text="<?php echo lang('submiting');?>..."><?php echo lang('confirm');?></button></form></div></div><div class="card"><div class="card-body">
+    <h3>后期技术支持</h3>官方网站：https://www.6rabbit.com/ <a href="https://www.6rabbit.com"target="_blank" style="text-decoration: none">点击进入</a><br>官方QQ群：58911696（正常群）、77868272（只吹牛不讨论正事）</div></div></div></div>
+<?php include _include(ADMIN_PATH.'view/htm/footer.inc.htm');?>
+<script>
+    var jform = $("#form");var jsubmit = $("#submit");
+    jform.on('submit', function(){
+        jform.reset();jsubmit.button('loading'); var postdata = jform.serialize()+'&op=0';
+        $.xpost(jform.attr('action'), postdata, function(code, message) {
+            if(code == 0) {
+                $.alert(message);
+                setTimeout(function() {window.location.reload(); jsubmit.button('reset');}, 1000);
+                return;
+            } else {
+                $.alert(message);jsubmit.button('reset');
+            }
+        });
+        return false;
+    });
+</script>

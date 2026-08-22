@@ -1,0 +1,105 @@
+<div class="tab-pane fade show active" id="digest_1" role="tabpanel" aria-labelledby="digest-1-tab">
+	<div class="site-top">
+		<ul class="site-list-ul discovery-rank-list">
+			<?php 
+			$new_list = get_new_threadlist(); //获取最新的帖子
+    	thread_list_access_filter($new_list, $gid);//过滤没有权限访问的帖子，必须要做
+			if($new_list) {
+				foreach($new_list as $thread) {
+					$avatar_url = 'upload/avatar/000/'.$thread['uid'].'.png';
+				if(file_exists($avatar_url)==false){
+					$avatar_url = 'view/img/avatar.png';
+				}
+					?>
+			<li class="d-flex justify-content-between">
+				<div class="text-truncate">
+					<a href="<?php echo url("user-$thread[uid]");?>"><img src="<?php echo $avatar_url;?>" alt="用户头像" class="avatar-1 mr-1"></a>
+					<a href="<?php echo url("thread-$thread[tid]");?>"><?php echo $thread['subject'];?></a>
+				</div>
+				<div class="text-nowrap">
+					<span class="date text-grey"><?php echo humandate($thread['create_date'])?></span>
+				</div>
+			</li>
+			<?php }} else { ?>
+				<?php echo lang('none');?>
+			<?php } ?>
+	</ul>	
+	</div>
+</div>
+
+<div class="tab-pane fade" id="digest_2" role="tabpanel" aria-labelledby="digest-2-tab">
+	<div class="site-top">
+		<ul class="site-list-ul discovery-rank-list">
+			<?php 
+			$newReplylist = get_new_reply_threadlist(); //获取精华二的帖子
+    	thread_list_access_filter($newReplylist, $gid);//过滤没有权限访问的帖子，必须要做
+			if($newReplylist) {
+				foreach($newReplylist as $thread) {
+					$avatar_url = 'upload/avatar/000/'.$thread['uid'].'.png';
+				if(file_exists($avatar_url)==false){
+					$avatar_url = 'view/img/avatar.png';
+				}
+					?>
+			<li class="d-flex justify-content-between">
+				<div class="text-truncate">
+					<a href="<?php echo url("user-$thread[uid]");?>"><img src="<?php echo $avatar_url;?>" alt="用户头像" class="avatar-1 mr-1"></a>
+					<a href="<?php echo url("thread-$thread[tid]");?>"><?php echo $thread['subject'];?></a>
+				</div>
+				<div class="text-nowrap">
+					<span class="date text-grey"><?php echo humandate($thread['create_date'])?></span>
+				</div>
+			</li>
+			<?php }} else { ?>
+				<?php echo lang('none');?>
+			<?php } ?>
+	</ul>	
+	</div>
+</div>
+
+
+<div class="tab-pane fade" id="nav-allrank" role="tabpanel" aria-labelledby="all-rank-tab">
+	<div class="site-top">
+	<ul class="site-list-ul discovery-rank-list">
+		<?php
+			$toplist = discovery_get_site_top_list();
+			if($toplist){
+			thread_list_access_filter($toplist, $gid);
+			foreach ($toplist as $k => $value){
+				$_class = $k < 3 ? 'badge-danger' : 'badge-secondary';
+				echo '<li class="d-flex justify-content-between"><div class="text-truncate"><span class=" badge mr-2 badge-pill '.$_class.'">'.($k+1).'</span><a href="thread-'.$value['tid'].'.htm">'.$value['subject'].'</a></div>
+				<div class="text-nowrap">
+					<span class="date text-grey">'.humandate($value['create_date']).'</span>
+				</div>
+				</li>';
+			}}
+		?>
+	</ul>
+</div>
+</div>
+
+<div class="tab-pane fade" id="nav-comment" role="tabpanel" aria-labelledby="nav-comment-tab">
+	<div class="site-top">
+		<ul class="site-list-ul discovery-rank-list">
+			<?php
+			$ax_posts = discovery_get_comment_list();
+			 if($ax_posts) {
+				foreach($ax_posts as &$post){ ?>
+			<li class="d-flex justify-content-between">
+				<div class="text-truncate">
+					<span><a href="<?php echo url("user-$post[uid]")?>" tabindex="-1" class="mr-2">
+							<img class="avatar-1" src="<?php echo $post['user_avatar_url'];?>">
+							<span class="username font-weight-bold mx-1"><?php echo $post['username']?></span>
+						</a>
+					</span>
+						<a href="<?php echo url("thread-$post[tid]")?>"><?php echo strip_tags(xn_substr($post['message_fmt'], 0, 25));?></a>
+					</div>
+					<div class="text-nowrap">
+						<span class="date text-grey"><?php echo $post['create_date_fmt']?></span>
+					</div>
+					</li>
+			<?php }} else { ?>
+				<?php echo lang('none');?>
+			<?php } ?>
+	</ul>	
+	</div>
+</div>

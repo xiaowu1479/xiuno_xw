@@ -1,0 +1,82 @@
+<?php include _include(ADMIN_PATH.'view/htm/header.inc.htm');?>
+
+<h1 class="card-title">举报设置</h1>
+<div class="card">
+	<div class="card-body">
+		<form action="<?php echo url("plugin-setting-ob_feedback");?>" method="post" id="form">
+
+			<h2>通用设置</h2>
+			<div class="form-group">
+				<label class="form-label" for="reasons">举报理由</label>
+				<?= $input['reasons'] ?>
+				<p class="form-text">一行一个，有两个值“给管理反馈”和“其他”会自动增加到该列表的尾部</p>
+			</div>
+			<h2>处理对应内容并反馈给用户</h2>
+			<div class="form-group">
+				<label class="form-label" for="default_notice_text_solve">默认赠言</label>
+				<?= $input['default_notice_text_solve'] ?>
+			</div>
+			<div class="form-group">
+				<label class="form-label" for="default_credits1_solve">默认<?= lang('credits1') ?></label>
+				<?= $input['default_credits1_solve'] ?>
+			</div>
+			<div class="form-group">
+				<label class="form-label" for="default_credits2_solve">默认<?= lang('credits2') ?></label>
+				<?= $input['default_credits2_solve'] ?>
+			</div>
+			<div class="form-group">
+				<label class="form-label" for="default_credits3_solve">默认<?= lang('credits3') ?></label>
+				<?= $input['default_credits3_solve'] ?>
+			</div>
+			<h2>不处理并反馈给用户</h2>
+			<div class="form-group">
+				<label class="form-label" for="default_notice_text_no_solve">默认赠言</label>
+				<?= $input['default_notice_text_no_solve'] ?>
+			</div>
+
+			<div class="form-group">
+				<label class="form-label" for="default_credits1_no_solve">默认<?= lang('credits1') ?></label>
+				<?= $input['default_credits1_no_solve'] ?>
+			</div>
+			<div class="form-group">
+				<label class="form-label" for="default_credits2_no_solve">默认<?= lang('credits2') ?></label>
+				<?= $input['default_credits2_no_solve'] ?>
+			</div>
+			<div class="form-group">
+				<label class="form-label" for="default_credits3_no_solve">默认<?= lang('credits3') ?></label>
+				<?= $input['default_credits3_no_solve'] ?>
+			</div>
+
+
+			<button type="submit" class="btn btn-primary btn-block" id="submit" data-loading-text="<?php echo lang('submiting');?>..."><?php echo lang('confirm');?></button>
+
+		</form>
+	</div>
+</div>
+
+
+<?php include _include(ADMIN_PATH.'view/htm/footer.inc.htm');?>
+
+<script>
+
+	var jform = $("#form");
+	var jsubmit = $("#submit");
+	var referer = '<?php echo http_referer();?>';
+	jform.on('submit', function () {
+		jform.reset();
+		jsubmit.button('loading');
+		var postdata = jform.serialize();
+		$.xpost(jform.attr('action'), postdata, function (code, message) {
+			if (code == 0) {
+				$.alert(message);
+				jsubmit.text(message).delay(2000).button('reset').location(referer);
+				return;
+			} else {
+				$.alert(message);
+				jsubmit.button('reset');
+			}
+		});
+		return false;
+	});
+
+</script>

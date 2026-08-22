@@ -1,0 +1,83 @@
+<?php if($uid) : $ob_feedback_setting = setting_get('ob_feedback_setting'); ?>
+<div class=" ajax-body">
+    <form action='<?php echo url("feedback"); ?>' method="post" id="ob_form">
+        <input name="to_uid" type="hidden" class="to_uid" value="0" />
+        <input name="ob_tid" type="hidden" class="ob_tid" value="0" />
+        <input name="ob_pid" type="hidden" class="ob_pid" value="0" />
+        <input name="ob_isfirst" type="hidden" class="ob_isfirst" value="0" />
+        <input name="ob_thread_subject" class="ob_thread_subject" type="hidden" value="0" />
+        <input name="ob_excerpt" class="ob_excerpt" type="hidden" value="0" />
+        <section class="form-group">
+            <label for="ob_feedback_type" class="fw-bolder fs-big"><i class="icon-exclamation-triangle text-danger "></i> 你觉得这个内容有什么问题？</label>
+            <select name="ob_feedback_type" id="ob_feedback_type" class="form-select">
+                <option value="给管理反馈" selected>给管理反馈</option>
+                <?php $ob_feedback_reasons = explode(PHP_EOL,$ob_feedback_setting['reasons']); foreach($ob_feedback_reasons as $reason): ?>
+                <option value="<?= $reason ?>"><?= $reason ?></option>
+                <?php endforeach; ?>
+                <option value="其他">其他</option>
+
+            </select>
+        </section>
+        <section class="form-group">
+            <label for="ob_message">反馈内容描述</label>
+                <textarea name="ob_message" class="form-control w-100" rows="4"></textarea>
+                <p class="form-text">为帮助审核人员更快处理，建议您补充违规帖子链接以及详细信息。</p>
+        </section>
+        <button type="submit" class="btn btn-block btn-primary" data-loading-text="<?php echo lang('submiting'); ?>...">提交举报</button>
+    </form>
+</div>
+<script ajax-eval="true">
+    // 接受传参
+    var args = args || {
+        jmodal: null,
+        callback: null,
+        arg: null,
+    };
+    var jmodal = args.jmodal;
+    var callback = args.callback;
+
+    str = args.arg;
+    var strs = new Array();
+    strs = str.split("Ȼ");
+
+    $(".to_uid").val(strs[0]);
+    $(".ob_tid").val(strs[1]);
+    $(".ob_pid").val(strs[2]);
+    $(".ob_isfirst").val(strs[3]);
+    $(".ob_thread_subject").val(strs[4]);
+    $(".ob_excerpt").val(strs[5]);
+    
+    var jform = $('#ob_form');
+    var jsubmit = jform.find('button[type="submit"]');
+    var jcancel = jform.find('button[type="button"]');
+
+    jform.on('submit', function () {
+        jform.reset();
+        jsubmit.button('loading');
+        var postdata = jform.serializeObject();
+        $.xpost(jform.attr('action'), postdata, function (code, message) {
+            if (code == 0) {
+                jsubmit.button(message);
+                setTimeout(function () {
+                    if (jmodal) jmodal.dispose();
+                    if (callback) callback(message);
+                    window.location.reload();
+                }, 1000);
+            } else {
+                $.alert(message);
+                jsubmit.button('reset');
+            }
+        });
+
+        return false;
+    });
+    jcancel.on('click', function () {
+        if (jmodal) jmodal.dispose();
+    });
+</script>
+<?php else: ?>
+<p>您好，如果您发现此文存在版权/法律/违规方面的问题，请通过以下方式举报</p>
+<ul>
+    <li><b>Email：</b></li>
+</ul>
+<?php endif; ?>

@@ -1,0 +1,388 @@
+<template include="./plugin/tt_credits/view/htm/my_credits.template.htm">
+    <slot name="my_body">
+        <div class="col-md-12 mx-auto">
+            <?php 
+            $no_cache_user = user_read($uid);
+            $progress = 100; 
+            $max = 1; 
+            $now = $no_cache_user['credits'];
+            
+            if($no_cache_user['gid'] > 100){
+    foreach($grouplist as $group) {
+        if($group['gid'] < 100) continue;
+                    $n = $no_cache_user['credits'];
+                    if($n >= $group['creditsfrom'] && $n <= $group['creditsto']) {
+                        $max = $group['creditsto'];
+                        if($no_cache_user['groupname'] != $group['name']) {
+                            $no_cache_user['groupname'] = $group['name'];
+                user_update_group($uid);
+            }
+            break;
+        }
+    }
+                $progress = $max > 0 ? min(100, ($now / $max) * 100) : 100;
+}
+            
+            // 获取积分设置
+            $credits_set = setting_get('tt_credits');
+            $rmb_unit_info = credits_get_rmb_unit_info();
+?>
+
+            <!--{hook my_credits_before.htm}-->
+
+            <!-- 积分概览卡片 -->
+            <div class="card border-0 shadow-sm mb-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <div class="card-body p-4 text-white">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="fas fa-wallet fa-2x me-3"></i>
+                                <div>
+                                    <h4 class="mb-0 font-weight-bold">我的积分</h4>
+                                    <p class="mb-0 opacity-75">管理您的数字资产</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-md-right">
+                            <div class="text-white">
+                                <div class="h5 mb-0">当前等级</div>
+                                <div class="h6 opacity-75"><?php echo htmlspecialchars($no_cache_user['groupname']); ?></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 积分数据卡片 -->
+            <div class="row mb-4">
+                <!-- 金币卡片 -->
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100 border-0 shadow-sm credit-card" data-type="golds">
+                        <div class="card-body text-center">
+                            <div class="credit-icon mb-3">
+                                <i class="fas fa-coins fa-3x text-warning"></i>
+                            </div>
+                            <h6 class="text-muted mb-2"><?php echo lang('credits2'); ?></h6>
+                            <h2 class="text-warning mb-1 font-weight-bold"><?php echo number_format($no_cache_user['golds']); ?></h2>
+                            <small class="text-muted">用于下载和购买</small>
+                        </div>
+                        <div class="card-footer bg-transparent border-0 text-center">
+                            <a href="<?php echo url('my-trade'); ?>" class="btn btn-outline-warning btn-sm">
+                                <i class="fas fa-exchange-alt"></i> 兑换
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RMB卡片 -->
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100 border-0 shadow-sm credit-card" data-type="rmbs">
+                        <div class="card-body text-center">
+                            <div class="credit-icon mb-3">
+                                <i class="fas fa-yen-sign fa-3x text-success"></i>
+                            </div>
+                            <h6 class="text-muted mb-2"><?php echo lang('credits3'); ?></h6>
+                            <h2 class="text-success mb-1 font-weight-bold">
+                                <?php 
+                                $rmb_display = credits_get_rmb_display($no_cache_user['rmbs'], false);
+                                echo $rmb_display;
+                                ?>
+                            </h2>
+                            <small class="text-muted">
+                                <?php if($rmb_unit_info['is_yuan']): ?>
+                                    元制 (1元=1系统单位)
+                                <?php else: ?>
+                                    分制 (1元=<?php echo $rmb_unit_info['rate']; ?>系统单位)
+                                <?php endif; ?>
+                            </small>
+                    </div>
+                        <div class="card-footer bg-transparent border-0 text-center">
+                            <a href="<?php echo url('my-trade'); ?>" class="btn btn-outline-success btn-sm">
+                                <i class="fas fa-exchange-alt"></i> 兑换
+                            </a>
+                    </div>
+                </div>
+            </div>
+
+                <!-- 经验卡片 -->
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100 border-0 shadow-sm credit-card" data-type="credits">
+                        <div class="card-body text-center">
+                            <div class="credit-icon mb-3">
+                                <i class="fas fa-star fa-3x text-info"></i>
+                            </div>
+                            <h6 class="text-muted mb-2">经验值</h6>
+                            <h2 class="text-info mb-1 font-weight-bold"><?php echo number_format($no_cache_user['credits']); ?></h2>
+                            <small class="text-muted">影响用户组等级</small>
+                        </div>
+                        <div class="card-footer bg-transparent border-0">
+                            <div class="text-center">
+                                <small class="text-muted">升级进度</small>
+                                <div class="progress mt-1" style="height: 6px;">
+                                    <div class="progress-bar bg-info" role="progressbar" style="width: <?php echo $progress; ?>%" aria-valuenow="<?php echo $progress; ?>" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                                <small class="text-muted"><?php echo number_format($progress, 1); ?>%</small>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+            <!-- 等级信息卡片 -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-transparent border-0 pb-0">
+                    <h5 class="mb-0">
+                        <i class="fas fa-award text-primary"></i> 等级信息
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <div class="d-flex align-items-center">
+                                <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px;">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                    <div>
+                                    <h5 class="mb-1 font-weight-bold"><?php echo htmlspecialchars($no_cache_user['groupname']); ?></h5>
+                                    <p class="text-muted mb-0">
+                                        当前经验：<?php echo number_format($no_cache_user['credits']); ?> 
+                                        <?php if($max > $now): ?>
+                                            / 下一级需要：<?php echo number_format($max); ?>
+                                        <?php endif; ?>
+                        </p>
+                    </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-md-right">
+                            <div class="d-flex align-items-center justify-content-md-end">
+                                <div class="text-center">
+                                    <div class="h3 text-primary mb-0"><?php echo number_format($progress, 1); ?>%</div>
+                                    <small class="text-muted">升级进度</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <?php if($max > $now): ?>
+                    <div class="mt-3">
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-primary" role="progressbar" style="width: <?php echo $progress; ?>%" aria-valuenow="<?php echo $progress; ?>" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <div class="d-flex justify-content-between mt-1">
+                            <small class="text-muted"><?php echo number_format($now); ?></small>
+                            <small class="text-muted">还需 <?php echo number_format($max - $now); ?> 经验</small>
+                        </div>
+                    </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+
+            <!-- 功能导航卡片 -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-transparent border-0 pb-0">
+                    <h5 class="mb-0">
+                        <i class="fas fa-tools text-success"></i> 积分功能
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 col-lg-3 mb-3">
+                            <a href="<?php echo url('my-trade'); ?>" class="text-decoration-none">
+                                <div class="card border h-100 function-card">
+                                    <div class="card-body text-center p-3">
+                                        <i class="fas fa-exchange-alt fa-2x text-info mb-2"></i>
+                                        <h6 class="mb-1">积分兑换</h6>
+                                        <small class="text-muted">RMB与金币互换</small>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-6 col-lg-3 mb-3">
+                            <a href="<?php echo url('my-record'); ?>" class="text-decoration-none">
+                                <div class="card border h-100 function-card">
+                                    <div class="card-body text-center p-3">
+                                        <i class="fas fa-history fa-2x text-warning mb-2"></i>
+                                        <h6 class="mb-1">消费记录</h6>
+                                        <small class="text-muted">查看积分流水</small>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-6 col-lg-3 mb-3">
+                            <a href="<?php echo url('my-purchased'); ?>" class="text-decoration-none">
+                                <div class="card border h-100 function-card">
+                                    <div class="card-body text-center p-3">
+                                        <i class="fas fa-shopping-bag fa-2x text-success mb-2"></i>
+                                        <h6 class="mb-1">已购内容</h6>
+                                        <small class="text-muted">查看购买记录</small>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-6 col-lg-3 mb-3">
+                            <div class="card border h-100 function-card opacity-75">
+                                <div class="card-body text-center p-3">
+                                    <i class="fas fa-gift fa-2x text-danger mb-2"></i>
+                                    <h6 class="mb-1">积分任务</h6>
+                                    <small class="text-muted">敬请期待</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+
+            <!-- 积分规则说明 -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-transparent border-0 pb-0">
+                    <h5 class="mb-0">
+                        <i class="fas fa-info-circle text-info"></i> 积分说明
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="text-primary">
+                                <i class="fas fa-coins text-warning"></i> <?php echo lang('credits2'); ?>
+                            </h6>
+                            <ul class="list-unstyled small text-muted">
+                                <li><i class="fas fa-check text-success"></i> 用于下载附件</li>
+                                <li><i class="fas fa-check text-success"></i> 购买付费内容</li>
+                                <li><i class="fas fa-check text-success"></i> 可与RMB互换</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-primary">
+                                <i class="fas fa-yen-sign text-success"></i> <?php echo lang('credits3'); ?>
+                            </h6>
+                            <ul class="list-unstyled small text-muted">
+                                <li><i class="fas fa-check text-success"></i> 可兑换金币</li>
+                                <li><i class="fas fa-check text-success"></i> 转账给其他用户</li>
+                                <li><i class="fas fa-check text-success"></i> 
+                                    兑换比例：1 <?php echo $rmb_unit_info['system_unit_name']; ?> = <?php echo isset($credits_set['exchange_n']) ? $credits_set['exchange_n'] : 1; ?> <?php echo lang('credits2'); ?>
+                                </li>
+                            </ul>
+                        </div>
+                </div>
+            </div>
+        </div>
+
+        <!--{hook my_credits_after.htm}-->
+        </div>
+    </slot>
+</template>
+
+<style>
+.credit-card {
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.credit-card:hover {
+        transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+}
+
+.credit-icon {
+    transition: transform 0.3s ease;
+}
+
+.credit-card:hover .credit-icon {
+    transform: scale(1.1);
+}
+
+.function-card {
+    transition: all 0.3s ease;
+    border-color: #e9ecef !important;
+}
+
+.function-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1) !important;
+    border-color: #007bff !important;
+}
+
+.opacity-75 {
+    opacity: 0.75;
+}
+
+.text-decoration-none {
+    text-decoration: none !important;
+}
+
+.text-decoration-none:hover {
+    text-decoration: none !important;
+}
+
+.rounded-circle {
+    border-radius: 50% !important;
+}
+
+.shadow-sm {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+}
+
+@media (max-width: 768px) {
+    .text-md-right {
+        text-align: center !important;
+        margin-top: 1rem;
+    }
+    
+    .col-md-8, .col-md-4 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+    
+    .justify-content-md-end {
+        justify-content: center !important;
+    }
+    }
+</style>
+
+<script>
+$(document).ready(function() {
+    // 设置TAB激活状态
+    $('a[data-active="my-credits"]').addClass('active');
+    
+    // 积分卡片点击效果
+    $('.credit-card').on('click', function() {
+        $(this).addClass('shadow-lg');
+        setTimeout(() => {
+            $(this).removeClass('shadow-lg');
+        }, 300);
+    });
+    
+    // 功能卡片悬停效果
+    $('.function-card').hover(
+        function() {
+            $(this).find('i').addClass('fa-pulse');
+        },
+        function() {
+            $(this).find('i').removeClass('fa-pulse');
+        }
+    );
+    
+    // 添加数字动画效果
+    function animateNumbers() {
+        $('.credit-card h2').each(function() {
+            const $this = $(this);
+            const finalValue = parseInt($this.text().replace(/,/g, ''));
+            if (finalValue > 0) {
+                $this.prop('Counter', 0).animate({
+                    Counter: finalValue
+                }, {
+                    duration: 1000,
+                    easing: 'swing',
+                    step: function(now) {
+                        $this.text(Math.ceil(now).toLocaleString());
+                    }
+                });
+            }
+        });
+    }
+    
+    // 页面加载完成后执行动画
+    setTimeout(animateNumbers, 500);
+});
+</script>
+
+<!--{hook my_credits_script_after.htm}-->

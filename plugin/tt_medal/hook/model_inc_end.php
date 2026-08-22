@@ -1,0 +1,1 @@
+include _include(APP_PATH.'plugin/tt_medal/model/medal.func.php');

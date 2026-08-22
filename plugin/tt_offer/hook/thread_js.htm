@@ -1,0 +1,24 @@
+<?php if($uid AND isset($load_select_btn) AND ($uid==$thread['uid'] || $user['gid']=='1') ){?>
+<script>
+    $('body').on('click', '.post_select_offer', function() {
+        var jthis = $(this);
+        var href = jthis.data('href');
+        if(window.confirm(jthis.data('confirm-text'))) {
+            jthis.attr('disabled','disabled');
+            $.xpost(href, function(code, message) {
+                if(code == 0) {
+                    $.alert(message);
+                    setTimeout(function() {
+                        window.location.reload();
+                    }, 1000);
+                    return;
+                } else {
+                    $.alert(message);
+                }
+                jthis.removeAttr('disabled');
+            });
+        }
+        return false;
+    });
+</script>
+<?php }?>

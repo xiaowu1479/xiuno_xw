@@ -1,0 +1,76 @@
+<?php include _include(ADMIN_PATH.'view/htm/header.inc.htm');
+$num_pid = db_count('gift',array()); $page = param(1,1);
+$g_credits_status_array = array('未用','已用');
+$data =  db_find('gift',array(), array('time_from'=>-1), $page, $pagesize = 20);
+$pagination = pagination(url("tt_gift-{page}"), $num_pid, $page, $pagesize);
+function username($uid)
+{ if($uid==0) return ' - ' ;else $r = db_find_one('user',array("uid"=>$uid)); return $r['username'];}
+?>
+<style>.opt{color:dodgerblue;cursor:pointer;margin:3px 9px;display:inline-block; height:30px; width:auto; }  .opt:hover{color:red;}</style>
+<div class="row"><div class="col-lg-10 mx-auto"><div class="card"><div class="card-body" >
+<h3>后期技术支持</h3>官方网站：http://www.6rabbit.com/ <a href="http://www.6rabbit.com"target="_blank" style="text-decoration: none">点击进入</a><br>
+官方QQ群：58911696（正常群）、77868272（只吹牛不讨论正事）</div></div>
+<div class="card"><div class="card-body"><h3>礼品卡生成</h3>考虑到负载，防止服务器爆炸，请不要一次性生成过多卡密，系统限制最多99个/次，如果不给这一项请填写0，不要出现特殊字符。<form action="<?php echo url('plugin-setting-tt_gift');?>" method="post" id="form">
+    <div class="input-group mb-3"><div class="input-group-prepend"><span class="input-group-text">份数</span></div>
+     <input type="text" class="form-control" name="num" maxlength="2" value="0"></div>
+    <div class="input-group mb-3"><div class="input-group-prepend"><span class="input-group-text">经验值</span></div>
+        <input type="text" class="form-control" name="credits" value="0"></div>
+    <div class="input-group mb-3"><div class="input-group-prepend"><span class="input-group-text">金币</span></div>
+        <input type="text" class="form-control" name="golds" value="0"></div>
+    <div class="input-group mb-3"><div class="input-group-prepend"><span class="input-group-text">人民币(分)</span></div>
+        <input type="text" class="form-control" name="rmbs" value="0"></div>
+    <div class="input-group mb-3"><div class="input-group-prepend"><span class="input-group-text">购买主题(输入tid,多个用英文半角竖线|隔开)</span></div>
+        <input type="text" class="form-control" name="tids" value="0"></div>
+<button type="button" class="btn btn-primary btn-block" id="submit" data-loading-text="<?php echo lang('submiting');?>..."><?php echo lang('confirm');?></button>
+        </form></div></div><div class="card"><div class="card-body" ><h3>礼品卡状态查询</h3><a href="<?php echo url('tt_gift_out'),'?type=csv&op=2&s=all';?>" target="_blank">导出礼品卡(CSV)</a>&nbsp;&nbsp;<a href="<?php echo url('tt_gift_out'),'?type=txt&op=2&s=all';?>" target="_blank">导出礼品卡(TXT)</a><br>
+        <a href="<?php echo url('tt_gift_out'),'?type=csv&op=2&s=un';?>" target="_blank">导出礼品卡(CSV,未使用)</a>&nbsp;&nbsp;<a href="<?php echo url('tt_gift_out'),'?type=txt&op=2&s=un';?>" target="_blank">导出礼品卡(TXT,未使用)</a><br><span style="color:dodgerblue;cursor:pointer;" id="delete_used">删除全部已使用的卡密</span><hr>
+        <input class="form-control" placeholder="请输入要查询的卡号" style="display:inline-block;width:80%;" id="card_input"/><span id="search_span" style="color:white;display:inline-block;background-color:dodgerblue;cursor:pointer;border-radius:5px; margin-left:8px; height:24px;width:60px;text-align: center;">搜索</span>
+        <hr><table class="table"><th>卡号</th><th>zid</th><th>经验</th><th>金币</th><th>人民币(分)</th><th>主题</th><th>用户</th><th>生成时间</th><th>使用时间</th>
+<?php foreach($data as $v){?><tr id="li<?php echo $v['zid'];?>">
+<td><?php echo $v['card_id'];?></td><td><?php echo $v['zid'];?></td><td><?php echo $v['credits'];?></td><td><?php echo $v['golds'];?></td><td><?php echo $v['rmbs'];?></td><td><?php echo $v['tids'];?></td><td><?php echo username($v['uid']);?></td><td><?php echo date('Y-m-d H:i:s',$v['time_from']); ?></td><td><?php echo $v['time_to']==0?'-':date('Y-m-d H:i:s',$v['time_to']); ?></td></tr><tr id="li2<?php echo $v['zid'];?>"><td colspan="9"><span style="color:red;" id="status<?php echo $v['zid'];?>"><?php echo $g_credits_status_array[$v['status']];?></span> <span class="opt" onclick="set(1,<?php echo $v['zid'];?>);">删除</span><span class="opt" onclick="set(-1,<?php echo $v['zid'];?>);">设为未使用</span><span class="opt" onclick="set(-2,<?php echo $v['zid'];?>);">设为已使用</span></td>
+ </tr><?php }?></table>
+<nav class="text-center"><ul class="pagination"><?php echo $pagination; ?></ul></nav>
+</div></div></div></div>
+<?php include _include(ADMIN_PATH.'view/htm/footer.inc.htm');?>
+<script>
+    var jsubmit = $("#submit"); var jform=$("#form");var jused = $("#delete_used"); var jsearch=$("#search_span");var jcard_input=$("#card_input");
+    jsubmit.on("click",function(){
+        jsubmit.attr('disabled','disabled');
+        var postdata = jform.serialize();
+        postdata+="&op=1";
+        $.xpost("<?php echo url('plugin-setting-tt_gift');?>", postdata, function(code, message) {jsubmit.removeAttr('disabled');
+            if(code == 0) location.reload(); else $.alert(message);
+        });
+    });
+    function set(opt,zid) {
+        var jli=$("#li"+zid);var postdata = new Array(); var jli2=$("#li2"+zid);
+        if(opt==1) {jli.fadeOut();jli2.fadeOut();}
+        var jstatus=$("#status"+zid); if(opt==-1) jstatus.html('未用'); else if(opt==-2) jstatus.html('已用');
+        postdata['opt']=opt; postdata['zid'] =zid; postdata['op']=0;
+        $.xpost("<?php echo url('plugin-setting-tt_gift');?>", serialize_array(postdata), function(code, message) {
+            if(code == 0) return; else {$.alert(message);jli.fadeIn();jli2.fadeIn();}
+        });
+    }
+    function serialize_array(arr) {
+        var first = 1; var rtn="";
+        for(var key in arr){
+            if(first!=1) rtn+="&"; else first=0;
+            rtn+= key+"="+arr[key];
+        } return rtn;
+    }
+    jused.on('click',function(){
+        $.confirm('您确定要清理所有已使用的卡密吗？',function(){
+            jused.attr('disabled','disabled');
+            $.xpost("<?php echo url('plugin-setting-tt_gift');?>","op=2",function(code,message){
+                if(code==0) location.reload();
+                else $.alert(message);
+            });
+        });
+    });
+    jsearch.on('click',function(){
+        jsearch.attr('disabled','disabled');
+        $.xpost("<?php echo url('plugin-setting-tt_gift');?>","op=3&card="+jcard_input.val(),function(code,message){
+            $.alert(message);jsearch.removeAttr('disabled');
+        });
+    });
+</script>

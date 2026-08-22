@@ -1,0 +1,214 @@
+<?php
+	if(empty($uid)) die();
+    $num_pid = db_count('user_pay', array('uid'=>$uid));
+	$page = param(2, 1);
+	$pagesize = 20;
+	$data = db_find('user_pay', array('uid'=>$uid), array('time'=>-1), $page, $pagesize);
+	$pagination = pagination(url("my-record-{page}"), $num_pid, $page, $pagesize);
+	function subject($tid) {
+		$r = db_find_one('thread', array("tid"=>$tid));
+		return $r ? $r['subject'] : '已删除帖子';
+	}
+?>
+
+<template include="./plugin/tt_credits/view/htm/my_credits.template.htm">
+	<slot name="my_body">
+
+	<!-- 稳定兼容版样式：移除高兼容性属性，保留核心美观度 -->
+	<style>
+		/* 全局容器：基础样式，确保内容正常显示 */
+		.credit-record-wrap {
+			padding: 20px 15px;
+			background-color: #f8f9fa;
+		}
+		.credit-record-inner {
+			max-width: 900px;
+			margin: 0 auto;
+		}
+
+		/* 标题栏：简洁清晰 */
+		.credit-record-title {
+			font-size: 18px;
+			font-weight: 600;
+			color: #212529;
+			margin-bottom: 24px;
+			padding-left: 8px;
+			border-left: 3px solid #007bff;
+		}
+
+		/* 卡片样式：移除复杂效果，保留基础质感 */
+		.credit-card {
+			background: #fff;
+			border-radius: 12px;
+			box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+			padding: 20px;
+			margin-bottom: 18px;
+			transition: all 0.2s ease;
+			border: 1px solid #eee;
+		}
+		.credit-card:hover {
+			transform: translateY(-2px);
+			box-shadow: 0 6px 15px rgba(0, 0, 0, 0.07);
+		}
+
+		/* 卡片内容布局：简单网格，确保信息正常展示 */
+		.credit-card__header {
+			display: flex;
+			justify-content: space-between;
+			margin-bottom: 16px;
+		}
+		.credit-card__time {
+			font-size: 13px;
+			color: #6c757d;
+		}
+		.credit-card__status {
+			font-size: 13px;
+			color: #007bff;
+			font-weight: 500;
+		}
+
+		.credit-card__body {
+			display: grid;
+			grid-template-columns: repeat(2, 1fr);
+			gap: 12px;
+			margin-bottom: 16px;
+		}
+		.credit-card__item {
+			display: flex;
+			flex-direction: column;
+		}
+		.credit-card__label {
+			font-size: 12px;
+			color: #6c757d;
+			margin-bottom: 4px;
+		}
+		.credit-card__value {
+			font-size: 14px;
+			color: #212529;
+			font-weight: 500;
+		}
+
+		.credit-card__footer {
+			font-size: 13px;
+			color: #6c757d;
+			border-top: 1px solid #f1f3f5;
+			padding-top: 12px;
+		}
+
+		/* 空数据提示：简单友好 */
+		.credit-empty {
+			background: #fff;
+			border-radius: 12px;
+			box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+			padding: 40px 20px;
+			margin-bottom: 18px;
+			text-align: center;
+			border: 1px solid #eee;
+		}
+		.credit-empty__text {
+			color: #6c757d;
+			font-size: 14px;
+		}
+
+		/* 分页：基础样式，确保功能正常 */
+		.credit-pagination {
+			display: flex;
+			justify-content: center;
+			flex-wrap: wrap;
+			padding-left: 0;
+			list-style: none;
+			margin: 30px 0 10px;
+		}
+		.credit-pagination li {
+			margin: 0 4px;
+		}
+		.credit-pagination li a,
+		.credit-pagination li span {
+			display: inline-block;
+			padding: 6px 12px;
+			border-radius: 6px;
+			background-color: #fff;
+			color: #495057;
+			text-decoration: none;
+			border: 1px solid #dee2e6;
+			font-size: 14px;
+			min-width: 36px;
+			text-align: center;
+		}
+		.credit-pagination li a:hover {
+			background-color: #e9ecef;
+			color: #007bff;
+			border-color: #dee2e6;
+		}
+		.credit-pagination li.active span {
+			background-color: #007bff;
+			color: #fff;
+			border-color: #007bff;
+		}
+		.credit-pagination li.disabled span {
+			color: #adb5bd;
+			background-color: #fff;
+			border-color: #dee2e6;
+			cursor: not-allowed;
+		}
+	</style>
+
+	<!-- 页面结构：简化层级，确保模板解析正常 -->
+	<div class="credit-record-wrap">
+		<div class="credit-record-inner">
+			<!-- 标题 -->
+			<div class="credit-record-title">记录</div>
+
+			<!-- 卡片列表 -->
+			<?php if (!empty($data)): ?>
+				<?php foreach($data as $v): ?>
+					<?php 
+						$c_type = $v['credit_type']; 
+						$credit_num = $v['num'] > 0 ? ($c_type == '3' ? $v['num'] / 1 : $v['num']) : '-';
+						$credit_text = $credit_num !== '-' ? $credit_num . ' ' . ($c_type <= 3 ? lang('credits'.$c_type) : '') : '-';
+						$type_text = isset($g_credits_type_array[$v['type']]) ? $g_credits_type_array[$v['type']] : '未知类型';
+						$status_text = isset($g_credits_status_array[$v['status'] + 1]) ? $g_credits_status_array[$v['status'] + 1] : '未知状态';
+					?>
+					<div class="credit-card">
+						<div class="credit-card__header">
+							<div class="credit-card__time"><?php echo date('Y-m-d H:i:s', $v['time']); ?></div>
+							<div class="credit-card__status"><?php echo $status_text; ?></div>
+						</div>
+						<div class="credit-card__body">
+							<div class="credit-card__item">
+								<div class="credit-card__label">交易类型</div>
+								<div class="credit-card__value"><?php echo $type_text; ?></div>
+							</div>
+							<div class="credit-card__item">
+								<div class="credit-card__label">交易金额</div>
+								<div class="credit-card__value"><?php echo $credit_text; ?></div>
+							</div>
+						</div>
+						<div class="credit-card__footer">
+							交易编码：<?php echo $v['code'] ?? '无'; ?>
+						</div>
+					</div>
+				<?php endforeach; ?>
+			<?php else: ?>
+				<!-- 空数据提示 -->
+				<div class="credit-empty">
+					<div class="credit-empty__text">暂无支付记录，完成交易后将显示此处</div>
+				</div>
+			<?php endif; ?>
+
+			<!-- 分页 -->
+			<nav class="text-center">
+				<ul class="credit-pagination"><?php echo $pagination; ?></ul>
+			</nav>
+		</div>
+	</div>
+
+	</slot>
+</template>
+
+<script>
+	// 简化JS，确保DOM加载后执行
+	$(function() {
+		$('a[data-active="my-record"]').addClass('active');
+	});
+</script>

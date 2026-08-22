@@ -1,0 +1,25 @@
+<div class="mb-3">
+	<div class="small font-weight-bold mb-2">隐藏内容</div>
+	<textarea class="form-control form-control-sm mb-2" name="ttlogin_content_s" id="ttlogin_content_s" rows="2" placeholder="登录可见内容"></textarea>
+	<textarea class="form-control form-control-sm mb-2" name="ttreply_content_s" id="ttreply_content_s" rows="2" placeholder="回复可见内容"></textarea>
+	<div class="small text-muted mb-2">二选一填写，插入后对应内容默认隐藏</div>
+	<button type="button" class="btn btn-sm btn-primary" onclick="ttread_sidebar_submit()">插入到正文</button>
+</div>
+<script>
+function ttread_sidebar_submit() {
+	var login = $('#ttlogin_content_s').val().trim();
+	var reply = $('#ttreply_content_s').val().trim();
+	if (!login && !reply) {
+		$.alert('请输入内容');
+		return;
+	}
+	if (login) {
+		tt_read_insert('[ttlogin]' + login + '[/ttlogin]');
+		$('#ttlogin_content_s').val('');
+	}
+	if (reply) {
+		tt_read_insert('[ttreply]' + reply + '[/ttreply]');
+		$('#ttreply_content_s').val('');
+	}
+}
+</script>

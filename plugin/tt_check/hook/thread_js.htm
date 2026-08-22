@@ -1,0 +1,32 @@
+<?php if(isset($load_check_js)) {?>
+<script>
+    function set_thread_check(tid,OK){
+        $.confirm('是否要审核该主题呢？',function(){
+            $.xpost(xn.url('post-check-'+tid),{'opt':OK,'data':tid,'act':0},function(code,message){
+                if(code==0) location.reload();
+                else $.alert(message);
+            });
+        });
+    }
+    function set_post_check(pid,OK){
+        $.confirm('是否要审核该回帖呢？',function(){
+            $.xpost(xn.url('post-check-'+pid),{'opt':OK,'data':pid,'act':1},function(code,message){
+                if(code==0) location.reload();
+                else $.alert(message);
+            });
+        });
+    }
+</script>
+<?php } if(isset($load_recycle_js)) {?>
+<script>
+    function set_thread_recycle(tid,OK){
+        var opt = OK==1?'删除':'恢复';
+        $.confirm('是否要'+opt+'该主题呢？',function(){
+            $.xpost(xn.url('post-recycle-'+tid),{'opt':OK,'data':tid},function(code,message){
+                if(code==0) location.reload();
+                else $.alert(message);
+            });
+        });
+    }
+</script>
+<?php }?>

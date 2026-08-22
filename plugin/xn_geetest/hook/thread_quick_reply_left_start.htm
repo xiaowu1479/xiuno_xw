@@ -1,0 +1,29 @@
+<?php
+$geetest_open = (array)kv_get('geetest');
+if (!empty($geetest_open['geetest_post_create_on'])) { ?>
+<div class="form-group">
+<div id="captcha"  name="captcha"></div>
+<div id="captchaform"></div>
+</div>
+<script src="https://static.geetest.com/v4/gt4.js"></script>
+<script>
+<?php $geetest_config = (array)kv_get('geetest'); ?>
+    var captchaId = "<?php echo htmlspecialchars($geetest_config['geetestid'] ?? ''); ?>"
+    var product = "float"
+    initGeetest4({
+        captchaId: captchaId,
+        product: product,
+        nativeButton:{
+            width: '100%'
+    }
+        
+    }, function (captchaObj) {
+            captchaObj.appendTo("#captcha");
+            captchaObj.onSuccess(function () {
+            	var result = captchaObj.getValidate();
+            	$("#captchaform").html('<input type="hidden" name="lot_number" value="'+result.lot_number+'" /><input type="hidden" name="captcha_output" value="'+result.captcha_output+'" /><input type="hidden" name="pass_token" value="'+result.pass_token+'" /><input type="hidden" name="gen_time" value="'+result.gen_time+'" />');
+            });
+    });
+
+</script>
+<?php } ?>

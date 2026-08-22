@@ -1,0 +1,10 @@
+{
+    "name": "极验证",
+    "brief": "采用极验证4.0接口<br /><b>作者：张益达</b><br />地址：https://xiuno.cn",
+    "version": "1.0",
+    "bbs_version": "4.0",
+    "installed": 1,
+    "enable": 1,
+    "hooks_rank": [],
+    "dependencies": []
+}

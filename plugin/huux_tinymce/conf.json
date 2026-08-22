@@ -1,0 +1,11 @@
+{
+    "name": "大白·TinyMCE编辑器",
+    "brief": "功能强大，所见即所得的富文本编辑器，本地部署速度快，附带Prism代码高亮插件，支持截图粘贴和多图片上传，内核TinyMCE v5.2",
+    "version": "2.1",
+    "bbs_version": "4.0",
+    "installed": 1,
+    "enable": 1,
+    "hooks_rank": [],
+    "overwrites_rank": [],
+    "dependencies": []
+}

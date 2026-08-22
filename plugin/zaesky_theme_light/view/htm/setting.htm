@@ -1,0 +1,90 @@
+<?php include _include(ADMIN_PATH.'view/htm/header.inc.htm'); ?>
+<form action="<?php echo url('plugin-setting-zaesky_theme_light');?>" method="post" id="formcreate">
+	<?php echo csrf_token_hidden();?>
+	<div class="block block-rounded overflow-hidden">
+		<ul class="nav nav-tabs nav-tabs-block" role="tablist">
+		  <li class="nav-item" role="presentation">
+			<button class="nav-link active" id="nav-GlobalSettings-tab" data-toggle="tab" data-target="#GlobalSettings" type="button" role="tab" aria-controls="GlobalSettings" aria-selected="true">全局设置</button>
+		</li>
+		  <li class="nav-item" role="presentation">
+			<button class="nav-link" id="nav-AnnouncementSettings-tab" data-toggle="tab" data-target="#AnnouncementSettings" type="button" role="tab" aria-controls="AnnouncementSettings" aria-selected="false">公告设置</button>
+		</li>
+		<li class="nav-item" role="presentation">
+			<button class="nav-link" id="nav-PostListSettings-tab" data-toggle="tab" data-target="#PostListSettings" type="button" role="tab" aria-controls="PostListSettings" aria-selected="false">帖子列表设置</button>
+		</li>
+		<li class="nav-item" role="presentation">
+			<button class="nav-link" id="nav-NavigationSettings-tab" data-toggle="tab" data-target="#NavigationSettings" type="button" role="tab" aria-controls="NavigationSettings" aria-selected="false">导航设置</button>
+		</li>
+		<li class="nav-item" role="presentation">
+			<button class="nav-link" id="nav-HomepageSettings-tab" data-toggle="tab" data-target="#HomepageSettings" type="button" role="tab" aria-controls="HomepageSettings" aria-selected="false">首页设置</button>
+		</li>
+		<li class="nav-item" role="presentation">
+			<button class="nav-link" id="nav-PostSettings-tab" data-toggle="tab" data-target="#PostSettings" type="button" role="tab" aria-controls="PostSettings" aria-selected="false">帖内设置</button>
+		</li>
+		<li class="nav-item" role="presentation">
+			<button class="nav-link" id="nav-AggregationPageSettings-tab" data-toggle="tab" data-target="#AggregationPageSettings" type="button" role="tab" aria-controls="AggregationPageSettings" aria-selected="false">聚合页设置</button>
+		</li>
+		<li class="nav-item" role="presentation">
+			<button class="nav-link" id="nav-ValueAddedFeatureSettings-tab" data-toggle="tab" data-target="#ValueAddedFeatureSettings" type="button" role="tab" aria-controls="ValueAddedFeatureSettings" aria-selected="false">增值功能设置</button>
+		</li>
+		<li class="nav-item" role="presentation">
+			<button class="nav-link" id="nav-FooterSettings-tab" data-toggle="tab" data-target="#FooterSettings" type="button" role="tab" aria-controls="FooterSettings" aria-selected="false">页脚设置</button>
+		</li>
+		<li class="nav-item" role="presentation">
+			<button class="nav-link" id="nav-FrequentlyAskedQuestion-tab" data-toggle="tab" data-target="#FrequentlyAskedQuestion" type="button" role="tab" aria-controls="FrequentlyAskedQuestion" aria-selected="false">常见问题</button>
+		</li>
+		</ul>
+		<div class="block-content tab-content">
+			<div class="tab-content" id="nav-tabContent">
+				<div class="tab-pane fade show active" id="GlobalSettings" role="tabpanel" aria-labelledby="nav-GlobalSettings-tab">
+					<?php include _include(APP_PATH.'/plugin/zaesky_theme_light/view/htm/settingItem/GlobalSettings.htm');?>
+				</div>
+				<div class="tab-pane fade" id="AnnouncementSettings" role="tabpanel" aria-labelledby="nav-AnnouncementSettings-tab">
+					<?php include _include(APP_PATH.'/plugin/zaesky_theme_light/view/htm/settingItem/AnnouncementSettings.htm');?>
+				</div>
+				<div class="tab-pane fade" id="PostListSettings" role="tabpanel" aria-labelledby="nav-PostListSettings-tab">
+					<?php include _include(APP_PATH.'/plugin/zaesky_theme_light/view/htm/settingItem/PostListSettings.htm');?>
+				</div>
+				<div class="tab-pane fade" id="NavigationSettings" role="tabpanel" aria-labelledby="nav-NavigationSettings-tab">
+					<?php include _include(APP_PATH.'/plugin/zaesky_theme_light/view/htm/settingItem/NavigationSettings.htm');?>
+				</div>
+				<div class="tab-pane fade" id="HomepageSettings" role="tabpanel" aria-labelledby="nav-HomepageSettings-tab">
+					<?php include _include(APP_PATH.'/plugin/zaesky_theme_light/view/htm/settingItem/HomepageSettings.htm');?>
+				</div>
+				<div class="tab-pane fade" id="PostSettings" role="tabpanel" aria-labelledby="nav-PostSettings-tab">
+					<?php include _include(APP_PATH.'/plugin/zaesky_theme_light/view/htm/settingItem/PostSettings.htm');?>
+				</div>
+				<div class="tab-pane fade" id="AggregationPageSettings" role="tabpanel" aria-labelledby="nav-AggregationPageSettings-tab">
+					<?php include _include(APP_PATH.'/plugin/zaesky_theme_light/view/htm/settingItem/AggregationPageSettings.htm');?>
+				</div>
+				<div class="tab-pane fade" id="ValueAddedFeatureSettings" role="tabpanel" aria-labelledby="nav-ValueAddedFeatureSettings-tab">
+					<?php include _include(APP_PATH.'/plugin/zaesky_theme_light/view/htm/settingItem/ValueAddedFeatureSettings.htm');?>
+				</div>
+				<div class="tab-pane fade" id="FooterSettings" role="tabpanel" aria-labelledby="nav-FooterSettings-tab">
+					<?php include _include(APP_PATH.'/plugin/zaesky_theme_light/view/htm/settingItem/FooterSettings.htm');?>
+				</div>
+				<div class="tab-pane fade" id="FrequentlyAskedQuestion" role="tabpanel" aria-labelledby="nav-FrequentlyAskedQuestion-tab">
+					<?php include _include(APP_PATH.'/plugin/zaesky_theme_light/view/htm/settingItem/FrequentlyAskedQuestion.htm');?>
+				</div>
+			  </div>
+		</div>
+	  </div>
+  <!--保存、返回按钮-->
+  <div class="form-group row my-3">
+  	<label class="col-md-2 form-control-label"></label>
+  	<div class="col-md-2">
+  		<button type="submit" class="btn btn-primary btn-block mr-2 mb-2" id="submit"><?php echo lang('save'); ?></button>
+  	</div>
+  	<div class="col-md-2">
+  		<a role="button" class="btn btn-secondary btn-block mb-2" href="javascript:history.back();"><?php echo lang('back'); ?></a>
+  	</div>
+  </div>
+</form>
+
+<?php
+include _include(ADMIN_PATH.'view/htm/footer.inc.htm');
+?>
+
+<script>
+$('#nav li.nav-item-light').addClass('active');	
+</script>

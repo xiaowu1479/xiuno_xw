@@ -1,0 +1,12 @@
+<script>
+    var jinput_gift=$("#input_gift");var jsubmit_gift = $("#use_gift");
+    jsubmit_gift.on('click', function(){var key="key="+jinput_gift.val();
+        jsubmit_gift.button('loading');
+        $.xpost("<?php echo url('my-gift');?>", key, function(code, message) {
+            if(code == 0) {
+                $.alert(message);
+                setTimeout(function() {window.location.reload();jsubmit_gift.button('reset');}, 1000);
+                return;} else {$.alert(message);jsubmit_gift.button('reset');}
+        });return false;
+    });
+</script>

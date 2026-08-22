@@ -1,0 +1,11 @@
+{
+    "name": "图章插件",
+    "brief": "类似于Discuz!X中的图章插件，版主以上权限可以盖章，适配默认模板。官网：www.6rabbit.com",
+    "version": "1.15",
+    "bbs_version": "4.0.4",
+    "installed": 1,
+    "enable": 1,
+    "hooks_rank": [],
+    "overwrites_rank": [],
+    "dependencies": []
+}

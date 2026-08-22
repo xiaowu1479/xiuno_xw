@@ -1,0 +1,9 @@
+<?php if(isset($plugin)): ?>
+<script>
+$("td .small.text-muted a").hover(function(){
+    if(this.href != this.getAttribute("data-href")){
+this.href = this.getAttribute("data-href");
+}
+});
+</script>
+<?php endif; ?>

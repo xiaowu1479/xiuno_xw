@@ -1,0 +1,18 @@
+<?php $fox_shang_data = kv_cache_get('fox_shang');?>
+<div class="fox-qr-reward pl-2"><button type="button" class="btn btn-outline-secondary" data-toggle="modal" data-target="#fox_qr_reward" title="打赏"><i class="icon icon-gift" aria-label="打赏"></i> 打赏</button></div>
+<div class="modal fade" id="fox_qr_reward" role="dialog" tabindex="-1" aria-labelledby="fox_qr_reward_modal_title" aria-hidden="true">
+    <div class="modal-dialog modal-md modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title my-0" id="fox_qr_reward_modal_title">如本文对您有用，欢迎随意打赏！</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <ul class="text-center row p-0" style="list-style:none;"><?php if(!empty($fox_shang_data['fox_shang_al'])){?>
+                    <li class="col-6"><img src="<?php echo $fox_shang_data['fox_shang_al'];?>"></li><?php }?><?php if(!empty($fox_shang_data['fox_shang_wx'])){?>
+                    <li class="col-6"><img src="<?php echo $fox_shang_data['fox_shang_wx'];?>"></li><?php }?>
+                </ul>
+            </div>
+        </div>        
+    </div>    
+</div>
