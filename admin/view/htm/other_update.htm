@@ -34,14 +34,18 @@
 							<?php } ?>
 						</div>
 						<div class="col-sm-6 text-right">
-							<?php if(!empty($upinfo['latest'])) { ?>
-								<span class="badge badge-warning"><?php echo lang('admin_update_found');?></span>
-								<?php if(!empty($upinfo['zipball_url'])) { ?>
-									<a class="btn btn-warning btn-sm" href="<?php echo $upinfo['zipball_url'];?>" target="_blank"><?php echo lang('admin_update_download');?></a>
-								<?php } ?>
-							<?php } else { ?>
-								<span class="badge badge-success"><?php echo lang('admin_update_latest');?></span>
+					<?php if(!empty($upinfo['latest'])) { ?>
+							<span class="badge badge-warning"><?php echo lang('admin_update_found');?></span>
+							<?php if(!empty($upinfo['download_url'])) { ?>
+								<a class="btn btn-warning btn-sm" href="<?php echo $upinfo['zipball_url'];?>" target="_blank"><?php echo lang('admin_update_download');?></a>
+								<form action="<?php echo url('other-update_do');?>" method="post" style="display:inline-block;margin:0;" onsubmit="return confirm('<?php echo lang('admin_update_confirm');?>');">
+									<?php echo csrf_token_hidden();?>
+									<button type="submit" class="btn btn-danger btn-sm"><?php echo lang('admin_update_auto');?></button>
+								</form>
 							<?php } ?>
+						<?php } else { ?>
+							<span class="badge badge-success"><?php echo lang('admin_update_latest');?></span>
+						<?php } ?>
 						</div>
 					</div>
 					

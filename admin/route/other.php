@@ -61,6 +61,13 @@ if($action == 'update') {
 	}
 }
 
+if($action == 'update_do') {
+	
+	// hook admin_other_update_do_get_post.php
+	
+	admin_update_do();
+}
+
 // hook admin_other_end.php
 
 ?>
