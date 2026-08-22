@@ -24,7 +24,7 @@ return array(
 	'admin_setting_base'=>'Основные настройки',
 	'admin_setting_smtp'=>'Настройки SMTP',
 	
-	// 检测更新 (Xiuno_xw)
+	// 检测更新 (XIUNO XW)
 	'admin_other_update'=>'Проверить обновления',
 	'admin_update_current_version'=>'Текущая версия',
 	'admin_update_latest_version'=>'Последняя версия',
@@ -134,7 +134,7 @@ return array(
 	'forum_please_delete_sub_forum'=>'Пожалуйста, сначала удалите под-форум.',
 	'forum_delete_successfully'=>'Успешно удалено',
 	
-	// Навигация (Xiuno_xw)
+	// Навигация (XIUNO XW)
 	'nav_admin'=>'Навигация',
 	'nav_name'=>'Название меню',
 	'nav_url'=>'URL ссылки',
@@ -202,7 +202,7 @@ return array(
 	'plugin_detail'=>'Описание',
 	'plugin_not_exists'=>'Плагин не существует',
 	'plugin_brief_url'=>'URL-адрес плагина',
-	'plugin_versio_not_match'=>'Этот плагин предназначен для Xiuno_xw  {bbs_version}, Ваша версия: {version}',
+	'plugin_versio_not_match'=>'Этот плагин предназначен для XIUNO XW  {bbs_version}, Ваша версия: {version}',
 	'plugin_download_sucessfully'=>'Загрузка плагина ({dir}) успешна, нажмите для установки',
 	'plugin_install_sucessfully'=>'Плагин Plugin ( {name} ) успешно установлен',
 	'plugin_unstall_sucessfully'=>'Плагин ( {name} ) успешно удален, toдля полного удаления удалите директорию плагинва {dir} ',

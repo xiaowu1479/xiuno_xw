@@ -123,7 +123,7 @@ function message($code, $message, $extra = array()) {
 	exit;
 }
 
-// 图形验证码校验 (Xiuno_xw)
+// 图形验证码校验 (XIUNO XW)
 function captcha_check($name = 'captcha') {
 	$code = param($name, '', FALSE);
 	$sess = isset($_SESSION['captcha_code']) ? $_SESSION['captcha_code'] : '';

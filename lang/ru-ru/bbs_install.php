@@ -39,11 +39,11 @@ return array(
 	'admin_username' => 'Логин',
 	'admin_pw' => 'Пароль',
 	'installing_about_moment' => 'Установка, ожидайте...',
-	'license_title' => 'Xiuno_xw 1.0.0 Лицензионное соглашение',
-	'license_content' => 'Thank you to choose Xiuno_xw 1.0.0, a fork of Xiuno BBS 4.0.4, fully compatible with PHP 8.0 - 8.4, SMTP mail system upgraded, cache mechanism enhanced.',
-	'license_date' => 'Последнее обновление: May 16, 2026',
+	'license_title' => 'XIUNO XW 1.1.1 Лицензионное соглашение',
+	'license_content' => 'Thank you to choose XIUNO XW 1.1.1, a fork of Xiuno BBS 4.0.4, fully compatible with PHP 8.0 - 8.4, SMTP mail system upgraded, cache mechanism enhanced.',
+	'license_date' => 'Последнее обновление: August 21, 2026',
 	'agree_license_to_continue' => 'Принять лицензию и продолжить',
-	'install_title' => 'Xiuno_xw 1.0.0 Мастер установки',
+	'install_title' => 'XIUNO XW 1.1.1 Мастер установки',
 	'install_guide' => 'Мастер установки',
 
 	

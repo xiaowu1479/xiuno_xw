@@ -11,7 +11,7 @@
 		$form_doctype = 1;
 				$isfirst = 1;
 				$quotepid = 0;
-				// 发帖成功后跳转到所选版块，优先用 URL 中的 fid（可靠），避免依赖 JS 的 jfid.checked() (fixed by Xiuno_xw)
+				// 发帖成功后跳转到所选版块，优先用 URL 中的 fid（可靠），避免依赖 JS 的 jfid.checked() (fixed by XIUNO XW)
 				$location = $fid ? url("forum-$fid") : url("forum-'+jfid.checked()+'");
 				$filelist = array();
 	} elseif($route == 'post' && $action == 'update') {
@@ -227,7 +227,7 @@ jform.find('[name="fid"]').checked(<?php echo $fid;?>);
 $('li[data-active="fid-<?php echo $fid;?>"]').addClass('active');
 
 <?php if(isset($input['readp_status'])) { ?>
-// 阅读权限：启用开关时显示权限等级选择 (Xiuno_xw)
+// 阅读权限：启用开关时显示权限等级选择 (XIUNO XW)
 var jreadpStatus = $('input[name="readp_status"]');
 var jreadpRow = $('#readp_level_row');
 function toggle_readp_row() {

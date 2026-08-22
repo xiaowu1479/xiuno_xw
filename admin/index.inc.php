@@ -20,7 +20,7 @@ if(DEBUG < 3) {
 	// 管理员令牌检查 / check admin token
 	admin_token_check();
 	
-	// 后台 CSRF 防护：所有 POST 写操作必须携带 csrf_token (fixed by Xiuno_xw)
+	// 后台 CSRF 防护：所有 POST 写操作必须携带 csrf_token (fixed by XIUNO XW)
 	// $.xpost() ajax 自动附带；普通表单由 footer.inc.htm 的 JS 自动注入
 	$method == 'POST' AND csrf_check();
 }

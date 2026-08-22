@@ -1,8 +1,8 @@
 <?php
 /**
- * Xiuno_xw (基于修罗BBS/Xiuno BBS 4.x) 火车头免登录发布接口
+ * XIUNO XW (基于修罗BBS/Xiuno BBS 4.x) 火车头免登录发布接口
  * ============================================
- * 上传到 Xiuno_xw 根目录
+ * 上传到 XIUNO XW 根目录
  * 
  * 测试访问：
  *   http://你的域名/loco.php?pass=123456&action=list_forum         -- 列出版块(JSON)

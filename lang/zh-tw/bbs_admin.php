@@ -24,7 +24,7 @@ return array(
 	'admin_setting_base'=>'基本設置',
 	'admin_setting_smtp'=>'SMTP 設置',
 	
-	// 检测更新 (Xiuno_xw)
+	// 检测更新 (XIUNO XW)
 	'admin_other_update'=>'檢測更新',
 	'admin_update_current_version'=>'當前版本',
 	'admin_update_latest_version'=>'最新版本',
@@ -135,7 +135,7 @@ return array(
 	'forum_please_delete_sub_forum'=>'请删除子版块。',
 	'forum_delete_successfully'=>'删除成功。',
 	
-	// 導航選單 (Xiuno_xw)
+	// 導航選單 (XIUNO XW)
 	'nav_admin'=>'導航選單',
 	'nav_name'=>'選單名稱',
 	'nav_url'=>'連結網址',
@@ -200,7 +200,7 @@ return array(
 	'plugin_detail'=>'插件詳情',
 	'plugin_brief_url'=>'插件介紹網址',
 	'plugin_not_exists'=>'插件不存在',
-	'plugin_versio_not_match'=>'此插件依賴的 Xiuno_xw 最低版本為 {bbs_version} ，您當前的版本：{version}',
+	'plugin_versio_not_match'=>'此插件依賴的 XIUNO XW 最低版本為 {bbs_version} ，您當前的版本：{version}',
 	'plugin_download_sucessfully'=>'下載插件 ({dir}) 成功，請點擊進行安裝',
 	'plugin_install_sucessfully'=>'安裝插件 ( {name} ) 成功',
 	'plugin_unstall_sucessfully'=>'卸載插件 ( {name} ) 成功，要徹底刪除插件，請手工刪除 {dir} 目錄',

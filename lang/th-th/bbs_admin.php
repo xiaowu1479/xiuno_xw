@@ -24,7 +24,7 @@ return array(
 	'admin_setting_base'=>'การตั้งค่าพื้นฐาน',
 	'admin_setting_smtp'=>'การตั้งค่า SMTP',
 	
-	// 检测更新 (Xiuno_xw)
+	// 检测更新 (XIUNO XW)
 	'admin_other_update'=>'ตรวจสอบอัปเดต',
 	'admin_update_current_version'=>'เวอร์ชันปัจจุบัน',
 	'admin_update_latest_version'=>'เวอร์ชันล่าสุด',
@@ -135,7 +135,7 @@ return array(
 	'forum_please_delete_sub_forum'=>'กรุณาลบฟอรัมย่อย',
 	'forum_delete_successfully'=>'ลบเรียบร้อยแล้ว',
 	
-	// เมนูนำทาง (Xiuno_xw)
+	// เมนูนำทาง (XIUNO XW)
 	'nav_admin'=>'เมนูนำทาง',
 	'nav_name'=>'ชื่อเมนู',
 	'nav_url'=>'URL ลิงก์',
@@ -199,7 +199,7 @@ return array(
 	'plugin_detail'=>'ข้อมูลปลั๊กอิน',
 	'plugin_brief_url'=>'URL ของปลั๊กอิน',
 	'plugin_not_exists'=>'ไม่พบปลั๊กอิน',
-	'plugin_versio_not_match'=>'ปลั๊กอินนี้ต้องการ Xiuno_xw เวอร์ชัน {bbs_version} เป็นอย่างต่ำ เวอร์ชันปัจจุบันคือ: {version}',
+	'plugin_versio_not_match'=>'ปลั๊กอินนี้ต้องการ XIUNO XW เวอร์ชัน {bbs_version} เป็นอย่างต่ำ เวอร์ชันปัจจุบันคือ: {version}',
 	'plugin_download_sucessfully'=>'ดาวน์โหลดปลั๊กอิน ({dir}) เรียบร้อยแล้ว กรุณาคลิกเพื่อติดตั้ง',
 	'plugin_install_sucessfully'=>'ติดตั้งปลั๊กอิน ( {name} ) เรียบร้อยแล้ว',
 	'plugin_unstall_sucessfully'=>'ถอนการติดตั้งปลั๊กอิน ( {name} ) เรียบร้อยแล้ว กรุณาลบไดเรกทอรี {dir} เพื่อลบออกอย่างสมบูรณ์',

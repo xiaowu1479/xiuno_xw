@@ -22,7 +22,7 @@ if($action == 'login') {
 
 		// hook admin_index_login_post_start.php
 		
-		// 登录限速：15 分钟内失败 5 次锁定 (fixed by Xiuno_xw)
+		// 登录限速：15 分钟内失败 5 次锁定 (fixed by XIUNO XW)
 		$lock_key = 'admin_login_fail_'.$ip;
 		$fail = cache_get($lock_key);
 		if(!empty($fail)) {

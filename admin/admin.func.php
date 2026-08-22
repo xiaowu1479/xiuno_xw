@@ -79,7 +79,7 @@ function admin_tab_active($arr, $active) {
 	return $s;
 }
 
-// 检测远程最新版本 (Xiuno_xw)
+// 检测远程最新版本 (XIUNO XW)
 function admin_update_check($force = FALSE) {
 	global $conf;
 	$key = 'admin_update_check';
@@ -102,7 +102,7 @@ function admin_update_check($force = FALSE) {
 		'http' => array(
 			'method' => 'GET',
 			'timeout' => 5,
-			'header' => "User-Agent: Xiuno_xw-Update-Check\r\nAccept: application/vnd.github+json\r\n",
+			'header' => "User-Agent: XIUNO XW-Update-Check\r\nAccept: application/vnd.github+json\r\n",
 		),
 	);
 	$ctx = stream_context_create($opts);

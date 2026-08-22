@@ -6,7 +6,7 @@
 
 $sid = sess_start();
 
-// 预生成 CSRF Token 并写入 Cookie（须在 headers 发送前调用，否则 setcookie 失效）(fixed by Xiuno_xw)
+// 预生成 CSRF Token 并写入 Cookie（须在 headers 发送前调用，否则 setcookie 失效）(fixed by XIUNO XW)
 csrf_token();
 
 // 语言 / Language
@@ -31,7 +31,7 @@ $forumlist_show = forum_list_access_filter($forumlist, $gid);	// 有权限查看
 $forumlist_nav = forum_list_access_filter($forumlist, $gid, 'allowread', true);	// 全部板块（含无权限标记），用于导航菜单显示
 $forumarr = arrlist_key_values($forumlist_show, 'fid', 'name');
 
-// 自定义导航菜单 (Xiuno_xw)
+// 自定义导航菜单 (XIUNO XW)
 $navlist = nav_list_cache();
 
 // 头部 header.inc.htm 

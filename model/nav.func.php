@@ -2,7 +2,7 @@
 
 // hook model_nav_start.php
 
-// ------------> 最原生的 CURD，无关联其他数据。（Xiuno_xw 新增：自定义导航菜单）
+// ------------> 最原生的 CURD，无关联其他数据。（XIUNO XW 新增：自定义导航菜单）
 
 function nav__create($arr) {
 	// hook model_nav__create_start.php

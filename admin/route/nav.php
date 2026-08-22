@@ -2,7 +2,7 @@
 
 !defined('DEBUG') AND exit('Access Denied.');
 
-// Xiuno_xw 新增：自定义导航菜单管理
+// XIUNO XW 新增：自定义导航菜单管理
 
 $action = param(1);
 

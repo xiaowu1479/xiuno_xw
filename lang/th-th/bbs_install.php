@@ -39,11 +39,11 @@ return array(
 	'admin_username' => 'ชื่อผู้ใช้แอดมิน',
 	'admin_pw' => 'รหัสผ่านแอดมิน',
 	'installing_about_moment' => 'กำลังติดตั้ง ใช้เวลาประมาณ 1 นาทีหรือมากกว่านั้น',
-	'license_title' => 'ข้อตกลง Xiuno_xw 1.0.0',
-	'license_content' => 'ขอขอบคุณที่เลือกใช้งาน Xiuno_xw 1.0.0 (fork ของ Xiuno BBS 4.0.4) รองรับ PHP 8.0 - 8.4 อัปเกรดระบบ SMTP และระบบแคช',
-	'license_date' => 'อัปเดตล่าสุด: 16 พฤษภาคม 2026',
+	'license_title' => 'ข้อตกลง XIUNO XW 1.1.1',
+	'license_content' => 'ขอขอบคุณที่เลือกใช้งาน XIUNO XW 1.1.1 (fork ของ Xiuno BBS 4.0.4) รองรับ PHP 8.0 - 8.4 อัปเกรดระบบ SMTP และระบบแคช',
+	'license_date' => 'อัปเดตล่าสุด: 21 พฤษภาคม 2026',
 	'agree_license_to_continue' => 'ยอมรับข้อตกลงและดำเนินการติดตั้งต่อ',
-	'install_title' => 'ตัวช่วยติดตั้ง Xiuno_xw 1.0.0',
+	'install_title' => 'ตัวช่วยติดตั้ง XIUNO XW 1.1.1',
 	'install_guide' => 'ตัวช่วยติดตั้ง',
 
 	

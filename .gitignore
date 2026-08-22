@@ -9,3 +9,5 @@ conf/conf.php
 conf/smtp.conf.php
 # 插件目录不纳入仓库，插件单独分发
 plugin/
+# 发行版打包产物
+*.tar.gz

@@ -41,15 +41,15 @@ return array(
 	'admin_username' => '管理员用户名',
 	'admin_pw' => '管理员密码',
 	'installing_about_moment' => '正在安装，大概需要一分钟左右',
-	'license_title' => 'Xiuno_xw 1.0.0 中文版授权协议',
-	'license_content' => '感谢您选择 Xiuno_xw 1.0.0，它是一款基于 Xiuno BBS 4.0.4 二次开发的轻论坛，国产、小巧、稳定、支持在大数据量下仍然保持高负载能力。它只有 20 多个表，源代码压缩后 1M 左右，运行速度非常快，处理单次请求在 0.01 秒级别，全面支持 PHP 8.x，对第三方类库依赖极少，仅仅前端依赖 jquery.js，方便部署和维护，是一个非常好的二次开发的基石。
+	'license_title' => 'XIUNO XW 1.1.1 中文版授权协议',
+	'license_content' => '感谢您选择 XIUNO XW 1.1.1，它是一款基于 Xiuno BBS 4.0.4 二次开发的轻论坛，国产、小巧、稳定、支持在大数据量下仍然保持高负载能力。它只有 20 多个表，源代码压缩后 1M 左右，运行速度非常快，处理单次请求在 0.01 秒级别，全面支持 PHP 8.x，对第三方类库依赖极少，仅仅前端依赖 jquery.js，方便部署和维护，是一个非常好的二次开发的基石。
 
-Xiuno_xw 1.0.0 全面兼容 PHP 8.0 - 8.4，修复了 SMTP 邮件系统，升级了缓存机制，新增文件缓存驱动，支持 Redis 密码认证等现代特性。
+XIUNO XW 1.1.1 全面兼容 PHP 8.0 - 8.4，修复了 SMTP 邮件系统，升级了缓存机制，新增文件缓存驱动，支持 Redis 密码认证等现代特性。
 
-Xiuno_xw 基于 Xiuno BBS 4.0.4 (MIT 协议) 二次开发，您可以自由修改、派生版本、商用而不用担心任何法律风险（修改后应保留原来的版权信息）。',
-	'license_date' => '最后更新：2026年5月17日',
+XIUNO XW 基于 Xiuno BBS 4.0.4 (MIT 协议) 二次开发，您可以自由修改、派生版本、商用而不用担心任何法律风险（修改后应保留原来的版权信息）。',
+	'license_date' => '最后更新：2026年8月21日',
 	'agree_license_to_continue' => '同意协议继续安装',
-	'install_title' => 'Xiuno_xw 1.0.0 安装向导',
+	'install_title' => 'XIUNO XW 1.1.1 安装向导',
 	'install_guide' => '安装向导',
 	
 	'function_check' => '函数依赖检查',

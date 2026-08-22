@@ -458,7 +458,7 @@ function user_password_verify($pw, $hash_or_user) {
     return password_verify($pw, $hash);
 }
 
-// CSRF Token — 基于 Cookie（HttpOnly），避免游客访问产生 session 数据导致在线人数虚高 (fixed by Xiuno_xw)
+// CSRF Token — 基于 Cookie（HttpOnly），避免游客访问产生 session 数据导致在线人数虚高 (fixed by XIUNO XW)
 function csrf_token() {
     global $time;
     static $token = NULL;

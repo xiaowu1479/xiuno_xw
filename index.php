@@ -1,7 +1,7 @@
 <?php
 /*
  * Copyright (C) xiuno.com
- * Xiuno_xw: 基于 Xiuno BBS 4.1.1 二次开发的分支版本
+ * XIUNO XW: 基于 Xiuno BBS 4.1.1 二次开发的分支版本
  */
 
 //xhprof_enable();
@@ -30,12 +30,12 @@ $conf = (@include APP_PATH.'conf/conf.php') OR exit('<script>window.location="in
 !isset($conf['logo_mobile_url']) AND $conf['logo_mobile_url'] = 'view/img/logo.png';
 !isset($conf['logo_pc_url']) AND $conf['logo_pc_url'] = 'view/img/logo.png';
 !isset($conf['logo_water_url']) AND $conf['logo_water_url'] = 'view/img/water-small.png';
-// 图形验证码 (Xiuno_xw)
+// 图形验证码 (XIUNO XW)
 !isset($conf['captcha_on']) AND $conf['captcha_on'] = 0;
 !isset($conf['captcha_login_on']) AND $conf['captcha_login_on'] = 1;
 !isset($conf['captcha_reg_on']) AND $conf['captcha_reg_on'] = 1;
 !isset($conf['captcha_post_on']) AND $conf['captcha_post_on'] = 0;
-// 更新检测地址 (Xiuno_xw)，默认 GitHub Releases API，可改为自建镜像
+// 更新检测地址 (XIUNO XW)，默认 GitHub Releases API，可改为自建镜像
 !isset($conf['update_check_url']) AND $conf['update_check_url'] = 'https://api.github.com/repos/xiaowu1479/xiuno_xw/releases/latest';
 $conf['version'] = '1.1.1';		// 定义版本号！避免手工修改 conf/conf.php
 

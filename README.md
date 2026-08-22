@@ -1,8 +1,8 @@
-# Xiuno_xw
+# XIUNO XW
 
 基于 [Xiuno BBS 4.1.1](https://bbs.xiuno.com/) 二次开发的分支版本（fork），国产轻量论坛系统。
 
-> 上游 Xiuno BBS 4.1.1 兼容 PHP 8.0 - 8.4，修复了 SMTP 邮件系统，升级了缓存机制（文件缓存 / Redis 认证）。Xiuno_xw 在此基础上继续演进。
+> 上游 Xiuno BBS 4.1.1 兼容 PHP 8.0 - 8.4，修复了 SMTP 邮件系统，升级了缓存机制（文件缓存 / Redis 认证）。XIUNO XW 在此基础上继续演进。
 
 ## 特性
 

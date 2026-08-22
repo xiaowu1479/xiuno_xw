@@ -70,7 +70,7 @@ function sess_new($sid) {
 		$g_session_invalid = FALSE;
 		// 首次访问（无 cookie_test）不建立 session 记录（原版行为），
 		// 避免游客浏览产生大量 session 记录导致在线人数虚高。
-		// 有实际数据（CSRF/验证码/登录）的会话由 sess_write 负责 INSERT。(fixed by Xiuno_xw)
+		// 有实际数据（CSRF/验证码/登录）的会话由 sess_write 负责 INSERT。(fixed by XIUNO XW)
 		return;
 	}
 	
@@ -118,7 +118,7 @@ function sess_write($sid, $data) {
 	if(empty($uid) && empty($g_session['uid']) && empty($data)) {
 		return TRUE;
 	}
-	// 游客会话仅含 fid（导航记忆）不建记录，避免在线人数虚高 (fixed by Xiuno_xw)
+	// 游客会话仅含 fid（导航记忆）不建记录，避免在线人数虚高 (fixed by XIUNO XW)
 	if(empty($uid) && empty($g_session['uid']) && preg_match('/^fid\|i:\d+;$/', $data)) {
 		return TRUE;
 	}
@@ -164,7 +164,7 @@ function sess_write($sid, $data) {
 	}
 	if($len <= 255) {
 		if(empty($g_session)) {
-			// 会话记录不存在（首次访问产生数据），插入记录 (fixed by Xiuno_xw)
+			// 会话记录不存在（首次访问产生数据），插入记录 (fixed by XIUNO XW)
 			$arr['sid'] = $sid;
 			db_insert('session', $arr);
 		} else {
@@ -178,7 +178,7 @@ function sess_write($sid, $data) {
 		$arr['data'] = '';
 		$arr['bigdata'] = 1;
 		if(empty($g_session)) {
-			// 会话记录不存在（首次访问产生大数据），插入记录 (fixed by Xiuno_xw)
+			// 会话记录不存在（首次访问产生大数据），插入记录 (fixed by XIUNO XW)
 			$arr['sid'] = $sid;
 			db_insert('session', $arr);
 			db_insert('session_data', array('sid'=>$sid, 'data'=>$data, 'last_date'=>$time));
