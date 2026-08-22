@@ -67,6 +67,47 @@
 				
 			</div>
 		</div>
+		
+		<div class="card">
+			<div class="card-header"><?php echo lang('admin_update_backup_title');?></div>
+			<div class="card-body">
+				<p class="text-grey small mb-3"><?php echo lang('admin_update_backup_tip');?></p>
+				<?php if(empty($backup_list)) { ?>
+					<p class="text-grey mb-0"><?php echo lang('admin_update_backup_empty');?></p>
+				<?php } else { ?>
+					<div class="table-responsive">
+						<table class="table mb-0">
+							<thead><tr><th><?php echo lang('admin_update_backup_time');?></th><th><?php echo lang('admin_update_backup_version');?></th><th></th></tr></thead>
+							<tbody>
+							<?php foreach($backup_list as $backup) { ?>
+								<tr>
+									<td><?php echo empty($backup['time']) ? '-' : date('Y-m-d H:i:s', $backup['time']);?></td>
+									<td>
+										<b><?php echo $backup['version'];?></b>
+										<?php if(!empty($backup['tag'])) { ?> <span class="text-grey small">(<?php echo $backup['tag'];?>)</span><?php } ?>
+										<div class="text-grey small"><?php echo $backup['dir'];?></div>
+									</td>
+									<td class="text-right">
+										<form action="<?php echo url('other-update_rollback');?>" method="post" style="display:inline-block;margin:0;" onsubmit="return confirm('<?php echo lang('admin_update_rollback_confirm');?>');">
+											<?php echo csrf_token_hidden();?>
+											<input type="hidden" name="dir" value="<?php echo $backup['dir'];?>">
+											<button type="submit" class="btn btn-danger btn-sm"><?php echo lang('admin_update_rollback');?></button>
+										</form>
+										<form action="<?php echo url('other-update_backup_delete');?>" method="post" style="display:inline-block;margin:0;" onsubmit="return confirm('<?php echo lang('admin_update_backup_delete_confirm');?>');">
+											<?php echo csrf_token_hidden();?>
+											<input type="hidden" name="dir" value="<?php echo $backup['dir'];?>">
+											<button type="submit" class="btn btn-secondary btn-sm"><?php echo lang('admin_update_backup_delete');?></button>
+										</form>
+									</td>
+								</tr>
+							<?php } ?>
+							</tbody>
+						</table>
+					</div>
+				<?php } ?>
+			</div>
+		</div>
+		
 	</div>
 </div>
 

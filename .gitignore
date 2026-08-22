@@ -15,3 +15,5 @@ plugin/pandown/cache/*
 plugin/pandown/includes/phpqrcode/cache/*
 # 发行版打包产物
 *.tar.gz
+# 自动更新回滚备份（运行时生成，不纳入仓库）
+backup/*

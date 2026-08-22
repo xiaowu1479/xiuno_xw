@@ -46,6 +46,9 @@ if($action == 'update') {
 		$force = param('force', 0);
 		$upinfo = admin_update_check($force);
 		
+		// 更新备份列表（回滚用）
+		$backup_list = admin_update_backup_list();
+		
 		$header['title'] = lang('admin_other_update');
 		$header['mobile_title'] = lang('admin_other_update');
 		
@@ -66,6 +69,22 @@ if($action == 'update_do') {
 	// hook admin_other_update_do_get_post.php
 	
 	admin_update_do();
+}
+
+if($action == 'update_rollback') {
+	
+	// hook admin_other_update_rollback_get_post.php
+	
+	$dirname = param('dir');
+	admin_update_rollback($dirname);
+}
+
+if($action == 'update_backup_delete') {
+	
+	// hook admin_other_update_backup_delete_get_post.php
+	
+	$dirname = param('dir');
+	admin_update_backup_delete($dirname);
 }
 
 // hook admin_other_end.php

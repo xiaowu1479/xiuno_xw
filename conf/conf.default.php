@@ -132,7 +132,7 @@ return array (
 	// 禁止插件
 	'disabled_plugin' => 0, 
 	  
-	'version' => '1.2.3',
+	'version' => '1.2.4',
 	'static_version' => '?1.0',
 	'installed' => 0,
 );

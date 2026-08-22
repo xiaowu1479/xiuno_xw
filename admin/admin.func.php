@@ -201,15 +201,8 @@ function admin_update_do() {
 		message(-1, lang('admin_update_bad_package'));
 	}
 
-	// 4. 备份数据目录
-	$backupdir = $conf['tmp_path'].'update_backup_'.date('Ymd_His').'/';
-	@mkdir($backupdir, 0777, TRUE);
-	foreach(array('conf', 'upload', 'log') as $_d) {
-		$_src = APP_PATH.$_d;
-		if(is_dir($_src)) copy_recusive($_src, $backupdir.$_d);
-	}
-	// 记录本次更新信息，便于回滚定位
-	file_put_contents($backupdir.'update_info.txt', "version={$conf['version']}\ntime={$time}\ntag={$upinfo['tag']}\n");
+	// 4. 备份主程序（可回滚）：备份到独立 backup/ 目录，不被临时目录清理删除
+	$backupdir = admin_update_backup_create($upinfo['tag']);
 
 	// 5. 解压到临时目录
 	$extdir = $conf['tmp_path'].'update_ext_'.md5($download_url).'/';
@@ -237,7 +230,7 @@ function admin_update_do() {
 	}
 
 	// 7. 覆盖主程序文件（保留配置/上传/临时/日志；插件目录：发行版含插件才覆盖）
-	$skip_dirs = array('conf', 'upload', 'tmp', 'log');
+	$skip_dirs = array('conf', 'upload', 'tmp', 'log', 'backup');
 	// 发行版 plugin 为空目录（无插件）时跳过，避免删除服务器已有插件
 	$_src_plugin = $srcdir.'plugin/';
 	if(!is_dir($_src_plugin) || empty(glob($_src_plugin.'*'))) {
@@ -245,11 +238,12 @@ function admin_update_do() {
 	}
 	admin_update_cover($srcdir, APP_PATH, $skip_dirs);
 
-	// 8. 清理
+	// 8. 清理（保留 backup/ 目录，回滚用）
 	@xn_unlink($tmpfile);
 	@rmdir_recusive($extdir, 1);
 	rmdir_recusive($conf['tmp_path'], 1);		// 清编译缓存
 	cache_truncate();							// 清缓存
+	admin_update_backup_rotate();				// 只保留最近 2 份备份
 
 	xn_lock_end('admin_update');
 
@@ -333,6 +327,109 @@ function admin_update_cover($srcdir, $dstdir, $skip = array()) {
 		}
 	}
 	closedir($dir);
+}
+
+// ==================== 更新备份 / 回滚 (XIUNO XW) ====================
+
+// 备份根目录（独立于 tmp/，不会被清临时文件删除）
+function admin_update_backup_dir() {
+	return APP_PATH.'backup/';
+}
+
+// 备份目录防 Web 访问：写入拒绝规则 + 空 index.html，防止备份内容（含程序/配置）被直接下载
+function admin_update_backup_protect($dir) {
+	!is_file($dir.'index.html') AND @file_put_contents($dir.'index.html', '');
+	!is_file($dir.'.htaccess') AND @file_put_contents($dir.'.htaccess', "Order allow,deny\nDeny from all\nRequire all denied\n");
+}
+
+// 备份当前主程序：复制 APP_PATH 下除数据/缓存/配置目录外的全部文件到 backup/update_YYYYmmdd_HHMMSS/
+function admin_update_backup_create($tag = '') {
+	global $conf, $time;
+	$dir = admin_update_backup_dir();
+	!is_dir($dir) AND mkdir($dir, 0777, TRUE);
+	admin_update_backup_protect($dir);
+	$backupdir = $dir.'update_'.date('Ymd_His').'/';
+	mkdir($backupdir, 0777, TRUE);
+	// 备份主程序（插件 / 模板 / 主文件），跳过数据、缓存、配置目录（update 从不覆盖 conf/upload/log）
+	$skip = array('conf', 'upload', 'log', 'tmp', 'backup');
+	admin_update_cover(APP_PATH, $backupdir, $skip);
+	// 记录本次备份信息，便于回滚定位与展示
+	file_put_contents($backupdir.'update_info.txt', "version={$conf['version']}\ntime={$time}\ntag={$tag}\n");
+	return $backupdir;
+}
+
+// 备份目录列表（按时间倒序，新的在前）
+function admin_update_backup_list() {
+	$dir = admin_update_backup_dir();
+	$arr = glob($dir.'update_*');
+	$list = array();
+	if($arr) foreach($arr as $dir1) {
+		if(!is_dir($dir1) || strpos(basename($dir1), 'update_') !== 0) continue;
+		$info = array('version'=>'', 'time'=>0, 'tag'=>'');
+		$infile = $dir1.'/update_info.txt';
+		if(is_file($infile)) {
+			foreach(file($infile, FILE_IGNORE_NEW_LINES) as $line) {
+				if(strpos($line, '=') === FALSE) continue;
+				list($k, $v) = explode('=', $line, 2);
+				$info[$k] = $v;
+			}
+		}
+		$list[] = array(
+			'dir' => basename($dir1),
+			'path' => $dir1,
+			'version' => $info['version'],
+			'time' => empty($info['time']) ? @filemtime($dir1) : intval($info['time']),
+			'tag' => $info['tag'],
+		);
+	}
+	usort($list, function($a, $b) { return $b['time'] - $a['time']; });
+	return $list;
+}
+
+// 只保留最近 $keep 份备份，删除更早的
+function admin_update_backup_rotate($keep = 2) {
+	$list = admin_update_backup_list();
+	foreach(array_slice($list, $keep) as $backup) {
+		rmdir_recusive($backup['path']);
+	}
+}
+
+// 删除指定备份目录
+function admin_update_backup_delete($dirname) {
+	$dirname = preg_replace('#[^\w-]#', '', $dirname);
+	if(strpos($dirname, 'update_') !== 0) message(-1, lang('admin_update_backup_invalid'));
+	$path = admin_update_backup_dir().$dirname;
+	if(!is_dir($path)) message(-1, lang('admin_update_backup_not_exists'));
+	rmdir_recusive($path);
+	message(0, lang('admin_update_backup_deleted'));
+}
+
+// 回滚到指定备份目录
+function admin_update_rollback($dirname) {
+	global $conf;
+	csrf_check();
+	$dirname = preg_replace('#[^\w-]#', '', $dirname);
+	if(strpos($dirname, 'update_') !== 0) message(-1, lang('admin_update_backup_invalid'));
+	$backupdir = admin_update_backup_dir().$dirname.'/';
+	if(!is_dir($backupdir) || !is_file($backupdir.'update_info.txt')) message(-1, lang('admin_update_backup_not_exists'));
+
+	set_time_limit(0);
+	@ini_set('memory_limit', '256M');
+
+	// 回滚前先备份当前状态，防止误操作（并入最近 2 份保留机制）
+	$curdir = admin_update_backup_create('rollback_before');
+
+	// 恢复备份：跳过数据/缓存/备份目录，防止覆盖用户数据
+	$skip = array('upload', 'log', 'tmp', 'backup');
+	admin_update_cover($backupdir, APP_PATH, $skip);
+
+	// 清编译缓存 + 缓存
+	rmdir_recusive($conf['tmp_path'], 1);
+	cache_truncate();
+	admin_update_backup_rotate();
+
+	$msg = lang('admin_update_rollback_success', array('dir'=>$dirname));
+	message(0, $msg);
 }
 
 // hook admin_func_end.php
