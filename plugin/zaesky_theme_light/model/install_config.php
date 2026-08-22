@@ -71,6 +71,7 @@ class ThemeLightHelper {
             "site_info_bg" => '',
             "site_info_logo" => '/view/img/favicon.ico',
             "site_info_switch" => 1,
+            "site_favicon" => '/view/img/favicon.ico',
             "thread_user_bg" => 1,
             "site_info_total" => 1,
             "thread_summary_pic" => 3,

@@ -347,3 +347,15 @@
 								<input type="text" name="login_page_banner" value="<?php echo $light_config['login_page_banner'] ;?>" class="form-control" id="login_page_banner" placeholder="图片url地址或本地图片路径">
 							</div>
 						</div>
+						<!--浏览器标签图标(favicon)-->
+						<div class="form-group row">
+							<label class="col-md-2 form-control-label text-md-right pr-0" for="site_favicon">
+								<b class="text-dark"><?php echo lang('admin_setting_config_site_favicon'); ?>：</b>
+							</label>
+							<div class="col-md-8">
+								<input type="text" name="site_favicon" value="<?php echo $light_config['site_favicon'] ;?>" class="form-control" id="site_favicon" placeholder="图片url地址或本地图片路径">
+								<div class="figure-caption mt-2">
+									<?php echo lang('admin_setting_config_site_favicon_tip'); ?>
+								</div>
+							</div>
+						</div>

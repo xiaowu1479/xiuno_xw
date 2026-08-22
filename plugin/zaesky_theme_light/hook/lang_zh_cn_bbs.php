@@ -156,6 +156,8 @@
 'admin_setting_config_site_info_switch'=>'站点信息及logo显示',
 'admin_setting_thread_user_bg'=>'帖子用户背景显示',
 'admin_setting_config_site_info_total'=>'PC端站点统计显示',
+'admin_setting_config_site_favicon'=>'浏览器标签图标(favicon)',
+'admin_setting_config_site_favicon_tip'=>'地址可以填网络图片链接也可以填服务器本地图片地址。建议使用 .ico 或 .png 格式图片。',
 'admin_setting_config_addition_func_tip'=>'注意:以下功能需要安装相关第三方插件才能正常使用！请检查是否安装相关插件再启用。',
 'admin_setting_announce_tip'=>'以上公告内容均支持HTML标签。',
 'admin_setting_config_thread_summary_pic'=>'摘要图片最大数量',

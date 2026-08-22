@@ -47,6 +47,7 @@ if ($method == 'GET') {
         $light_config['thread_last_reply'] = param('thread_last_reply',1);
         $light_config['site_info_bg'] = param('site_info_bg','');
         $light_config['site_info_logo'] = param('site_info_logo','/view/img/favicon.ico');
+        $light_config['site_favicon'] = param('site_favicon','/view/img/favicon.ico');
         $light_config['site_info_switch'] = param('site_info_switch',1);
         $light_config['thread_user_bg'] = param('thread_user_bg',1);
         $light_config['site_info_total'] = param('site_info_total',1);
