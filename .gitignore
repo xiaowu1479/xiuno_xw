@@ -1,10 +1,16 @@
 tmp/*
+!tmp/.gitkeep
 admin/tmp/*
 log/*
+!log/.gitkeep
 upload/tmp/*
+!upload/tmp/.gitkeep
 upload/attach/*
+!upload/attach/.gitkeep
 upload/avatar/*
+!upload/avatar/.gitkeep
 upload/forum/*
+!upload/forum/.gitkeep
 conf/conf.php
 conf/smtp.conf.php
 # 插件目录纳入仓库（随发行版分发）

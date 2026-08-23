@@ -24,6 +24,18 @@ function get_env(&$env, &$write) {
 		APP_PATH.'plugin/'
 	);
 
+	// 发行版可能不含空目录，先尝试创建再检测
+	foreach($writedir as &$dir) {
+		if(!is_dir($dir)) @mkdir($dir, 0777, TRUE);
+		// 上传目录下的默认子目录
+		if(strpos($dir, 'upload/') !== FALSE) {
+			foreach(array('tmp', 'attach', 'avatar', 'forum') as $sub) {
+				$subdir = $dir.$sub.'/';
+				if(!is_dir($subdir)) @mkdir($subdir, 0777, TRUE);
+			}
+		}
+	}
+
 	$write = array();
 	foreach($writedir as &$dir) {
 		$write[$dir] = xn_is_writable($dir);
