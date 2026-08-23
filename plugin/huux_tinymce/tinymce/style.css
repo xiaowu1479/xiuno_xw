@@ -52,38 +52,37 @@
 /* 豆瓣/影视信息卡片 */
 .chuan-douban-card,
 .movie-card {
-    background: rgba(255, 255, 255, .95);
-    border: 1px solid rgba(0, 0, 0, .08);
-    border-radius: 12px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, .06);
+    background: rgba(249, 250, 251, .45);
+    border: 1px solid rgba(0, 0, 0, .06);
+    border-radius: 16px;
+    box-shadow: 0 8px 26px rgba(24, 39, 75, .06);
     box-sizing: border-box;
-    color: #333;
+    color: #44546a;
     font-size: 13px;
-    line-height: 1.6;
+    line-height: 1.68;
     margin: 16px auto;
     width: 100%;
-    padding: 20px;
+    padding: 18px 20px;
     text-align: left;
 }
 
 .movie-card__hero {
     display: flex;
-    gap: 20px;
+    gap: 18px;
 }
 
 .movie-card__poster {
-    flex: 0 0 38%;
-    margin-top: 0;
-    min-width: 0;
+    flex: 0 0 145px;
+    margin-top: 18px;
 }
 
 .movie-card__poster img {
     aspect-ratio: 2 / 3;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, .15);
+    border-radius: 12px;
+    box-shadow: 0 8px 22px rgba(24, 39, 75, .12);
     object-fit: cover;
     transition: transform .18s ease;
-    width: 100%;
+    width: 145px;
 }
 
 .movie-card__poster img:hover,
@@ -92,118 +91,104 @@
 }
 
 .movie-card__main {
-    flex: 1 1 50%;
+    flex: 1;
     min-width: 0;
 }
 
 .movie-card__head {
-    align-items: center;
+    align-items: flex-start;
     display: flex;
-    gap: 12px;
-    justify-content: center;
-    margin-bottom: 12px;
+    gap: 14px;
+    justify-content: space-between;
 }
 
 .movie-card__title {
-    color: #1a1a1a;
-    font-family: inherit;
-    font-size: 32px;
+    color: #0f172a;
+    font-size: 20px;
     font-weight: 700;
-    line-height: 1.3;
-    margin: 0;
-    position: relative;
-    display: inline-block;
-    text-align: center;
-}
-
-.movie-card__title::after {
-    content: "";
-    position: absolute;
-    bottom: -4px;
-    left: 0;
-    width: 100%;
-    height: 2px;
-    background: #0084ff;
+    line-height: 1.28;
+    margin: 0 0 4px;
 }
 
 .movie-card__title a {
     color: inherit;
-    font-family: inherit;
     text-decoration: none;
 }
 
 .movie-card__title span {
-    color: #666;
-    font-size: 18px;
+    color: #94a3b8;
+    font-size: 14px;
     font-weight: 400;
-    margin-left: 4px;
+    margin-left: 6px;
 }
 
 .movie-card__subtitle {
-    color: #1a1a1a;
-    font-family: inherit;
-    font-size: 17px;
-    font-weight: 400;
+    color: #94a3b8;
+    font-size: 12px;
     line-height: 1.5;
-    margin: 8px 0;
-    text-align: center;
+    margin: 0 0 8px;
 }
 
 .movie-card__rating {
     align-items: center;
-    background: linear-gradient(135deg, #0084ff, #00aaff);
-    border-radius: 50%;
-    color: #fff;
+    background: rgba(245, 158, 11, .1);
+    border: 1px solid rgba(245, 158, 11, .2);
+    border-radius: 12px;
+    color: #b45309;
     display: flex;
-    flex-direction: column;
     flex: 0 0 auto;
-    justify-content: center;
-    width: 52px;
-    height: 52px;
-    padding: 0;
-    box-shadow: 0 2px 8px rgba(0, 132, 255, .3);
+    gap: 8px;
+    min-width: 96px;
+    padding: 6px 12px;
 }
 
 .movie-card__rating strong {
-    display: block;
-    font-size: 22px;
+    display: inline-block;
+    font-size: 20px;
     font-weight: 700;
     line-height: 1;
 }
 
 .movie-card__rating span {
-    display: none;
+    color: #f59e0b;
+    display: block;
+    font-size: 10px;
+    line-height: 1.1;
+}
+
+.movie-card__rating span::after {
+    content: "★★★★★";
 }
 
 .movie-card__rating em {
-    display: none;
+    color: #94a3b8;
+    display: block;
+    font-size: 10px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 1.2;
+    margin-top: 2px;
+    white-space: nowrap;
 }
 
 .movie-card__meta {
-    margin-top: 12px;
-    border-top: 1px solid #eee;
-    padding-top: 12px;
+    margin-top: 8px;
 }
 
 .movie-card__meta-row {
-    color: #1a1a1a;
-    font-family: inherit;
-    font-size: 17px;
-    font-weight: 400;
-    line-height: 1.7;
-    margin: 4px 0;
+    color: #53657c;
+    font-size: 12px;
+    line-height: 1.58;
+    margin: 1px 0;
 }
 
 .movie-card__meta-row strong {
-    color: #1a1a1a;
-    font-family: inherit;
+    color: #8b97a8;
     font-weight: 700;
 }
 
 .movie-card__meta-row span {
-    color: #1a1a1a;
-    font-family: inherit;
-    font-weight: 400;
+    color: #475569;
 }
 
 .movie-card__meta--clamp span {
@@ -212,44 +197,44 @@
 }
 
 .movie-card__section {
-    border-top: 1px solid #eee;
+    border-top: 1px solid rgba(0, 0, 0, .04);
     margin-top: 16px;
     padding-top: 16px;
 }
 
 .movie-card__section h3 {
-    color: #666;
-    font-family: inherit;
-    font-size: 14px;
-    font-weight: 900 !important;
+    color: #8b97a8;
+    font-size: 13px;
+    font-weight: 700;
     margin: 0 0 10px;
-    padding-left: 8px;
-    border-left: 3px solid #0084ff;
 }
 
 .movie-card__section p {
-    color: #444;
-    font-family: inherit;
-    font-size: 17px;
+    color: #475569;
+    font-size: 13px;
     margin: 0;
-    line-height: 1.7;
 }
 
 .movie-card__quote {
-    background: transparent;
-    border: none;
-    border-radius: 0;
-    color: #555;
+    background: #f8fafc;
+    border: 1px solid rgba(0, 0, 0, .04);
+    border-radius: 12px;
+    color: #475569;
     margin-top: 16px;
-    padding: 0;
+    padding: 14px;
+}
+
+.movie-card__quote strong {
+    color: #94a3b8;
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 6px;
 }
 
 .movie-card__quote p {
     font-style: italic;
-    font-family: inherit;
-    font-size: 17px;
     margin: 0;
-    line-height: 1.6;
 }
 
 .movie-card__stills {
@@ -260,8 +245,8 @@
 
 .movie-card__stills img {
     aspect-ratio: 16 / 9;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, .1);
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(24, 39, 75, .1);
     object-fit: cover;
     transition: transform .18s ease;
     width: 100%;
@@ -285,7 +270,7 @@
 
     .movie-card__poster,
     .movie-card__poster img {
-        width: 150px;
+        width: 145px;
     }
 
     .movie-card__poster {
@@ -296,11 +281,11 @@
 
     .movie-card__head {
         display: block;
-        text-align: center;
     }
 
     .movie-card__rating {
-        margin: 8px auto 0;
+        display: inline-block;
+        margin: 8px 0 0;
     }
 
     .movie-card__stills {

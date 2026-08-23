@@ -337,49 +337,6 @@ function douban_fetch_mobile_meta(string $id): array
     return $out;
 }
 
-function douban_fetch_imdb_by_title(string $title, string $year = ''): string
-{
-    $title = douban_clean_text($title);
-    if ($title === '') {
-        return '';
-    }
-    $search = $title . ($year !== '' ? ' ' . $year : '');
-    try {
-        $json = douban_http_json(
-            'https://v2.sg.media-imdb.com/suggestion/x/' . rawurlencode($search) . '.json',
-            'https://www.imdb.com/'
-        );
-    } catch (Throwable $e) {
-        return '';
-    }
-    $items = array_values(array_filter((array) ($json['d'] ?? []), function ($item) {
-        return is_array($item) && preg_match('/^tt\d{6,10}$/', (string) ($item['id'] ?? ''));
-    }));
-    if (!$items) {
-        return '';
-    }
-    $titleNorm = function (string $s): string {
-        return strtolower(trim(preg_replace('/\W+/u', '', $s) ?? ''));
-    };
-    $target = $titleNorm($title);
-    foreach ($items as $item) {
-        $name = $titleNorm(douban_clean_text((string) ($item['l'] ?? '')));
-        if ($target !== '' && $name === $target) {
-            return strtolower((string) $item['id']);
-        }
-    }
-    if ($year !== '') {
-        foreach ($items as $item) {
-            $matchYear = douban_clean_text((string) ($item['y'] ?? ''));
-            $matchTl = douban_clean_text((string) ($item['tl'] ?? ''));
-            if ($matchYear === $year || strpos($matchTl, $year) !== false) {
-                return strtolower((string) $item['id']);
-            }
-        }
-    }
-    return strtolower((string) $items[0]['id']);
-}
-
 function douban_fetch_credits_meta(string $id): array
 {
     $out = [];
@@ -544,7 +501,6 @@ function douban_render_html(array $data): string
         ['单集片长', (string) $data['duration']],
         ['又名', (string) $data['aka']],
         ['IMDb', (string) $data['imdb']],
-        ['豆瓣ID', (string) $data['id']],
     ];
 
     $html = '<div class="chuan-douban-card movie-card">';
@@ -553,7 +509,7 @@ function douban_render_html(array $data): string
         $html .= '<div class="movie-card__poster"><img src="' . douban_e($cover) . '" alt="' . douban_e($title) . '"></div>';
     }
     $html .= '<div class="movie-card__main"><div class="movie-card__head">';
-    $html .= '<h2 class="movie-card__title">' . douban_e($title);
+    $html .= '<h2 class="movie-card__title"><a href="' . douban_e((string) $data['url']) . '" target="_blank" rel="noopener">' . douban_e($title) . '</a>';
     if ($year !== '') {
         $html .= '<span>（' . douban_e($year) . '）</span>';
     }
@@ -578,9 +534,16 @@ function douban_render_html(array $data): string
         $html .= '<div class="movie-card__section"><h3>剧情简介</h3><p>' . douban_e((string) $data['intro']) . '</p></div>';
     }
     if ($data['hotComment'] !== '') {
-        $html .= '<div class="movie-card__section movie-card__quote"><h3>影视热评</h3><p>“' . nl2br(douban_e((string) $data['hotComment'])) . '”</p></div>';
+        $html .= '<div class="movie-card__quote"><strong>豆瓣热评</strong><p>“' . nl2br(douban_e((string) $data['hotComment'])) . '”</p></div>';
     }
-    $html .= '<div class="movie-card__section"><h3>下载地址：</h3></div>';
+    $stills = array_values(array_filter((array) $data['stills']));
+    if ($stills) {
+        $html .= '<div class="movie-card__section movie-card__section--photos"><h3>剧照/海报</h3><div class="movie-card__stills">';
+        foreach (array_slice($stills, 0, 3) as $still) {
+            $html .= '<img src="' . douban_e(douban_cover_url((string) $still, (string) $data['url'])) . '" alt="' . douban_e($title) . '">';
+        }
+        $html .= '</div></div>';
+    }
     $html .= '</div><p></p>';
     return $html;
 }
@@ -639,9 +602,6 @@ function douban_detail(string $id): array
     }
     if ($payload['rating'] === '') {
         $payload['rating'] = '暂无评分';
-    }
-    if ($payload['imdb'] === '') {
-        $payload['imdb'] = douban_fetch_imdb_by_title($payload['title'], $payload['year']);
     }
     if ($payload['subtitle'] === '') {
         $payload['subtitle'] = $payload['year'];
