@@ -81,25 +81,31 @@ const ThemeManager = {
   },
   updateTinyMCETheme: function() {
     const iframe = document.getElementById("message_ifr");
-    if (!iframe) return;
-    
+    if (!iframe || !iframe.contentWindow || !iframe.contentWindow.document) return;
+
     const isDark = this.getCurrentTheme() === "3" || 
                   (this.getCurrentTheme() === "1" && this.isNightTime());
-    
+
     const style = isDark 
       ? '.mce-content-body{color:#FFFFFF!important}' 
       : '.mce-content-body{color:#000000!important}';
-    
-    iframe.contentWindow.document.head.innerHTML = `
-      <style>
-        .mce-content-body:before {
-          color: #868e96 !important;
-          content: attr(data-mce-placeholder);
-          position: absolute;
-        }
-        ${style}
-      </style>
+
+    // 追加 style 到编辑器 head，避免整体覆盖导致 content_css 引入的样式丢失
+    const head = iframe.contentWindow.document.head;
+    if (!head || typeof head.parentNode !== 'object') return;
+    const prev = head.querySelector('style[data-xw-tinymce-theme]');
+    if (prev) prev.remove();
+    const st = document.createElement('style');
+    st.setAttribute('data-xw-tinymce-theme', '1');
+    st.textContent = `
+      .mce-content-body:before {
+        color: #868e96 !important;
+        content: attr(data-mce-placeholder);
+        position: absolute;
+      }
+      ${style}
     `;
+    head.appendChild(st);
   },
   switchTheme: function() {
     const currentTheme = this.getCurrentTheme();
