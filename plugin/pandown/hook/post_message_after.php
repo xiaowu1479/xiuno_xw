@@ -26,7 +26,7 @@
 					<div class="input-group-prepend">
 						<span class="input-group-text">友情提醒：</span>
 					</div>
-					<div class="form-control text-info">支持百度网盘、夸克网盘、UC网盘、迅雷网盘、阿里云盘等链接。</div>
+					<div class="form-control text-info">支持百度网盘、夸克网盘、UC网盘、迅雷网盘、阿里云盘、光鸭网盘等链接。</div>
 				</div>
 			</div>
 			<div class="modal-footer">
@@ -51,6 +51,7 @@ function pandown_extract_url(text) {
 		/xunlei\.com\/s\/[a-zA-Z0-9]+/i,
 		/aliyundrive\.com\/s\/[a-zA-Z0-9]+/i,
 		/aliyundrive\.net\/s\/[a-zA-Z0-9]+/i,
+		/guangyapan\.com\/s\/[a-zA-Z0-9_]+/i,
 	];
 	for (var i = 0; i < patterns.length; i++) {
 		m = text.match(patterns[i]);

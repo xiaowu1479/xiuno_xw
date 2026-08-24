@@ -15,6 +15,11 @@
 
 ## 更新日志
 
+### v1.2.9 (2026-08-24)
+
+- pandown 网盘链接转二维码插件升级 v1.2.0：新增光鸭网盘（guangyapan.com）链接识别与支持
+- pandown 插件新增后台管理图标
+
 ### v1.2.8 (2026-08-23)
 
 - 修复轻鸿主题编辑器内豆瓣卡片样式丢失：主题的 `updateTinyMCETheme` 原用 `head.innerHTML` 整体覆盖编辑器 iframe 头部，导致 TinyMCE `content_css` 注入的样式被清除；改为追加 `<style>` 方式渲染

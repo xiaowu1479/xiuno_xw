@@ -19,6 +19,7 @@ function pandown_extract_url($text) {
         '#xunlei\.com/s/[a-zA-Z0-9]+#i',
         '#aliyundrive\.com/s/[a-zA-Z0-9]+#i',
         '#aliyundrive\.net/s/[a-zA-Z0-9]+#i',
+        '#guangyapan\.com/s/[a-zA-Z0-9_]+#i',
     );
     foreach($patterns as $pattern) {
         if(preg_match($pattern, $text, $matches)) {
@@ -40,6 +41,7 @@ function pandown_detect_type($url) {
         'UC网盘'   => array('drive.uc.cn', 'uc.cn', 'www.uc.cn'),
         '迅雷网盘' => array('pan.xunlei.cn', 'xunlei.com'),
         '阿里云盘' => array('aliyundrive.com', 'aliyundrive.net'),
+        '光鸭网盘' => array('guangyapan.com'),
     );
     foreach($types as $name => $domains) {
         foreach($domains as $domain) {
@@ -107,6 +109,11 @@ if(!empty($preg_pd) && !empty($matches[0])) {
                 'class' => 'pd-pan-aliyun',
                 'styles' => 'background:#3b82f6;color:#fff;border-color:#3b82f6',
                 'svg' => '<svg class="pandown-icon" viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M19.35 10.04A7.49 7.49 0 0 0 12 4C9.11 4 6.6 5.64 5.35 8.04A5.994 5.994 0 0 0 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"/></svg>',
+            ),
+            '光鸭网盘' => array(
+                'class' => 'pd-pan-guangya',
+                'styles' => 'background:#ea580c;color:#fff;border-color:#ea580c',
+                'svg' => '<svg class="pandown-icon" viewBox="0 0 1024 1024" width="16" height="16" fill="currentColor"><path d="M512 1024C229.222 1024 0 794.778 0 512S229.222 0 512 0s512 229.222 512 512-229.222 512-512 512z m0-192c176.73 0 320-143.27 320-320S688.73 192 512 192 192 335.27 192 512s143.27 320 320 320z m-32-480h64v192h-64V352z m0-64h64v-64h-64v64z"></path></svg>',
             ),
             '网盘' => array(
                 'class' => 'pd-pan-default',
