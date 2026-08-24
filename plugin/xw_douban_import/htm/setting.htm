@@ -1,0 +1,402 @@
+<?php include _include(ADMIN_PATH.'view/htm/header.inc.htm');?>
+
+<?php
+$ajax_url = url("plugin-setting-xw_douban_import");
+$tagdata_json = json_encode($tagdata, JSON_UNESCAPED_UNICODE);
+$export_url = $ajax_url.(strpos($ajax_url, '?') !== false ? '&' : '?').'action=export';
+?>
+
+<div class="row" style="margin-bottom: 16px;">
+	<div class="col-12">
+		<div class="btn-group" role="group">
+			<a class="btn btn-secondary" href="./"><i class="icon-reply"></i> 返回插件列表</a>
+			<button type="button" class="btn btn-primary" id="btn_reload"><i class="icon-refresh"></i> 刷新页面</button>
+			<button type="button" class="btn btn-success" id="btn_resume">继续发布待处理任务</button>
+		</div>
+	</div>
+</div>
+
+<!-- ============ 导入发布 ============ -->
+<div class="row">
+	<div class="col-lg-10 offset-lg-1">
+		<div class="card">
+			<div class="card-body">
+				<h4 class="card-title">豆瓣影视批量导入</h4>
+				<p class="text-muted small">
+					每行一条：<code>影视名|网盘链接</code>（支持 txt / csv / xlsx，或直接粘贴）。<br>
+					自动用影视名搜索豆瓣并生成与「大白编辑器」一致的豆瓣卡片帖；网盘链接以 <code>[pd url="..."]</code> 短代码发布，由「网盘链接转二维码(pandown)」插件渲染为下载按钮+二维码；多个搜索结果时自动选第一个。
+				</p>
+
+				<form id="import_form" enctype="multipart/form-data">
+					<div class="form-group row">
+						<label class="col-sm-2 form-control-label">发布版块<span class="text-danger">*</span>：</label>
+						<div class="col-sm-6">
+							<select name="fid" id="fid_select" class="form-control" required>
+								<option value="">-- 请选择版块 --</option>
+								<?php foreach ($forumlist as $f) { ?>
+								<option value="<?php echo $f['fid'];?>"<?php if ($kv['fid'] == $f['fid']) echo ' selected';?>><?php echo htmlspecialchars($f['name'], ENT_QUOTES, 'UTF-8');?> (fid=<?php echo $f['fid'];?>)</option>
+								<?php } ?>
+							</select>
+						</div>
+					</div>
+
+					<div class="form-group row">
+						<label class="col-sm-2 form-control-label">发帖用户 UID：</label>
+						<div class="col-sm-3">
+							<input type="number" name="uid" class="form-control" min="1" value="<?php echo intval($kv['uid']);?>">
+						</div>
+						<div class="col-sm-7 form-control-label text-muted small">帖子将以该用户身份发布（默认 1 = 管理员）</div>
+					</div>
+
+					<div class="form-group row">
+						<label class="col-sm-2 form-control-label">固定标签：</label>
+						<div class="col-sm-10">
+							<div id="tag_box" class="border rounded p-2" style="max-height: 200px; overflow-y: auto; background: #f8f9fa;">
+								<span class="text-muted small">请先选择版块后显示对应标签（来自 xn_tag 插件）</span>
+							</div>
+						</div>
+					</div>
+
+					<div class="form-group row">
+						<label class="col-sm-2 form-control-label">链接前缀：</label>
+						<div class="col-sm-3">
+							<input type="text" name="link_prefix" class="form-control" value="<?php echo htmlspecialchars($kv['link_prefix'], ENT_QUOTES, 'UTF-8');?>">
+						</div>
+						<div class="col-sm-7 form-control-label text-muted small">帖子中显示为「前缀+网盘链接」</div>
+					</div>
+
+					<div class="form-group row">
+						<label class="col-sm-2 form-control-label">跳过重复：</label>
+						<div class="col-sm-10 form-control-label">
+							<div class="custom-control custom-radio custom-control-inline">
+								<input class="custom-control-input" type="radio" name="skip_dup" id="skip_dup_1" value="1"<?php if (!empty($kv['skip_dup'])) echo ' checked';?>>
+								<label class="custom-control-label" for="skip_dup_1">是（已成功发布的同名同链接条目自动跳过）</label>
+							</div>
+							<div class="custom-control custom-radio custom-control-inline">
+								<input class="custom-control-input" type="radio" name="skip_dup" id="skip_dup_0" value="0"<?php if (empty($kv['skip_dup'])) echo ' checked';?>>
+								<label class="custom-control-label" for="skip_dup_0">否</label>
+							</div>
+						</div>
+					</div>
+
+					<div class="form-group row">
+						<label class="col-sm-2 form-control-label">同名影片：</label>
+						<div class="col-sm-10 form-control-label">
+							<div class="custom-control custom-radio custom-control-inline">
+								<input class="custom-control-input" type="radio" name="merge_same" id="merge_same_1" value="1"<?php if (!empty($kv['merge_same'])) echo ' checked';?>>
+								<label class="custom-control-label" for="merge_same_1">追加到旧帖（同名不同链接时不发新帖，把新链接加到旧帖下载区，推荐）</label>
+							</div>
+							<div class="custom-control custom-radio custom-control-inline">
+								<input class="custom-control-input" type="radio" name="merge_same" id="merge_same_0" value="0"<?php if (empty($kv['merge_same'])) echo ' checked';?>>
+								<label class="custom-control-label" for="merge_same_0">总是发新帖</label>
+							</div>
+						</div>
+					</div>
+
+					<div class="form-group row">
+						<label class="col-sm-2 form-control-label">清单文件：</label>
+						<div class="col-sm-9">
+							<input type="file" name="file" class="form-control-file" accept=".txt,.csv,.xlsx">
+							<small class="text-muted">支持 .txt / .csv / .xlsx（≤2MB，单次最多 <?php echo XWDI_BATCH_LIMIT;?> 条）</small>
+						</div>
+					</div>
+
+					<div class="form-group row">
+						<label class="col-sm-2 form-control-label">或粘贴文本：</label>
+						<div class="col-sm-9">
+							<textarea name="text" class="form-control" rows="6" placeholder="流浪地球|https://pan.baidu.com/s/xxxx&#10;我不是药神 (2018)|https://pan.quark.cn/s/yyyy"></textarea>
+						</div>
+					</div>
+
+					<div class="form-group row">
+						<div class="col-sm-9 offset-sm-2">
+							<button type="submit" class="btn btn-primary" id="btn_parse">解析并加入任务队列</button>
+							<span id="parse_tip" class="text-muted ml-2"></span>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- ============ 发布进度 ============ -->
+<div class="row" id="progress_card" style="display:none;">
+	<div class="col-lg-10 offset-lg-1">
+		<div class="card border-primary">
+			<div class="card-body">
+				<h5 class="card-title">发布进度 <span id="prog_stat" class="text-muted small"></span></h5>
+				<div class="progress" style="height: 22px;">
+					<div class="progress-bar progress-bar-striped progress-bar-animated bg-success" id="prog_bar" style="width:0%">0%</div>
+				</div>
+				<div id="prog_log" class="mt-3" style="max-height:300px;overflow-y:auto;font-size:13px;"></div>
+				<button type="button" class="btn btn-warning btn-sm mt-2" id="btn_stop">停止后续任务</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- ============ 任务记录 ============ -->
+<div class="row" style="margin-top: 24px;">
+	<div class="col-lg-12">
+		<div class="card">
+			<div class="card-body">
+				<h5 class="card-title">
+					任务记录
+					<span class="ml-3 small">
+						<span class="badge badge-info">待处理 <?php echo $count_pending;?></span>
+						<span class="badge badge-success">成功 <?php echo $count_done;?></span>
+						<span class="badge badge-danger">失败 <?php echo $count_failed;?></span>
+					</span>
+					<span class="float-right">
+						<a class="btn btn-outline-success btn-sm" href="<?php echo $export_url;?>" title="导出全部任务记录为CSV文件（Excel可打开）"><i class="icon-download"></i> 导出记录</a>
+						<button type="button" class="btn btn-outline-secondary btn-sm" data-clear="done">清除成功记录</button>
+						<button type="button" class="btn btn-outline-secondary btn-sm" data-clear="failed">清除失败记录</button>
+						<button type="button" class="btn btn-outline-danger btn-sm" data-clear="all">清空全部</button>
+					</span>
+				</h5>
+				<table class="table table-bordered table-hover table-sm small">
+					<thead><tr><th>ID</th><th>影视名</th><th>网盘链接</th><th>版块</th><th>UID</th><th>标签</th><th>状态</th><th>主题</th><th>失败原因</th><th>操作</th></tr></thead>
+					<tbody id="task_tbody">
+					<?php foreach ((array)$tasklist as $v) { ?>
+					<tr data-id="<?php echo $v['id'];?>">
+						<td><?php echo $v['id'];?></td>
+						<td><?php echo htmlspecialchars($v['title'], ENT_QUOTES, 'UTF-8');?></td>
+						<td style="max-width:200px;word-break:break-all;"><?php echo htmlspecialchars($v['link'], ENT_QUOTES, 'UTF-8');?></td>
+						<td><?php echo $v['fid'];?></td>
+						<td><?php echo $v['uid'];?></td>
+						<td><?php echo htmlspecialchars($v['tagids'], ENT_QUOTES, 'UTF-8');?></td>
+						<td><?php if ($v['status'] == 0) { ?><span class="badge badge-info">待处理</span><?php } elseif ($v['status'] == 1) { echo empty($v['err']) ? '<span class="badge badge-success">成功</span>' : '<span class="badge badge-primary">已追加</span>'; } else { ?><span class="badge badge-danger">失败</span><?php } ?></td>
+						<td><?php if ($v['tid']) { $turl = $conf['url_rewrite_on'] ? "../thread-$v[tid].htm" : "../?thread-$v[tid].htm"; ?><a href="<?php echo $turl;?>" target="_blank">#<?php echo $v['tid'];?></a><?php } ?></td>
+						<td style="max-width:180px;word-break:break-all;" class="text-danger"><?php echo htmlspecialchars($v['err'], ENT_QUOTES, 'UTF-8');?></td>
+						<td>
+							<?php if ($v['status'] != 1) { ?>
+							<button type="button" class="btn btn-xs btn-outline-primary btn-retry" data-id="<?php echo $v['id'];?>"><?php echo $v['status']==0 ? '发布' : '改名重试';?></button>
+							<?php } ?>
+						</td>
+					</tr>
+					<?php } ?>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+
+<?php include _include(ADMIN_PATH.'view/htm/footer.inc.htm');?>
+
+<input type="hidden" id="prog_running" value="">
+
+<script>
+var AJAX_URL = '<?php echo $ajax_url;?>';
+var CSRF_TOKEN = '<?php echo csrf_token();?>';
+var TAG_DATA = <?php echo $tagdata_json;?>;
+var BATCH_LIMIT = <?php echo XWDI_BATCH_LIMIT;?>;
+
+// ---------------- 标签选择 ----------------
+
+function render_tags(fid) {
+	var box = $('#tag_box');
+	box.empty();
+	if (!fid) {
+		box.html('<span class="text-muted small">请先选择版块后显示对应标签（来自 xn_tag 插件）</span>');
+		return;
+	}
+	var html = '';
+	TAG_DATA.forEach(function(cate) {
+		if (cate.fid != fid && cate.fid !== 0) return;
+		if (!cate.tags.length) return;
+		html += '<div class="mb-1"><strong class="mr-2">' + $('<i>').text(cate.name).html() + '：</strong>';
+		cate.tags.forEach(function(tag) {
+			html += '<label class="checkbox-inline mr-3" style="font-weight:normal;margin-right:12px;">'
+				+ '<input type="checkbox" class="tag-check" value="' + tag.tagid + '"> '
+				+ $('<i>').text(tag.name).html() + '</label>';
+		});
+		html += '</div>';
+	});
+	if (!html) html = '<span class="text-muted small">当前版块没有可用标签分类</span>';
+	box.html(html);
+}
+
+$('#fid_select').on('change', function() { render_tags($(this).val()); });
+render_tags($('#fid_select').val());
+
+function selected_tagids() {
+	var arr = [];
+	$('.tag-check:checked').each(function() { arr.push($(this).val()); });
+	return arr.join(',');
+}
+
+// ---------------- 解析入库 ----------------
+
+$('#import_form').on('submit', function() {
+	var fid = $('#fid_select').val();
+	if (!fid) { $.alert('请先选择发布版块'); return false; }
+	var has_file = $('input[name=file]')[0].files.length > 0;
+	var has_text = $.trim($('textarea[name=text]').val()) !== '';
+	if (!has_file && !has_text) { $.alert('请上传清单文件或粘贴文本'); return false; }
+	if ($('#prog_running').val() === '1') { $.alert('有批次正在发布中'); return false; }
+
+	var jsubmit = $('#btn_parse');
+	jsubmit.button('loading');
+	var tip = $('#parse_tip');
+
+	function done(code, msg, data) {
+		jsubmit.button('reset');
+		if (code !== 0) { tip.text(''); $.alert(msg); return; }
+		tip.text('解析完成：共 ' + data.total + ' 条，入队 ' + data.inserted + ' 条，跳过 ' + data.skipped + ' 条（重复）');
+		if (data.inserted > 0) start_progress();
+	}
+
+	if (has_file) {
+		var fd = new FormData(this);
+		fd.append('action', 'parse');
+		fd.append('fid', fid);
+		fd.append('tagids', selected_tagids());
+		fd.append('csrf_token', CSRF_TOKEN);
+		$.ajax({ url: AJAX_URL, type: 'POST', data: fd, processData: false, contentType: false, dataType: 'json' })
+			.done(function(r) { done(r.code, r.message, r.data); })
+			.fail(function() { done(-1, '请求失败，请检查网络', null); });
+	} else {
+		var post = $('#import_form').serialize() + '&action=parse&fid=' + fid + '&tagids=' + encodeURIComponent(selected_tagids());
+		post += '&csrf_token=' + encodeURIComponent(CSRF_TOKEN);
+		$.ajax({ url: AJAX_URL, type: 'POST', data: post, dataType: 'json' })
+			.done(function(r) { done(r.code, r.message, r.data); })
+			.fail(function() { done(-1, '请求失败，请检查网络', null); });
+	}
+	return false;
+});
+
+// ---------------- 批量发布循环 ----------------
+
+var prog_queue = [], prog_idx = 0, prog_ok = 0, prog_fail = 0, stop_flag = false;
+
+function esc_html(s) {
+	return $('<i>').text(s === undefined || s === null ? '' : String(s)).html();
+}
+
+function start_progress() {
+	$.post(AJAX_URL, { action: 'pending', csrf_token: CSRF_TOKEN }, null, 'json')
+		.done(function(r) {
+			if (r.code !== 0) { $.alert(r.message); return; }
+			prog_queue = (r.data && r.data.ids) ? r.data.ids : [];
+			if (!prog_queue.length) { $.alert('没有待处理的任务'); return; }
+			prog_idx = 0; prog_ok = 0; prog_fail = 0;
+			$('#progress_card').slideDown();
+			$('#prog_log').empty();
+			$('#prog_bar').addClass('progress-bar-animated');
+			$('#prog_running').val('1');
+			mark_rows_processing(prog_queue);
+			process_next();
+		})
+		.fail(function() { $.alert('获取任务列表失败'); });
+}
+
+function mark_rows_processing(ids) {
+	var map = {};
+	ids.forEach(function(i) { map[i] = 1; });
+	$('#task_tbody tr').each(function() {
+		var tr = $(this);
+		if (map[parseInt(tr.data('id'))]) {
+			tr.find('td:eq(6)').html('<span class="badge badge-warning">发布中</span>');
+		}
+	});
+}
+
+function prog_render() {
+	var total = prog_queue.length, donec = prog_idx;
+	var pct = total ? Math.round(donec * 100 / total) : 100;
+	$('#prog_bar').css('width', pct + '%').text(pct + '% (' + donec + '/' + total + ') 成功' + prog_ok + ' 失败' + prog_fail);
+	$('#prog_stat').text('成功 ' + prog_ok + ' / 失败 ' + prog_fail);
+}
+
+function prog_log(id, ok, text, tid) {
+	var color = ok ? 'text-success' : 'text-danger';
+	var line = '[' + (prog_idx) + '] #' + id + ' ' + esc_html(text);
+	if (ok && tid) line += ' → <a href="' + xiuno_url_thread(tid) + '" target="_blank">#' + tid + '</a>';
+	$('#prog_log').prepend('<div class="' + color + '">' + line + '</div>');
+}
+
+function xiuno_url_thread(tid) {
+	return url_rewrite_on ? '../thread-' + tid + '.htm' : '../?thread-' + tid + '.htm';
+}
+
+function process_next() {
+	if (stop_flag) { finish_progress(true); return; }
+	if (prog_idx >= prog_queue.length) { finish_progress(false); return; }
+	var id = prog_queue[prog_idx];
+	prog_idx++;
+	$.post(AJAX_URL, { action: 'process', id: id, csrf_token: CSRF_TOKEN }, null, 'json')
+		.done(function(r) {
+			var d = r.data || {};
+			if (r.code !== 0) {
+				prog_fail++; prog_log(id, false, '请求错误: ' + r.message, 0);
+			} else if (d.status == 1) {
+				prog_ok++;
+				if (d.merged) {
+					prog_log(id, true, (d.dup ? '链接已存在于旧帖：' : '已追加到旧帖 #') + d.tid + ' ' + (d.subject || ''), d.tid);
+				} else {
+					prog_log(id, true, d.subject || '发布成功', d.tid);
+				}
+				mark_row(id, d.tid, d.merged);
+			} else {
+				prog_fail++; prog_log(id, false, (d.subject || '') + ' ' + (d.err || '未知错误'), 0);
+			}
+		})
+		.fail(function() { prog_fail++; prog_log(id, false, '网络请求失败', 0); })
+		.always(function() { prog_render(); setTimeout(process_next, 400); });
+}
+
+$('#btn_stop').on('click', function() { stop_flag = true; });
+
+function finish_progress(stopped) {
+	$('#prog_running').val('');
+	stop_flag = false;
+	$('#prog_bar').removeClass('progress-bar-animated');
+	prog_render();
+	$('#prog_log').prepend('<div class="text-primary font-weight-bold">' + (stopped ? '已手动停止。' : '全部完成。') + '成功 ' + prog_ok + ' 条，失败 ' + prog_fail + ' 条。</div>');
+}
+
+function mark_row(id, tid, merged) {
+	var tr = $('#task_tbody tr[data-id=' + id + ']');
+	tr.find('td:eq(6)').html(merged ? '<span class="badge badge-primary">已追加</span>' : '<span class="badge badge-success">成功</span>');
+	tr.find('td:eq(7)').html('<a href="' + xiuno_url_thread(tid) + '" target="_blank">#' + tid + '</a>');
+	tr.find('.btn-retry').remove();
+}
+
+// ---------------- 任务记录操作 ----------------
+
+$(document).on('click', '.btn-retry', function() {
+	var btn = $(this), id = btn.data('id');
+	var title = $.trim(prompt('影视名（可修改后重试）：', btn.closest('tr').find('td:eq(1)').text()));
+	if (title === null) return;
+	btn.button('loading');
+	$.post(AJAX_URL, { action: 'process', id: id, new_title: title, csrf_token: CSRF_TOKEN }, null, 'json')
+		.done(function(r) {
+			btn.button('reset');
+			var d = r.data || {};
+			if (r.code === 0 && d.status == 1) {
+				$.alert(d.merged ? (d.dup ? '链接已存在于旧帖' : '已追加到旧帖') : '发布成功');
+				mark_row(id, d.tid, d.merged);
+			} else {
+				$.alert('失败：' + ((d && d.err) || r.message));
+			}
+		})
+		.fail(function() { btn.button('reset'); $.alert('请求失败'); });
+});
+
+$('[data-clear]').on('click', function() {
+	var mode = $(this).data('clear');
+	if (!confirm('确定清除该类记录？此操作不可恢复')) return;
+	$.xpost(AJAX_URL, 'action=clear&mode=' + mode + '&csrf_token=' + encodeURIComponent(CSRF_TOKEN), function(code, msg) {
+		$.alert(msg);
+		if (code === 0) setTimeout(function(){ location.reload(); }, 800);
+	});
+});
+
+$('#btn_reload').on('click', function() { location.reload(); });
+$('#btn_resume').on('click', function() {
+	if ($('#prog_running').val() === '1') { $.alert('有批次正在发布中'); return; }
+	start_progress();
+});
+</script>
