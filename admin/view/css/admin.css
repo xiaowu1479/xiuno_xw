@@ -1,3 +1,16 @@
 
 .price { font-size: 1rem; color:coral; font-weight: bold;}
 .price:before { content:"￥"; font-weight: bold;}
+
+/* 手机端适配：版块列表横向滚动时，防止列被挤压导致输入框无法点击 */
+@media (max-width: 992px) {
+	.arrlist input[type="text"] { min-width: 110px !important; }
+	.arrlist input[type="file"] { min-width: 160px !important; }
+}
+
+/* 手机端适配：版块编辑页标签插件(xn_tag)表格横滚，防止标签输入框被挤压 */
+@media (max-width: 992px) {
+	#tag_html { overflow-x: auto; }
+	#tag_html input[type="text"] { min-width: 110px !important; }
+	#tag_html select { min-width: 110px !important; }
+}
