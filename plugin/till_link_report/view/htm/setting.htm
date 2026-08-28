@@ -1,0 +1,199 @@
+<?php include _include(ADMIN_PATH.'view/htm/header.inc.htm'); ?>
+
+<div class="row">
+	<div class="col-sm-12">
+		
+		<div class="card">
+			<div class="card-body">
+				<form action="<?php echo url('plugin-setting-till_link_report');?>" method="post" id="formcreate">
+					<h4 class="card-title mb-3"><?php echo lang('till_link_report').lang('setting'); ?></h4>
+					
+					<hr class="m-0" />
+
+					<div class="form-group row mb-3">
+						<label class="col-md-2 form-control-label text-md-right pr-0" for="enable">
+							<?php echo lang('till_link_report_setting_enable'); ?>：
+						</label>
+						<div class="col-md-8">							
+							<div class="custom-redio" id="enable">
+								<?php if (isset($config['enable']) && $config['enable'] == 1) { ?>
+									<label class="custom-input custom-radio mr-3">
+										<input type="radio" name="enable" value="1" checked="checked"> <?php echo lang('enable'); ?>
+									</label>
+									<label class="custom-input custom-radio mr-3">
+										<input type="radio" name="enable" value="0"> <?php echo lang('disable'); ?>
+									</label>
+								<?php } else { ?>
+									<label class="custom-input custom-radio mr-3">
+										<input type="radio" name="enable" value="1"> <?php echo lang('enable'); ?>
+									</label>
+									<label class="custom-input custom-radio mr-3">
+										<input type="radio" name="enable" value="0" checked="checked"> <?php echo lang('disable'); ?>
+									</label>
+								<?php } ?>
+							</div>		
+							
+							<div class="figure-caption mt-2">
+								<?php echo lang('till_link_report_setting_enable_tip'); ?>
+							</div>
+						</div>
+					</div>	
+
+					<div class="form-group row mb-3">
+						<label class="col-md-2 form-control-label text-md-right pr-0" for="login_only">
+							<?php echo lang('till_link_report_setting_login_only'); ?>：
+						</label>
+						<div class="col-md-8">							
+							<div class="custom-redio" id="login_only">
+								<?php if (isset($config['login_only']) && $config['login_only'] == 1) { ?>
+									<label class="custom-input custom-radio mr-3">
+										<input type="radio" name="login_only" value="1" checked="checked"> <?php echo lang('enable'); ?>
+									</label>
+									<label class="custom-input custom-radio mr-3">
+										<input type="radio" name="login_only" value="0"> <?php echo lang('disable'); ?>
+									</label>
+								<?php } else { ?>
+									<label class="custom-input custom-radio mr-3">
+										<input type="radio" name="login_only" value="1"> <?php echo lang('enable'); ?>
+									</label>
+									<label class="custom-input custom-radio mr-3">
+										<input type="radio" name="login_only" value="0" checked="checked"> <?php echo lang('disable'); ?>
+									</label>
+								<?php } ?>
+							</div>		
+							
+							<div class="figure-caption mt-2">
+								<?php echo lang('till_link_report_setting_login_only_tip'); ?>
+							</div>
+						</div>
+					</div>	
+
+					<div class="form-group row mb-3">
+						<label class="col-md-2 form-control-label text-md-right pr-0" for="self_report">
+							<?php echo lang('till_link_report_setting_self_report'); ?>：
+						</label>
+						<div class="col-md-8">							
+							<div class="custom-redio" id="self_report">
+								<?php if (isset($config['self_report']) && $config['self_report'] == 1) { ?>
+									<label class="custom-input custom-radio mr-3">
+										<input type="radio" name="self_report" value="1" checked="checked"> <?php echo lang('enable'); ?>
+									</label>
+									<label class="custom-input custom-radio mr-3">
+										<input type="radio" name="self_report" value="0"> <?php echo lang('disable'); ?>
+									</label>
+								<?php } else { ?>
+									<label class="custom-input custom-radio mr-3">
+										<input type="radio" name="self_report" value="1"> <?php echo lang('enable'); ?>
+									</label>
+									<label class="custom-input custom-radio mr-3">
+										<input type="radio" name="self_report" value="0" checked="checked"> <?php echo lang('disable'); ?>
+									</label>
+								<?php } ?>
+							</div>		
+							
+							<div class="figure-caption mt-2">
+								<?php echo lang('till_link_report_setting_self_report_tip'); ?>
+							</div>
+						</div>
+					</div>	
+
+					<div class="form-group row mb-3">
+						<label class="col-md-2 form-control-label text-md-right pr-0" for="show_count">
+							<?php echo lang('till_link_report_setting_show_count'); ?>：
+						</label>
+						<div class="col-md-8">							
+							<div class="custom-redio" id="show_count">
+								<?php if (isset($config['show_count']) && $config['show_count'] == 1) { ?>
+									<label class="custom-input custom-radio mr-3">
+										<input type="radio" name="show_count" value="1" checked="checked"> <?php echo lang('enable'); ?>
+									</label>
+									<label class="custom-input custom-radio mr-3">
+										<input type="radio" name="show_count" value="0"> <?php echo lang('disable'); ?>
+									</label>
+								<?php } else { ?>
+									<label class="custom-input custom-radio mr-3">
+										<input type="radio" name="show_count" value="1"> <?php echo lang('enable'); ?>
+									</label>
+									<label class="custom-input custom-radio mr-3">
+										<input type="radio" name="show_count" value="0" checked="checked"> <?php echo lang('disable'); ?>
+									</label>
+								<?php } ?>
+							</div>		
+							
+							<div class="figure-caption mt-2">
+								<?php echo lang('till_link_report_setting_show_count_tip'); ?>
+							</div>
+						</div>
+					</div>	
+
+					<div class="form-group row mb-3 mt-4">
+						<label class="col-md-2 form-control-label text-md-right pr-0" for="cooldown">
+							<?php echo lang('till_link_report_setting_cooldown'); ?>：
+						</label>
+						<div class="col-md-8">
+							<input type="text" name="cooldown" id="cooldown" value="<?php echo isset($config['cooldown']) ? intval($config['cooldown']) : 300; ?>" class="form-control">
+							<div class="figure-caption mt-2">
+								<?php echo lang('till_link_report_setting_cooldown_tip'); ?>
+							</div>
+						</div>
+					</div>
+
+					<div class="form-group row mb-3 mt-4">
+						<label class="col-md-2 form-control-label text-md-right pr-0" for="ip_interval">
+							<?php echo lang('till_link_report_setting_ip_interval'); ?>：
+						</label>
+						<div class="col-md-8">
+							<input type="text" name="ip_interval" id="ip_interval" value="<?php echo isset($config['ip_interval']) ? intval($config['ip_interval']) : 600; ?>" class="form-control">
+							<div class="figure-caption mt-2">
+								<?php echo lang('till_link_report_setting_ip_interval_tip'); ?>
+							</div>
+						</div>
+					</div>
+
+					<div class="form-group row mb-3 mt-4">
+						<label class="col-md-2 form-control-label text-md-right pr-0" for="max_per_day">
+							<?php echo lang('till_link_report_setting_max_per_day'); ?>：
+						</label>
+						<div class="col-md-8">
+							<input type="text" name="max_per_day" id="max_per_day" value="<?php echo isset($config['max_per_day']) ? intval($config['max_per_day']) : 50; ?>" class="form-control">
+							<div class="figure-caption mt-2">
+								<?php echo lang('till_link_report_setting_max_per_day_tip'); ?>
+							</div>
+						</div>
+					</div>
+
+					<div class="form-group row mb-3 mt-4">
+						<label class="col-md-2 form-control-label text-md-right pr-0" for="notice_type">
+							<?php echo lang('till_link_report_setting_notice_type'); ?>：
+						</label>
+						<div class="col-md-8">
+							<input type="text" name="notice_type" id="notice_type" value="<?php echo isset($config['notice_type']) ? intval($config['notice_type']) : 156; ?>" class="form-control">
+							<div class="figure-caption mt-2">
+								<?php echo lang('till_link_report_setting_notice_type_tip'); ?>
+							</div>
+						</div>
+					</div>
+
+					<div class="form-group row mb-3">
+						<label class="col-md-2 form-control-label"></label>
+						<div class="col-md-2">
+							<button type="submit" class="btn btn-primary btn-block mr-2 mb-3" id="submit"><?php echo lang('save'); ?></button>
+						</div>
+						<div class="col-md-2">
+							<a role="button" class="btn btn-secondary btn-block mb-3" href="javascript:history.back();"><?php echo lang('back'); ?></a>
+						</div>
+					</div>
+					
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<?php
+include _include(ADMIN_PATH.'view/htm/footer.inc.htm');
+?>
+
+<script>
+$('#nav li.nav-item-plugin').addClass('active');
+</script>

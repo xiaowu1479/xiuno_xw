@@ -1,0 +1,85 @@
+<?php include _include(ADMIN_PATH.'view/htm/header.inc.htm');?>
+
+<div class="row">
+	<div class="col-12">
+		<div class="card">
+			<div class="card-body">
+				<div class="mb-3">
+					<label class="mr-2"><input type="checkbox" id="select_all"> <?php echo lang('select_all');?></label>
+					<button type="button" class="btn btn-danger btn-sm" id="batch_delete"><?php echo lang('batch_delete');?></button>
+					<a role="button" class="btn btn-secondary btn-sm float-right" href="<?php echo url('plugin-setting-till_link_report');?>"><?php echo lang('till_link_report_setting');?></a>
+				</div>
+			    <nav><ul class="pagination justify-content-left flex-wrap mb-3"><?php echo $pagination; ?></ul></nav>
+			    <div class="table-responsive">
+				<table class="table table-hover table-striped">
+					<thead>
+						<tr>
+							<th style="width:36px;"></th>
+							<th><?php echo lang('till_link_report_list_from');?></th>
+							<th><?php echo lang('till_link_report_list_thread');?></th>
+							<th><?php echo lang('till_link_report_list_owner');?></th>
+							<th><?php echo lang('till_link_report_list_reason');?></th>
+							<th style="width:160px;"><?php echo lang('till_link_report_list_time');?></th>
+							<th style="width:80px;"><?php echo lang('operation');?></th>
+						</tr>
+					</thead>
+					<tbody>
+						<?php foreach ($list as $row) {
+							$from = user_read($row['fromuid']);
+							$owner = user_read($row['uid']);
+							$thread = thread_read($row['tid']);
+						?>
+						<tr>
+							<td><input type="checkbox" class="report_item" value="<?php echo intval($row['id']);?>"></td>
+							<td><a href="<?php echo url("user-{$row['fromuid']}");?>" target="_blank"><?php echo empty($from['username']) ? '-' : htmlspecialchars($from['username']);?></a></td>
+							<td><a href="<?php echo url("thread-{$row['tid']}");?>" target="_blank"><?php echo empty($thread['subject']) ? '#' . $row['tid'] : htmlspecialchars($thread['subject']);?></a></td>
+							<td><?php echo empty($owner['username']) ? '-' : htmlspecialchars($owner['username']);?></td>
+							<td><?php echo empty($row['reason']) ? '-' : htmlspecialchars($row['reason']);?></td>
+							<td><?php echo humandate($row['create_date']);?></td>
+							<td>
+								<button class="btn btn-danger btn-sm" onclick="del_report(<?php echo intval($row['id']);?>)"><?php echo lang('delete');?></button>
+							</td>
+						</tr>
+						<?php } ?>
+					</tbody>
+				</table>
+				</div>
+				<?php if (empty($list)) { ?>
+				<div class="text-center text-muted py-4"><?php echo lang('till_link_report_list_empty');?></div>
+				<?php } ?>
+			</div>
+		</div>
+	</div>
+</div>
+
+<?php include _include(ADMIN_PATH.'view/htm/footer.inc.htm');?>
+<script>
+$('#nav li.nav-item-plugin').addClass('active');
+
+$('#select_all').on('change', function() {
+	$('.report_item').prop('checked', this.checked);
+});
+
+$('#batch_delete').on('click', function() {
+	var ids = [];
+	$('.report_item:checked').each(function() {
+		ids.push($(this).val());
+	});
+	if(ids.length == 0) return $.alert('<?php echo lang('please_select');?>');
+	$.confirm('<?php echo lang('confirm_delete');?> ' + ids.length + ' <?php echo lang('items');?>', function() {
+		$.xpost(url('link_report-delete'), {ids: ids}, function(code, msg) {
+			if(code != 0) return $.alert(msg);
+			window.location.reload();
+		});
+	});
+});
+
+function del_report(id) {
+	$.confirm('<?php echo lang('confirm_delete');?>', function() {
+		$.xpost(url('link_report-delete'), {id: id}, function(code, msg) {
+			if(code != 0) return $.alert(msg);
+			window.location.reload();
+		});
+	});
+}
+</script>

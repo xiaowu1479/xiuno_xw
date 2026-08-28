@@ -1,0 +1,24 @@
+<?php $till_link_report_config = till_link_report_config(); ?>
+
+<?php if (!empty($till_link_report_config['enable']) && isset($tid) && isset($first)) { ?>
+<div class="till-link-report px-2">
+	<span class="btn-group" role="group">
+		<?php if (!empty($uid)) { ?>
+			<button class="btn btn-outline-secondary js-till-link-report-add" data-tid="<?php echo intval($tid); ?>" data-pid="<?php echo intval($first['pid']); ?>" title="<?php echo lang('till_link_report_btn_title'); ?>">
+				<i class="icon icon-exclamation-triangle" aria-label="<?php echo lang('till_link_report'); ?>"></i>
+				<span class="till-link-report-btn"><?php echo lang('till_link_report_btn'); ?></span>
+			</button>
+		<?php } else { ?>
+			<button class="btn btn-outline-secondary js-till-link-report-tip" title="<?php echo lang('till_link_report_btn_title'); ?>">
+				<i class="icon icon-exclamation-triangle" aria-label="<?php echo lang('till_link_report'); ?>"></i>
+				<span class="till-link-report-btn"><?php echo lang('till_link_report_btn'); ?></span>
+			</button>
+		<?php } ?>
+		<?php if (!empty($till_link_report_config['show_count'])) { ?>
+			<button class="btn btn-outline-secondary" title="<?php echo lang('till_link_report_count_title'); ?>" data-tid="<?php echo intval($tid); ?>">
+				<span class="till-link-report-count"><?php echo intval(till_link_report_count_by_tid($tid)); ?></span>
+			</button>
+		<?php } ?>
+	</span>
+</div>
+<?php } ?>

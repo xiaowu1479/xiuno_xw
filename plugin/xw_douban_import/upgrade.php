@@ -9,10 +9,13 @@
 
 $tablepre = $db->tablepre;
 
-// v1.1: 补齐 lock_time 列（仅对已安装但未更新的老数据库）
+// v1.2: 补齐旧表缺失的列（lock_time、tagids），保证 db_create 不静默失败
 if (db_sql_find_one("SHOW TABLES LIKE '{$tablepre}xw_douban_import'")) {
 	if (!db_sql_find_one("SHOW COLUMNS FROM `{$tablepre}xw_douban_import` LIKE 'lock_time'")) {
-		db_exec("ALTER TABLE `{$tablepre}xw_douban_import` ADD COLUMN `lock_time` int(11) unsigned NOT NULL DEFAULT '0' AFTER `lock_time`");
+		db_exec("ALTER TABLE `{$tablepre}xw_douban_import` ADD COLUMN `lock_time` int(11) unsigned NOT NULL DEFAULT '0' AFTER `err`");
+	}
+	if (!db_sql_find_one("SHOW COLUMNS FROM `{$tablepre}xw_douban_import` LIKE 'tagids'")) {
+		db_exec("ALTER TABLE `{$tablepre}xw_douban_import` ADD COLUMN `tagids` varchar(255) NOT NULL DEFAULT '' AFTER `uid`");
 	}
 }
 

@@ -1,0 +1,18 @@
+{
+    "name": "链接失效反馈",
+    "brief": "在帖子下方显示「链接失效」反馈按钮（与点赞/收藏同列），登录用户点击后通过站内通知(huux_notice)提醒楼主链接已失效。支持重复反馈计数、防刷限制与后台查看反馈记录。<br>依赖：huux_notice(通知)。",
+    "version": "1.1.0",
+    "author": "till",
+    "id": "till_link_report",
+    "bbs_version": "4.0",
+    "installed": 1,
+    "enable": 1,
+    "hooks_rank": {
+        "thread_plugin_body.htm": 550,
+        "thread_js.htm": 550,
+        "post_end.php": 100,
+        "model_inc_file.php": 100,
+        "lang_zh_cn_bbs.php": 100
+    },
+    "dependencies": []
+}

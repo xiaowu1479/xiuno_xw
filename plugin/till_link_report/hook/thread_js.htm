@@ -1,0 +1,27 @@
+<script>
+$(document).on('click', '.js-till-link-report-add', function() {
+	var tid = $(this).attr("data-tid");
+	var pid = $(this).attr("data-pid");
+	var url = '<?php echo url("post-link_report-create");?>';
+
+	$.confirm('<?php echo lang("till_link_report_confirm_title"); ?>', function() {
+		var reason = $('#till-link-report-reason').val();
+		$.xpost(url, {'tid': tid, 'pid': pid, 'reason': reason}, function(code, msg) {
+			if (code == 1) {
+				$.alert(msg.msg);
+				$(".till-link-report-count").text(msg.count);
+			} else {
+				$.alert(msg);
+			}
+		});
+	}, {
+		'body': '<p class="mb-2"><?php echo lang("till_link_report_confirm_body"); ?></p><textarea id="till-link-report-reason" class="form-control" rows="3" placeholder="<?php echo lang("till_link_report_reason_placeholder"); ?>"></textarea>'
+	});
+});
+
+$(document).on('click', '.js-till-link-report-tip', function() {
+	$.confirm('<?php echo lang("till_link_report_login_title"); ?>', function() {
+		window.location = "<?php echo url('user-login'); ?>";
+	}, {'body': '<?php echo lang("till_link_report_login_body"); ?>'});
+});
+</script>
