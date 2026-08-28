@@ -239,43 +239,25 @@ function xwdi_append_link_to_thread($tid, $link, $prefix) {
 	return $exists ? 'EXISTS' : TRUE;
 }
 
-// 处理单个任务。返回 array(tid, subject, merged, dup)，失败抛异常
-function xwdi_task_process($task) {
+// 处理单个任务：将采集数据渲染为卡片 + 下载链接，创建主题。
+// merge_same 查重已在 api.php submit 中完成，此处只负责发新帖。
+// 返回 array(tid, subject, merged=0, dup=0)，失败抛异常
+function xwdi_task_process($task, $payload_data = NULL) {
 	global $time;
 
 	if (empty($task['title'])) throw new RuntimeException('影视名为空');
 
 	$kv = kv_get('xw_douban_import');
 	$prefix = empty($kv['link_prefix']) ? '下载链接：' : $kv['link_prefix'];
-	$merge_same = empty($kv['merge_same']) ? 0 : 1;
 
-	// 同名影片合并模式：不发新帖，直接往旧帖追加链接（无需再抓豆瓣）
-	if ($merge_same) {
-		$existing = xwdi_find_existing_thread($task['title']);
-		if (!empty($existing)) {
-			$r = xwdi_append_link_to_thread(intval($existing['tid']), $task['link'], $prefix);
-			if ($r === FALSE) throw new RuntimeException('旧帖 #'.$existing['tid'].' 数据异常，无法追加');
-			return array(
-				'tid' => intval($existing['tid']),
-				'subject' => $task['title'],
-				'merged' => 1,
-				'dup' => ($r === 'EXISTS') ? 1 : 0,
-			);
-		}
+	// v1.1 起抓取在本地 Python 客户端完成，服务端只接收数据
+	if (!is_array($payload_data) || empty($payload_data)) {
+		throw new RuntimeException('未收到采集数据，请用本地客户端(xwdi_client)处理任务');
 	}
-
-	$fid = intval($task['fid']);
-	$uid = intval($task['uid']);
-
-	$forum = forum_read($fid);
-	if (empty($forum)) throw new RuntimeException('版块不存在(fid='.$fid.')');
-	$_user = user_read($uid);
-	if (empty($_user)) throw new RuntimeException('发帖用户不存在(uid='.$uid.')');
-
-	// 抓取豆瓣
-	$payload = xwdi_resolve_detail($task['title']);
+	$payload = xwdi_payload_from_api($payload_data);
+	$payload['subject'] = xwdi_payload_subject($payload);
 	$subject = $payload['subject'];
-	$message = $payload['html'];
+	$message = $payload['html'] = xwdi_render_html($payload);
 
 	// 拼接下载链接行（[pd] 短代码由「网盘链接转二维码 pandown」插件渲染为网盘按钮+二维码）
 	if ($task['link'] !== '') {
@@ -286,6 +268,10 @@ function xwdi_task_process($task) {
 
 	$longip = ip2long(ip());
 	$longip < 0 AND $longip = sprintf("%u", $longip);
+
+	$fid = isset($task['fid']) ? intval($task['fid']) : 0;
+	$uid = isset($task['uid']) ? intval($task['uid']) : 0;
+	$uid <= 0 AND $uid = 1;
 
 	$thread = array(
 		'fid' => $fid,

@@ -22,5 +22,9 @@ plugin/pandown/includes/phpqrcode/cache/*
 plugin/xw_douban_import/cache/*
 # 发行版打包产物
 *.tar.gz
+# 本地刮削工具（Python 客户端，不随发行版分发）
+tools/
+# 本地备份（不提交）
+plugin/备份/
 # 自动更新回滚备份（运行时生成，不纳入仓库）
 backup/*

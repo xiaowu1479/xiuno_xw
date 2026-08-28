@@ -8,7 +8,7 @@
 
 !defined('DEBUG') AND exit('Access Denied.');
 
-include _include(APP_PATH.'plugin/xw_douban_import/model/douban_scraper.func.php');
+include _include(APP_PATH.'plugin/xw_douban_import/model/card.func.php');
 include _include(APP_PATH.'plugin/xw_douban_import/model/importer.func.php');
 
 $tablepre = $db->tablepre;
@@ -19,8 +19,8 @@ if (!db_sql_find_one("SHOW TABLES LIKE '{$tablepre}xw_douban_import'")) {
 }
 
 $kv = kv_get('xw_douban_import');
-if (empty($kv)) $kv = array('uid'=>1, 'fid'=>0, 'link_prefix'=>'下载链接：', 'skip_dup'=>1, 'merge_same'=>1);
-$kv += array('uid'=>1, 'fid'=>0, 'link_prefix'=>'下载链接：', 'skip_dup'=>1, 'merge_same'=>1);
+if (empty($kv)) $kv = array('uid'=>1, 'fid'=>0, 'link_prefix'=>'下载链接：', 'skip_dup'=>1, 'merge_same'=>1, 'api_enable'=>0, 'api_token'=>'', 'direct_push'=>0);
+$kv += array('uid'=>1, 'fid'=>0, 'link_prefix'=>'下载链接：', 'skip_dup'=>1, 'merge_same'=>1, 'api_enable'=>0, 'api_token'=>'', 'direct_push'=>0);
 
 $action = param('action', '');
 
@@ -71,6 +71,7 @@ if ($action == '' && $method == 'GET') {
 
 	// 统计
 	$count_pending = db_count('xw_douban_import', array('status'=>0));
+	$count_claimed = db_count('xw_douban_import', array('status'=>3));
 	$count_failed = db_count('xw_douban_import', array('status'=>2));
 	$count_done = db_count('xw_douban_import', array('status'=>1));
 
@@ -119,41 +120,21 @@ if ($action == 'parse') {
 	exit;
 }
 
-if ($action == 'process') {
+if ($action == 'reset') {
 	$id = param('id', 0);
+	$new_title = trim(param('new_title', '', FALSE));
 	$task = db_find_one('xw_douban_import', array('id'=>$id));
 	if (empty($task)) message(-1, '任务不存在');
 
-	// 重试时可修改影视名
-	$new_title = trim(param('new_title', '', FALSE));
+	// 支持改名后重置
+	$update = array('status'=>0, 'err'=>'', 'lock_time'=>0);
 	if ($new_title !== '') {
 		$new_title = mb_substr(preg_replace('/\s+/u', ' ', $new_title), 0, 120, 'UTF-8');
-		db_update('xw_douban_import', array('id'=>$id), array('title'=>$new_title));
-		$task['title'] = $new_title;
+		$update['title'] = $new_title;
+		$update['hash'] = md5($new_title."\n".$task['link']);
 	}
-
-	$data = array('id'=>$id, 'status'=>2, 'tid'=>0, 'subject'=>'', 'err'=>'', 'merged'=>0, 'dup'=>0);
-
-	try {
-		$r = xwdi_task_process($task);
-		$note = '';
-		if (!empty($r['merged'])) {
-			$note = empty($r['dup']) ? '已追加到旧帖' : '链接已存在于旧帖';
-		}
-		db_update('xw_douban_import', array('id'=>$id), array('status'=>1, 'tid'=>$r['tid'], 'err'=>$note));
-		$data['status'] = 1;
-		$data['tid'] = $r['tid'];
-		$data['subject'] = $r['subject'];
-		$data['merged'] = $r['merged'];
-		$data['dup'] = $r['dup'];
-	} catch (Throwable $e) {
-		$err = mb_substr($e->getMessage(), 0, 200, 'UTF-8');
-		db_update('xw_douban_import', array('id'=>$id), array('status'=>2, 'err'=>$err));
-		$data['err'] = $err;
-	}
-
-	echo json_encode(array('code'=>0, 'message'=>'ok', 'data'=>$data));
-	exit;
+	db_update('xw_douban_import', array('id'=>$id), $update);
+	message(0, '任务已重置为待处理，等待本地客户端拉取发布');
 }
 
 if ($action == 'export') {
@@ -209,6 +190,44 @@ if ($action == 'pending') {
 	exit;
 }
 
+if ($action == 'batch_publish') {
+	$ids = isset($_POST['ids']) ? $_POST['ids'] : array();
+	if (!is_array($ids) || empty($ids)) message(-1, '未选择任务');
+	$ok = $fail = $skip = 0;
+	$details = array();
+	foreach ($ids as $id) {
+		$id = intval($id);
+		$task = db_find_one('xw_douban_import', array('id'=>$id));
+		if (empty($task)) { $skip++; continue; }
+		if (intval($task['status']) == 1) { $skip++; continue; }
+		if (empty($task['title'])) { $skip++; continue; }
+		// 没有采集数据的待处理任务，需要客户端先推送数据才能发布
+		if (intval($task['status']) == 0 && empty($task['tid'])) {
+			// 检查是否有 payload_data（从 API 直推模式来的任务会有 data）
+			$fail++;
+			$details[] = "#{$task['id']} {$task['title']}: 需先由本地客户端推送采集数据";
+			continue;
+		}
+		try {
+			$r = xwdi_task_process($task);
+			$note = '';
+			if (!empty($r['merged'])) {
+				$note = empty($r['dup']) ? '已追加到旧帖' : '链接已存在于旧帖';
+			}
+			db_update('xw_douban_import', array('id'=>$id), array('status'=>1, 'tid'=>intval($r['tid']), 'err'=>$note, 'lock_time'=>0));
+			$ok++;
+			$details[] = "#{$task['id']} {$task['title']}: → #{$r['tid']}";
+		} catch (Throwable $e) {
+			$err = mb_substr($e->getMessage(), 0, 200, 'UTF-8');
+			db_update('xw_douban_import', array('id'=>$id), array('status'=>2, 'err'=>$err, 'lock_time'=>0));
+			$fail++;
+			$details[] = "#{$task['id']} {$task['title']}: {$err}";
+		}
+	}
+	echo json_encode(array('code'=>0, 'message'=>"发布完成：成功 $ok，失败 $fail，跳过 $skip", 'data'=>array('ok'=>$ok, 'fail'=>$fail, 'skip'=>$skip, 'details'=>$details)));
+	exit;
+}
+
 if ($action == 'clear') {
 	$mode = param_word('mode');
 	if ($mode == 'done') {
@@ -219,6 +238,26 @@ if ($action == 'clear') {
 		db_delete('xw_douban_import', array());
 	}
 	message(0, '清理完成');
+}
+
+// ---------------- API 设置 ----------------
+
+if ($action == 'api_save') {
+	$api_enable = param('api_enable', 0) ? 1 : 0;
+	$direct_push = param('direct_push', 0) ? 1 : 0;
+	$kv = kv_get('xw_douban_import');
+	$kv['api_enable'] = $api_enable;
+	$kv['direct_push'] = $direct_push;
+	kv_set('xw_douban_import', $kv);
+	message(0, 'API 设置已保存');
+}
+
+if ($action == 'api_regen_token') {
+	$kv = kv_get('xw_douban_import');
+	$kv['api_token'] = bin2hex(random_bytes(24));
+	kv_set('xw_douban_import', $kv);
+	echo json_encode(array('code'=>0, 'message'=>'ok', 'data'=>array('token'=>$kv['api_token'])));
+	exit;
 }
 
 message(-1, '未知操作');

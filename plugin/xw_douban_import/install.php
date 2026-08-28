@@ -17,9 +17,10 @@ $sql = "CREATE TABLE IF NOT EXISTS {$tablepre}xw_douban_import (
 	fid int(11) unsigned NOT NULL DEFAULT '0',		-- 目标版块
 	uid int(11) unsigned NOT NULL DEFAULT '0',		-- 发帖用户
 	tagids varchar(255) NOT NULL DEFAULT '',		-- 固定标签 tagid，逗号分隔
-	status tinyint(1) NOT NULL DEFAULT '0',			-- 0待处理 1成功 2失败
+	status tinyint(1) NOT NULL DEFAULT '0',			-- 0待处理 1成功 2失败 3采集中
 	tid int(11) unsigned NOT NULL DEFAULT '0',		-- 发布后的主题ID
 	err varchar(255) NOT NULL DEFAULT '',			-- 失败原因
+	lock_time int(11) unsigned NOT NULL DEFAULT '0',-- 采集锁定时间（超时自动回收）
 	dateline int(11) unsigned NOT NULL DEFAULT '0',
 	PRIMARY KEY (id),
 	KEY (hash),
@@ -40,6 +41,9 @@ empty($kv) AND kv_set('xw_douban_import', array(
 	'link_prefix' => '下载链接：',
 	'skip_dup' => 1,			// 跳过已成功发布的重复条目
 	'merge_same' => 1,			// 同名影片追加到旧帖
+	'api_enable' => 0,			// 本地采集对接 API 开关
+	'api_token' => bin2hex(random_bytes(24)), // API 鉴权令牌（48位随机hex）
+	'direct_push' => 0,			// 直推模式：允许 Python 直接推送数据并发布
 ));
 
 ?>

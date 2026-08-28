@@ -1,7 +1,7 @@
 {
     "name": "豆瓣影视批量导入",
-    "brief": "导入 TXT/XLSX/CSV 影视清单（每行：影视名|网盘链接），自动用影视名抓取豆瓣信息，生成与「大白·TinyMCE编辑器」豆瓣卡片完全一致的帖子；网盘链接以 [pd] 短代码发布，由「网盘链接转二维码(pandown)」渲染为下载按钮+二维码。支持选择发布版块、勾选 xn_tag 标签增强版的固定标签。<br>依赖：大白·TinyMCE编辑器(huux_tinymce) 卡片渲染；标签增强版(xn_tag) 标签功能；网盘链接转二维码(pandown) 二维码按钮",
-    "version": "1.0",
+    "brief": "导入 TXT/XLSX/CSV 影视清单（每行：影视名|网盘链接），配合本地 Python 客户端(Apache 独立工具)搜刮豆瓣信息，生成与「大白·TinyMCE编辑器」豆瓣卡片完全一致的帖子；网盘链接以 [pd] 短代码发布，由「网盘链接转二维码(pandown)」渲染为下载按钮+二维码。支持选择发布版块、勾选 xn_tag 标签增强版的固定标签。<br><strong>v1.2+ 架构</strong>：豆瓣采集在本地 Python 客户端完成（独立于发行版分发），服务端只接收采集结果并发布，大幅降低被豆瓣封禁风险。<br>依赖：大白·TinyMCE编辑器(huux_tinymce) 卡片渲染；标签增强版(xn_tag) 标签功能；网盘链接转二维码(pandown) 二维码按钮",
+    "version": "1.2",
     "bbs_version": "4.0",
     "installed": 1,
     "enable": 1,
