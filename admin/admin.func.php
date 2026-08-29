@@ -238,6 +238,9 @@ function admin_update_do() {
 	}
 	admin_update_cover($srcdir, APP_PATH, $skip_dirs);
 
+	// 7.5 执行数据库升级脚本
+	$db_upgrade = admin_update_run_db_upgrade($srcdir);
+
 	// 8. 清理（保留 backup/ 目录，回滚用）
 	@xn_unlink($tmpfile);
 	@rmdir_recusive($extdir, 1);
@@ -250,6 +253,7 @@ function admin_update_do() {
 	$msg = lang('admin_update_success', array('version'=>$upinfo['tag']));
 	$backupshown = str_replace(APP_PATH, '', $backupdir);
 	$msg .= '<br>'.lang('admin_update_backup_done', array('dir'=>$backupshown));
+	if(isset($db_upgrade['msg'])) $msg .= '<br>'.$db_upgrade['msg'];
 	message(0, $msg);
 }
 
@@ -307,6 +311,47 @@ function admin_update_find_root($extdir) {
 		if(is_file($inner.'index.php')) return array($inner, basename($arr[0]));
 	}
 	return array($extdir, '');
+}
+
+// 执行数据库升级脚本
+function admin_update_run_db_upgrade($srcdir) {
+	global $db;
+	$upgrade_file = $srcdir.'install/upgrade.sql';
+	if(!is_file($upgrade_file)) return array('ok' => true, 'msg' => '无升级脚本');
+	
+	$sql_content = @file_get_contents($upgrade_file);
+	if(empty($sql_content)) return array('ok' => true, 'msg' => '升级脚本为空');
+	
+	// 分割 SQL 语句（简单按 ; 分割，去除注释和空行）
+	$statements = array();
+	$lines = explode("\n", $sql_content);
+	$current = '';
+	foreach($lines as $line) {
+		$line = trim($line);
+		if($line === '' || strpos($line, '#') === 0 || strpos($line, '--') === 0) continue;
+		$current .= ' '.$line;
+		if(substr($line, -1) === ';') {
+			$stmt = trim($current);
+			if($stmt !== ';') $statements[] = $stmt;
+			$current = '';
+		}
+	}
+	
+	$executed = 0;
+	$errors = array();
+	foreach($statements as $stmt) {
+		try {
+			$r = $db->exec($stmt);
+			if($r !== FALSE) $executed++;
+			else $errors[] = $db->errstr . " | SQL: " . substr($stmt, 0, 100);
+		} catch(Exception $e) {
+			$errors[] = $e->getMessage() . " | SQL: " . substr($stmt, 0, 100);
+		}
+	}
+	
+	$msg = "数据库升级完成：执行 $executed 条语句";
+	if($errors) $msg .= "；错误: " . count($errors) . " 条";
+	return array('ok' => empty($errors), 'msg' => $msg, 'executed' => $executed, 'errors' => $errors);
 }
 
 // 递归覆盖目录：$srcdir 下的文件合并到 $dstdir，跳过 $skip 目录
