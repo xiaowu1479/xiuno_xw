@@ -92,8 +92,8 @@ if($action == 'login') {
 	
 	
 	$stat = array();
-	$stat['threads'] = thread_count();
-	$stat['posts'] = post_count();
+	$stat['threads'] = thread_count(['tid' => ['>' => 0]]);
+	$stat['posts'] = post_count(['pid' => ['>' => 0]]);
 	$stat['users'] = user_count();
 	$stat['attachs'] = attach_count();
 	$stat['disk_free_space'] = function_exists('disk_free_space') ? humansize(disk_free_space(APP_PATH)) : lang('unknown');

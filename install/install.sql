@@ -77,6 +77,7 @@ CREATE TABLE bbs_forum (
   name char(16) NOT NULL default '',			# 版块名称
   `rank` tinyint(3) unsigned NOT NULL default '0',	# 显示，倒序，数字越大越靠前
   threads mediumint(8) unsigned NOT NULL default '0',	# 主题数
+  posts mediumint(8) unsigned NOT NULL default '0',	# 帖子数（含首帖）
   todayposts mediumint(8) unsigned NOT NULL default '0',# 今日发帖，计划任务每日凌晨０点清空为０，
   todaythreads mediumint(8) unsigned NOT NULL default '0',# 今日发主题，计划任务每日凌晨０点清空为０
   brief text NOT NULL,					# 版块简介 允许HTML

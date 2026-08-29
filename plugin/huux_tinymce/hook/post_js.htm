@@ -5,14 +5,21 @@ var t_external_toolbar = [],
 </script>
 <!--{hook huux_tinymce_post_js_before.htm}-->
 <script type="text/javascript" src="plugin/huux_tinymce/tinymce/tinymce.min.js?v5.2.0"></script>
-<script type="text/javascript" src="plugin/huux_tinymce/tinymce/init.js?v2.1.17"></script>
+<script type="text/javascript" src="plugin/huux_tinymce/tinymce/init.js?v2.1.18"></script>
 <script type="text/javascript">
 $.require_css('plugin/huux_tinymce/tinymce/style.css?v2.1.17');
-if (typeof jform != 'unefined') jform.find('[name="doctype"]').val(0);
+if (typeof jform != 'undefined') jform.find('[name="doctype"]').val(0);
 var xn_sbform = $('#message').parents('form'); //获取文本框message所在form表单
-xn_sbform.on('submit', function() { tinyMCE.editors['message'].save(); }); //给submit挂载同步事件
+xn_sbform.on('submit', function() { if (tinyMCE.editors['message']) tinyMCE.editors['message'].save(); }); //给submit挂载同步事件
 var xn_sbdata = $._data(xn_sbform[0], 'events').submit; //获取form表单submit事件列表
 xn_sbdata.splice(0, 0, xn_sbdata.pop()); //把同步事件优先级设到最前
+// 安全回退：如果TinyMCE未能初始化，显示原始textarea
+setTimeout(function() {
+    if (typeof tinyMCE === 'undefined' || !tinyMCE.editors || !tinyMCE.editors['message']) {
+        var msg = document.getElementById('message');
+        if (msg) { msg.style.display = ''; msg.style.height = '300px'; }
+    }
+}, 5000);
 </script>
 <!--{hook huux_tinymce_post_js_after.htm}-->
  

@@ -74,9 +74,6 @@ tinymce.init({
         });
     },
     // 下面为2.0版本后加配置项
-    mobile: {
-        toolbar_sticky: true // 固定工具栏到顶部
-    },
     convert_fonts_to_spans: false, // 不强制font转换为span
     extended_valid_elements: 'span[style|class],b,i,a[href|target|rel]', // 保留span/b/i/a标签
     paste_remove_styles_if_webkit: false, // 禁用webkit粘贴过滤器，保留style样式，如果不想保留可选择后点击【清除样式】

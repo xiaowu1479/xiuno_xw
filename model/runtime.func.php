@@ -11,8 +11,8 @@ function runtime_init() {
 	if($runtime === NULL || !isset($runtime['users'])) {
 		$runtime = array();
 		$runtime['users'] = user_count();
-		$runtime['posts'] = post_count();
-		$runtime['threads'] = thread_count();
+		$runtime['posts'] = post_count(['pid' => ['>' => 0]]); // 强制精确 COUNT(*)
+		$runtime['threads'] = thread_count(['tid' => ['>' => 0]]); // 强制精确 COUNT(*)
 		$runtime['posts'] -= $runtime['threads']; // 减去首帖
 		$runtime['todayusers'] = 0;
 		$runtime['todayposts'] = 0;

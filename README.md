@@ -15,6 +15,14 @@
 
 ## 更新日志
 
+### v1.5.1 (2026-08-29)
+
+- 修复手机端签到按钮无响应：侧边栏按钮 ID 从 `sign-btn` 改为 `sg_sign_mobile`，匹配 sg_sign 插件的 JS 绑定
+- 修复手机端编辑帖子内容为空：移除 TinyMCE `mobile` 配置避免移动端引擎丢失内容，增加 5 秒兜底回退显示原始 textarea
+- 修复版块统计「帖子数」显示负数：`bbs_forum` 表补 `posts` 列存总帖子数；`runtime_init` 强制精确 `COUNT(*)` 避免 InnoDB `TABLE_ROWS` 近似值导致负数
+- 后台首页统计同步修正：`post_count` / `thread_count` 均加条件强制精确计数
+- 新装/升级 SQL 同步补齐：`install.sql` 与 `upgrade.sql` 增加 `bbs_forum.posts` 列
+
 ### v1.5.0 (2026-08-28)
 
 - 新增内置插件「链接失效反馈」(till_link_report)：帖子下方（与点赞/收藏同列）显示「链接失效」按钮，登录用户点击后可填写失效原因，通过站内通知(huux_notice)提醒楼主
