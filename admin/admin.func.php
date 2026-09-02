@@ -814,6 +814,13 @@ function admin_db_fix() {
 		}
 	}
 
+	// 修复缺失的插件表
+	$plugin_fix = admin_db_fix_plugin_tables();
+	$executed += $plugin_fix['executed'];
+	$skipped += $plugin_fix['skipped'];
+	$errors = array_merge($errors, $plugin_fix['errors']);
+	$details = array_merge($details, $plugin_fix['details']);
+
 	$msg = "修复完成：共 " . count($steps) . " 条";
 	if($executed > 0) $msg .= "，执行 $executed 条";
 	if($skipped > 0) $msg .= "，跳过 $skipped 条";
@@ -827,6 +834,70 @@ function admin_db_fix() {
 		'errors' => $errors,
 		'details' => $details,
 	);
+}
+
+// 修复缺失的插件表：从 install.php 提取 CREATE TABLE 并执行
+function admin_db_fix_plugin_tables() {
+	global $db;
+	$plugin_dir = APP_PATH.'plugin/';
+	$executed = 0;
+	$skipped = 0;
+	$errors = array();
+	$details = array();
+
+	if(!is_dir($plugin_dir)) return array('executed' => 0, 'skipped' => 0, 'errors' => array(), 'details' => array());
+
+	$dirs = glob($plugin_dir.'*', GLOB_ONLYDIR);
+	if(!$dirs) return array('executed' => 0, 'skipped' => 0, 'errors' => array(), 'details' => array());
+
+	foreach($dirs as $dir) {
+		$name = basename($dir);
+		$conf_file = $dir.'/conf.json';
+		if(!is_file($conf_file)) continue;
+		$conf = @json_decode(file_get_contents($conf_file), true);
+		if(!$conf || empty($conf['enable'])) continue;
+
+		$install_file = $dir.'/install.php';
+		if(!is_file($install_file)) continue;
+
+		$content = file_get_contents($install_file);
+		// 提取所有 CREATE TABLE 语句（含 IF NOT EXISTS）
+		if(preg_match_all('/(\$sql\s*=\s*["\'].*?CREATE\s+TABLE\s+IF\s+NOT\s+EXISTS\s+\{?\$tablepre\}?\s*(\w+).*?["\'];.*?db_exec\(\$sql\))/si', $content, $m, PREG_SET_ORDER)) {
+			foreach($m as $match) {
+				$tbl = $match[2];
+				// 检查表是否已存在
+				$r = db_sql_find_one("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = '{$db->tablepre}{$tbl}'");
+				if(!empty($r)) {
+					$skipped++;
+					$details[] = array('status' => 'skip', 'desc' => "插件 {$name} 表 {$tbl}", 'msg' => '表已存在');
+					continue;
+				}
+				// 提取并执行建表 SQL
+				$sql_block = $match[1];
+				if(preg_match('/CREATE\s+TABLE\s+IF\s+NOT\s+EXISTS\s+\{?\$tablepre\}?\s*\w+\s*\(.*?\)\s*ENGINE\s*=\s*\w+[^;]*;/si', $sql_block, $sql_m)) {
+					$sql = $sql_m[0];
+					$sql = str_replace('{$tablepre}', $db->tablepre, $sql);
+					try {
+						$r = db_exec($sql);
+						if($r !== FALSE) {
+							$executed++;
+							$details[] = array('status' => 'ok', 'desc' => "插件 {$name} 表 {$tbl}", 'msg' => '创建成功');
+						} else {
+							$err = $db->errstr;
+							$errors[] = $err;
+							$details[] = array('status' => 'error', 'desc' => "插件 {$name} 表 {$tbl}", 'msg' => $err);
+						}
+					} catch(Exception $e) {
+						$err = $e->getMessage();
+						$errors[] = $err;
+						$details[] = array('status' => 'error', 'desc' => "插件 {$name} 表 {$tbl}", 'msg' => $err);
+					}
+				}
+			}
+		}
+	}
+
+	return array('executed' => $executed, 'skipped' => $skipped, 'errors' => $errors, 'details' => $details);
 }
 
 // hook admin_func_end.php
