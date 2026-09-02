@@ -241,6 +241,20 @@ function admin_update_do() {
 	// 7.5 执行数据库升级脚本
 	$db_upgrade = admin_update_run_db_upgrade($srcdir);
 
+	// 7.6 同步版本号到 conf/conf.php（新版 index.php 的版本号覆盖旧 conf 里的）
+	$_new_index = @file_get_contents(APP_PATH.'index.php');
+	if(preg_match('/\$conf\[.version.\]\s*=\s*[\'"]([^\'"]+)/', $_new_index, $_m)) {
+		$_new_ver = $_m[1];
+		$_conf_file = APP_PATH.'conf/conf.php';
+		$_conf_content = @file_get_contents($_conf_file);
+		if($_conf_content !== false) {
+			$_conf_content = preg_replace('/(\'version\'\s*=>\s*\')[^\']*/', '$1'.$_new_ver, $_conf_content);
+			$_conf_content = preg_replace('/("version"\s*=>\s*")[^"]*/', '$1'.$_new_ver, $_conf_content);
+			@file_put_contents($_conf_file, $_conf_content);
+			$conf['version'] = $_new_ver;
+		}
+	}
+
 	// 8. 清理（保留 backup/ 目录，回滚用）
 	@xn_unlink($tmpfile);
 	@rmdir_recusive($extdir, 1);

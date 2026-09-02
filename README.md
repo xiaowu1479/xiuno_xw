@@ -23,6 +23,11 @@
 - 修复分享弹窗 Bootstrap 4 兼容：`data-bs-*` 改为 `data-toggle`/`data-target`，jQuery `.modal()` 替代原生 Bootstrap API
 - 新增心跳/已读更新异常捕获：try/catch + error_log 便于排查500错误
 
+### v1.5.9 (2026-09-02)
+
+- 修复自动更新后 conf.php 版本号不同步：更新完成后自动从新版 index.php 提取版本号写入 conf/conf.php
+- 更新 chat.js 版本号（1.3→1.4）强制浏览器刷新加载修复后的 JS
+
 ### v1.5.7 (2026-09-02)
 
 - 修复聊天室所有 API 请求 404：chat.js 从硬编码相对 URL 改用 `xn.url()` 函数，兼容 `url_rewrite_on` 各模式
