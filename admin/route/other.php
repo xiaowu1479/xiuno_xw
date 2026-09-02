@@ -87,6 +87,29 @@ if($action == 'update_backup_delete') {
 	admin_update_backup_delete($dirname);
 }
 
+if($action == 'db_check') {
+	
+	if($method == 'GET') {
+		
+		$result = admin_db_check();
+		
+		$header['title'] = '数据库检查';
+		$header['mobile_title'] = '数据库检查';
+		
+		include _include(ADMIN_PATH.'view/htm/other_db_check.htm');
+		
+	} else {
+		
+		// POST: 一键修复
+		$r = admin_db_fix();
+		$msg = $r['msg'];
+		if($r['errors']) {
+			$msg .= "\n" . implode("\n", $r['errors']);
+		}
+		message($r['ok'] ? 0 : -1, $msg);
+	}
+}
+
 // hook admin_other_end.php
 
 ?>

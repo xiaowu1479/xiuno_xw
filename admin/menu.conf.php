@@ -50,6 +50,7 @@ return array(
 		'tab'=> array (
 			'cache'=>array('url'=>url('other-cache'), 'text'=>lang('admin_other_cache')),
 			'update'=>array('url'=>url('other-update'), 'text'=>lang('admin_other_update')),
+			'db_check'=>array('url'=>url('other-db_check'), 'text'=>'数据库检查'),
 		)
 	),
 	'plugin' => array(

@@ -23,6 +23,12 @@
 - 修复分享弹窗 Bootstrap 4 兼容：`data-bs-*` 改为 `data-toggle`/`data-target`，jQuery `.modal()` 替代原生 Bootstrap API
 - 新增心跳/已读更新异常捕获：try/catch + error_log 便于排查500错误
 
+### v1.5.3 (2026-09-02)
+
+- 新增后台数据库健康检查页面（其他 → 数据库检查）：解析 `upgrade.sql` 逐条检查是否已应用，支持一键修复
+- 修复 `admin_update_check_applied()` / `admin_db_build_check()` 中 KEY/INDEX 正则匹配括号的 bug：`(\S+)` 改为 `(\w+)`，避免 `uid_last_date(uid,` 被整个当作索引名
+- 修复 `admin_db_build_check()` 表名前缀重复：`upgrade.sql` 表名已含 `bbs_` 前缀，不再额外加 `$db->tablepre`
+
 ### v1.5.1 (2026-08-29)
 
 - 修复手机端签到按钮无响应：侧边栏按钮 ID 从 `sign-btn` 改为 `sg_sign_mobile`，匹配 sg_sign 插件的 JS 绑定

@@ -1,0 +1,103 @@
+<?php include _include(ADMIN_PATH.'view/htm/header.inc.htm');?>
+
+<!--{hook admin_other_db_check_start.htm}-->
+
+<div class="row">
+	<div class="col-12">
+		<div class="btn-group mb-3" role="group">
+			<?php echo admin_tab_active($menu['other']['tab'], 'db_check');?>
+		</div>
+		<div class="card">
+			<div class="card-body">
+				<h5 class="card-title mb-3">数据库健康检查</h5>
+				<p class="text-muted mb-4">检查 upgrade.sql 中的变更是否已全部应用到数据库。可反复执行，安全无副作用。</p>
+
+				<?php if($result['ok']): ?>
+				<div class="mb-3">
+					<span class="badge badge-success mr-2">已就位 <?php echo $result['summary']['ok'];?> 项</span>
+					<?php if($result['summary']['need_fix'] > 0): ?>
+					<span class="badge badge-warning mr-2">需修复 <?php echo $result['summary']['need_fix'];?> 项</span>
+					<?php endif; ?>
+					<?php if($result['summary']['unknown'] > 0): ?>
+					<span class="badge badge-secondary mr-2">需手动确认 <?php echo $result['summary']['unknown'];?> 项</span>
+					<?php endif; ?>
+				</div>
+				<?php endif; ?>
+
+				<div id="checkResults">
+					<table class="table table-sm table-bordered">
+						<thead class="thead-light">
+							<tr>
+								<th width="40">#</th>
+								<th>变更内容</th>
+								<th width="100">状态</th>
+								<th>说明</th>
+							</tr>
+						</thead>
+						<tbody>
+							<?php foreach($result['results'] as $r): ?>
+							<tr class="<?php echo $r['applied'] ? '' : ($r['needs_fix'] ? 'table-warning' : 'table-secondary');?>">
+								<td><?php echo $r['index'];?></td>
+								<td><code class="small"><?php echo htmlspecialchars($r['desc']);?></code></td>
+								<td>
+									<?php if($r['applied']): ?>
+									<span class="badge badge-success">✓ 已就位</span>
+									<?php elseif($r['needs_fix']): ?>
+									<span class="badge badge-warning">✗ 需修复</span>
+									<?php else: ?>
+									<span class="badge badge-secondary">? 待确认</span>
+									<?php endif; ?>
+								</td>
+								<td class="small text-muted"><?php echo htmlspecialchars($r['reason']);?></td>
+							</tr>
+							<?php endforeach; ?>
+						</tbody>
+					</table>
+				</div>
+
+				<?php if($result['summary']['need_fix'] > 0): ?>
+				<div class="mt-3">
+					<button type="button" class="btn btn-warning" id="fixBtn">
+						<i class="icon-wrench"></i> 一键修复
+					</button>
+					<button type="button" class="btn btn-outline-secondary ml-2" onclick="location.reload()">
+						<i class="icon-refresh"></i> 重新检查
+					</button>
+				</div>
+				<?php else: ?>
+				<div class="mt-3">
+					<button type="button" class="btn btn-outline-secondary" onclick="location.reload()">
+						<i class="icon-refresh"></i> 重新检查
+					</button>
+				</div>
+				<?php endif; ?>
+
+			</div>
+		</div>
+	</div>
+</div>
+
+<!--{hook admin_other_db_check_end.htm}-->
+
+<?php include _include(ADMIN_PATH.'view/htm/footer.inc.htm');?>
+
+<script>
+$(function(){
+	$('#fixBtn').on('click', function(){
+		var jbtn = $(this);
+		jbtn.prop('disabled', true).text('修复中...');
+		$.xpost(xn.url('other-db_check'), {}, function(code, message){
+			if(code == 0){
+				$.alert(message);
+				jbtn.text('修复完成').removeClass('btn-warning').addClass('btn-success');
+				setTimeout(function(){ location.reload(); }, 1500);
+			} else {
+				$.alert(message);
+				jbtn.prop('disabled', false).text('一键修复');
+			}
+		});
+	});
+});
+</script>
+
+<!--{hook admin_other_db_check_js.htm}-->
