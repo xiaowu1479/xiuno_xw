@@ -1,0 +1,5 @@
+<?php if(class_exists('ChatroomService', false)) { $_xw_chat_nav_s = ChatroomService::settings(); if(!empty($_xw_chat_nav_s['enabled']) && !empty($_xw_chat_nav_s['show_nav'])) { ?>
+<li class="nav-item">
+    <a class="nav-link" href="<?php echo url('chat'); ?>" title="<?php echo $lang['xw_chat_title']; ?>">💬 <span class="d-none d-lg-inline"><?php echo $lang['xw_chat_title']; ?></span></a>
+</li>
+<?php } } ?>

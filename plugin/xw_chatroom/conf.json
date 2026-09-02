@@ -1,0 +1,20 @@
+{
+    "name": "聊天室",
+    "brief": "实时频道聊天室：站长后台创建频道、emoji 表情、网址白黑名单过滤、频道快捷分享。",
+    "version": "1.0.0",
+    "bbs_version": "4.0",
+    "installed": 1,
+    "enable": 1,
+    "hooks_rank": {
+        "model_inc_file.php": 10,
+        "index_route_case_end.php": 10,
+        "model_cron_5_minutes_end.php": 10,
+        "header_link_after.htm": 10,
+        "footer_js_after.htm": 10,
+        "lang_zh_cn_bbs.php": 10,
+        "header_nav_forum_end.htm": 10
+    },
+    "overwrites_rank": [],
+    "dependencies": [],
+    "type": "plugin"
+}

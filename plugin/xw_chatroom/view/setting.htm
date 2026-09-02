@@ -1,0 +1,165 @@
+<?php include _include(ADMIN_PATH.'view/htm/header.inc.htm');?>
+
+<div class="container-fluid p-0 p-md-3">
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title mb-0">💬 聊天室设置</h5>
+        </div>
+        <div class="card-body">
+            <form method="post" action="">
+                <?php echo csrf_token_hidden(); ?>
+                <input type="hidden" name="xw_chat_action" value="save_settings">
+                
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">启用聊天室</label>
+                        <select name="enabled" class="form-select">
+                            <option value="1" <?php echo $s['enabled'] ? 'selected' : ''; ?>>是</option>
+                            <option value="0" <?php echo !$s['enabled'] ? 'selected' : ''; ?>>否</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">导航栏显示</label>
+                        <select name="show_nav" class="form-select">
+                            <option value="1" <?php echo $s['show_nav'] ? 'selected' : ''; ?>>是</option>
+                            <option value="0" <?php echo !$s['show_nav'] ? 'selected' : ''; ?>>否</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label class="form-label">消息最大长度</label>
+                        <input type="number" name="msg_max_length" class="form-control" value="<?php echo intval($s['msg_max_length']); ?>" min="1" max="5000">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">发送间隔（秒）</label>
+                        <input type="number" name="msg_interval" class="form-control" value="<?php echo intval($s['msg_interval']); ?>" min="0" max="3600">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">历史消息数</label>
+                        <input type="number" name="history_limit" class="form-control" value="<?php echo intval($s['history_limit']); ?>" min="5" max="200">
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label class="form-label">轮询间隔（毫秒）</label>
+                        <input type="number" name="poll_interval" class="form-control" value="<?php echo intval($s['poll_interval']); ?>" min="1000" max="60000">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">访客可阅读</label>
+                        <select name="allow_guest_read" class="form-select">
+                            <option value="1" <?php echo $s['allow_guest_read'] ? 'selected' : ''; ?>>是</option>
+                            <option value="0" <?php echo !$s['allow_guest_read'] ? 'selected' : ''; ?>>否</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">访客可发送</label>
+                        <select name="allow_guest_send" class="form-select">
+                            <option value="1" <?php echo $s['allow_guest_send'] ? 'selected' : ''; ?>>是</option>
+                            <option value="0" <?php echo !$s['allow_guest_send'] ? 'selected' : ''; ?>>否</option>
+                        </select>
+                    </div>
+                </div>
+
+                <hr>
+                <h6>URL 过滤</h6>
+
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label class="form-label">过滤模式</label>
+                        <select name="url_filter_mode" class="form-select">
+                            <option value="none" <?php echo $s['url_filter_mode'] === 'none' ? 'selected' : ''; ?>>不过滤</option>
+                            <option value="whitelist" <?php echo $s['url_filter_mode'] === 'whitelist' ? 'selected' : ''; ?>>白名单</option>
+                            <option value="blacklist" <?php echo $s['url_filter_mode'] === 'blacklist' ? 'selected' : ''; ?>>黑名单</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">替换文本</label>
+                        <input type="text" name="url_replace" class="form-control" value="<?php echo htmlspecialchars($s['url_replace']); ?>" maxlength="64">
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">白名单域名（每行一个）</label>
+                        <textarea name="url_whitelist" class="form-control" rows="3"><?php echo htmlspecialchars($s['url_whitelist']); ?></textarea>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">黑名单域名（每行一个）</label>
+                        <textarea name="url_blacklist" class="form-control" rows="3"><?php echo htmlspecialchars($s['url_blacklist']); ?></textarea>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">保存设置</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="card mt-3">
+        <div class="card-header">
+            <h5 class="card-title mb-0">频道管理</h5>
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered table-sm">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>名称</th>
+                        <th>Slug</th>
+                        <th>排序</th>
+                        <th>默认</th>
+                        <th>状态</th>
+                        <th>在线</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach($channels as $c) { ?>
+                    <tr>
+                        <td><?php echo intval($c['id']); ?></td>
+                        <td><?php echo htmlspecialchars($c['name']); ?></td>
+                        <td><code><?php echo htmlspecialchars($c['slug']); ?></code></td>
+                        <td><?php echo intval($c['sort_order']); ?></td>
+                        <td><?php echo intval($c['is_default']) ? '✓' : ''; ?></td>
+                        <td><?php echo intval($c['status']) ? '启用' : '禁用'; ?></td>
+                        <td><?php echo intval($c['online_count']); ?></td>
+                        <td>
+                            <a href="../?chat-<?php echo urlencode($c['slug']); ?>.htm" class="btn btn-sm btn-outline-primary" target="_blank">访问</a>
+                        </td>
+                    </tr>
+                    <?php } ?>
+                </tbody>
+            </table>
+
+            <hr>
+            <h6>创建新频道</h6>
+            <form method="post" action="" class="row g-2 align-items-end">
+                <?php echo csrf_token_hidden(); ?>
+                <input type="hidden" name="xw_chat_action" value="create_channel">
+                <div class="col-md-3">
+                    <label class="form-label">名称</label>
+                    <input type="text" name="name" class="form-control" required maxlength="32">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Slug</label>
+                    <input type="text" name="slug" class="form-control" maxlength="32" placeholder="自动生成">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">描述</label>
+                    <input type="text" name="description" class="form-control" maxlength="255">
+                </div>
+                <div class="col-md-1">
+                    <label class="form-label">排序</label>
+                    <input type="number" name="sort_order" class="form-control" value="0">
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-success w-100">创建频道</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<?php include _include(ADMIN_PATH.'view/htm/footer.inc.htm');?>

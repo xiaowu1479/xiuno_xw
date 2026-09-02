@@ -12,6 +12,12 @@ Xiuno 会把带插件钩子的文件编译到 `tmp/`。源码或插件改动后�
   - `tmp/view_htm_header.inc.htm`（前台 header 覆盖）
   - `tmp/plugin_zaesky_theme_light_setting.php`、`tmp/_plugin_zaesky_theme_light_view_htm_settingItem_*.htm`（主题设置页）
 - 主题/插件文件用 `php -l` 验证语法（本机 PHP：`D:\local_php_build\phpstudy_pro\Extensions\php\php7.4.3nts\php.exe`）
+- ⚠️ **钩子文件格式规则**（编译器行为 `model/plugin.func.php:380-382`）：
+  - `.php` 钩子文件须以 `<?php exit;` 开头，编译器用正则 `#^\s*<\?php\s*exit;(.*?)(?:\?>)?\s*$#is` 剥离后注入
+  - **lang 钩子**（如 `lang_zh_cn_bbs.php`）：源文件是 `return array(...)` 数组定义，钩子点在数组内部。必须用**数组键值对**格式，不能用 `$lang['key']='val'` 赋值！正确：`'xw_chat_title'=>'聊天室',`  错误：`<?php $lang['xw_chat_title']='聊天室';`
+  - **model 钩子**（如 `model_inc_file.php`）：钩子点在数组内，须用数组元素格式（不带 `<?php` 标签）
+  - **view/htm 钩子**（如 `header_nav_forum_end.htm`）：直接输出 HTML/PHP，用 `<?php exit;` 开头即可
+  - **route 钩子**（如 `index_route_case_end.php`）：钩子点在 `switch` 语句内，须用 `case 'xxx':` 格式
 
 ## 二、发行版发布流程（vX.Y.Z）
 
