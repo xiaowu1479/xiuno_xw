@@ -23,6 +23,11 @@
 - 修复分享弹窗 Bootstrap 4 兼容：`data-bs-*` 改为 `data-toggle`/`data-target`，jQuery `.modal()` 替代原生 Bootstrap API
 - 新增心跳/已读更新异常捕获：try/catch + error_log 便于排查500错误
 
+### v1.5.4 (2026-09-02)
+
+- 数据库健康检查新增「插件表检查」：自动扫描已启用插件的 install.php，检测所需数据表是否存在
+- 修复 KEY/INDEX 正则：`(\S+)` → `(\w+)`，避免括号被误捕获为索引名
+
 ### v1.5.3 (2026-09-02)
 
 - 新增后台数据库健康检查页面（其他 → 数据库检查）：解析 `upgrade.sql` 逐条检查是否已应用，支持一键修复

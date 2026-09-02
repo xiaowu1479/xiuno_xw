@@ -704,16 +704,71 @@ function admin_db_check() {
 		}
 	}
 
+	// 检查已启用插件所需的数据表
+	$plugin_tables = admin_db_check_plugin_tables();
+	$results = array_merge($results, $plugin_tables['results']);
+	$ok_count += $plugin_tables['ok'];
+	$fix_count += $plugin_tables['need_fix'];
+
 	return array(
 		'ok' => true,
 		'results' => $results,
 		'summary' => array(
-			'total' => count($steps),
+			'total' => count($results),
 			'ok' => $ok_count,
 			'need_fix' => $fix_count,
 			'unknown' => $fail_count,
 		),
 	);
+}
+
+// 扫描已启用插件的 install.php，提取 CREATE TABLE 并检查表是否存在
+function admin_db_check_plugin_tables() {
+	global $db;
+	$plugin_dir = APP_PATH.'plugin/';
+	$results = array();
+	$ok = 0;
+	$need_fix = 0;
+
+	if(!is_dir($plugin_dir)) return array('results' => $results, 'ok' => 0, 'need_fix' => 0);
+
+	$dirs = glob($plugin_dir.'*', GLOB_ONLYDIR);
+	if(!$dirs) return array('results' => $results, 'ok' => 0, 'need_fix' => 0);
+
+	foreach($dirs as $dir) {
+		$name = basename($dir);
+		$conf_file = $dir.'/conf.json';
+		if(!is_file($conf_file)) continue;
+		$conf = @json_decode(file_get_contents($conf_file), true);
+		if(!$conf || empty($conf['enable'])) continue;
+
+		$install_file = $dir.'/install.php';
+		if(!is_file($install_file)) continue;
+
+		$content = file_get_contents($install_file);
+		// 提取所有 CREATE TABLE 语句中的表名
+		if(preg_match_all('/CREATE\s+TABLE\s+IF\s+NOT\s+EXISTS\s+\{?\$tablepre\}?\s*(\w+)/i', $content, $m)) {
+			foreach($m[1] as $tbl) {
+				$r = db_sql_find_one("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = '{$db->tablepre}{$tbl}'");
+				$exists = !empty($r);
+				$results[] = array(
+					'index' => count($results) + 1,
+					'desc' => "插件 {$name} 表 {$tbl}",
+					'sql' => '',
+					'applied' => $exists,
+					'reason' => $exists ? '表已存在' : '表缺失',
+					'needs_fix' => !$exists,
+				);
+				if($exists) {
+					$ok++;
+				} else {
+					$need_fix++;
+				}
+			}
+		}
+	}
+
+	return array('results' => $results, 'ok' => $ok, 'need_fix' => $need_fix);
 }
 
 // 一键修复数据库（只执行缺失的部分）
