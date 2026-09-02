@@ -23,6 +23,10 @@
 - 修复分享弹窗 Bootstrap 4 兼容：`data-bs-*` 改为 `data-toggle`/`data-target`，jQuery `.modal()` 替代原生 Bootstrap API
 - 新增心跳/已读更新异常捕获：try/catch + error_log 便于排查500错误
 
+### v1.5.7 (2026-09-02)
+
+- 修复聊天室所有 API 请求 404：chat.js 从硬编码相对 URL 改用 `xn.url()` 函数，兼容 `url_rewrite_on` 各模式
+
 ### v1.5.6 (2026-09-02)
 
 - 修复数据库健康检查「一键修复」创建插件表时 SQL 语法错误：改用逐行提取替代正则捕获，避免误捕获 PHP 引号

@@ -62,7 +62,7 @@ function renderMessage(m) {
         var bubbleWrap = createEl('div', 'xw-chat-msg-bubble xw-chat-msg-share-card-wrap');
         bubbleWrap.appendChild(createEl('div', null, m.content));
         var link = createEl('a', 'xw-chat-share-card');
-        link.setAttribute('href', 'chat-' + encodeURIComponent(m.ref_channel.slug) + '.htm');
+        link.setAttribute('href', xn.url('chat-' + encodeURIComponent(m.ref_channel.slug)));
         link.textContent = '# ' + m.ref_channel.name + ' →';
         bubbleWrap.appendChild(link);
         body.appendChild(bubbleWrap);
@@ -113,7 +113,7 @@ function renderInitial() {
 // 心跳
 function heartbeat() {
     if (!state.current || state.uid <= 0) return;
-    var url = 'chat-heartbeat-' + state.current.id + '.htm';
+    var url = xn.url('chat-heartbeat-' + state.current.id);
     var fd = new FormData();
     fd.append('csrf_token', getCsrfToken());
     fetch(url, { method: 'POST', body: fd, credentials: 'same-origin' })
@@ -159,7 +159,7 @@ function updateCurrentOnline(count) {
 
 // 页面加载时立即获取在线数
 function fetchOnlineCount(channelId) {
-    var url = 'chat-online-' + channelId + '.htm';
+    var url = xn.url('chat-online-' + channelId);
     fetch(url, { credentials: 'same-origin' })
         .then(function (r) { return r.json(); })
         .then(function (d) {
@@ -174,13 +174,13 @@ function fetchOnlineCount(channelId) {
 // 更新已读
 function updateRead(channelId, lastReadId) {
     if (state.uid <= 0) return;
-    var url = 'chat-read-' + channelId + '-' + lastReadId + '.htm';
+    var url = xn.url('chat-read-' + channelId + '-' + lastReadId);
     fetch(url, { method: 'POST', credentials: 'same-origin' }).catch(function () {});
 }
 
 // 获取在线用户列表（可选：点击在线数显示）
 function fetchOnlineUsers(channelId) {
-    var url = 'chat-online-' + channelId + '.htm';
+    var url = xn.url('chat-online-' + channelId);
     fetch(url, { credentials: 'same-origin' })
         .then(function (r) { return r.json(); })
         .then(function (d) {
@@ -200,7 +200,7 @@ function showOnlineUsers(users) {
 // 轮询新消息
 function poll() {
     if (!state.current) return;
-    var url = 'chat-messages-' + state.current.id + '-' + state.lastId + '.htm';
+    var url = xn.url('chat-messages-' + state.current.id + '-' + state.lastId);
     fetch(url, { credentials: 'same-origin' })
         .then(function (r) { return r.json(); })
         .then(function (d) {
@@ -237,7 +237,7 @@ function sendMessage() {
     state.sending = true;
     sendBtn.disabled = true;
     var fd = new FormData(formEl);
-    var url = 'chat-send-' + state.current.id + '.htm';
+    var url = xn.url('chat-send-' + state.current.id);
     fetch(url, { method: 'POST', body: fd, credentials: 'same-origin' })
         .then(function (r) { return r.json(); })
         .then(function (d) {
@@ -330,7 +330,7 @@ function initShare() {
         fd.append('from_channel_id', state.current.id);
         fd.append('to_channel_id', toId);
         fd.append('csrf_token', getCsrfToken());
-        fetch('chat-share.htm', { method: 'POST', body: fd, credentials: 'same-origin' })
+        fetch(xn.url('chat-share'), { method: 'POST', body: fd, credentials: 'same-origin' })
             .then(function (r) { return r.json(); })
             .then(function (d) {
                 if (d && d.code === 0) {
