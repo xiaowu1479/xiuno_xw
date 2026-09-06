@@ -30,6 +30,7 @@ if($action == 'base') {
 		$input['cookie_secure'] = form_radio_yes_no('cookie_secure', $conf['cookie_secure'], lang('cookie_secure_tips'));
 		$input['online_hold_time'] = form_text('online_hold_time', $conf['online_hold_time'], 100);
 		$input['lang'] = form_select('lang', array('zh-cn'=>lang('lang_zh_cn'), 'zh-tw'=>lang('lang_zh_tw'), 'en-us'=>lang('lang_en_us'), 'ru-ru'=>lang('lang_ru_ru'), 'th-th'=>lang('lang_th_th')), $conf['lang']);
+		$input['favicon_url'] = form_text('favicon_url', $conf['favicon_url']);
 		
 		$header['title'] = lang('admin_site_setting');
 		$header['mobile_title'] =lang('admin_site_setting');
@@ -54,6 +55,7 @@ if($action == 'base') {
 		$online_hold_time = param('online_hold_time', 3600);
 		
 		$_lang = param('lang');
+		$favicon_url = param('favicon_url', '', FALSE);
 		
 		// hook admin_setting_base_post_start.php
 		
@@ -71,6 +73,7 @@ if($action == 'base') {
 		$replace['cookie_secure'] = $cookie_secure;
 		$replace['online_hold_time'] = max(60, min(86400, intval($online_hold_time)));
 		$replace['lang'] = $_lang;
+		$replace['favicon_url'] = $favicon_url;
 		
 		file_replace_var(APP_PATH.'conf/conf.php', $replace);
 	

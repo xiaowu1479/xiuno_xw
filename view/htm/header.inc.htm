@@ -35,9 +35,9 @@
 	
 	<!--{hook header_link_before.htm}-->
 	
-	<link rel="shortcut icon" href="<?php echo $conf['view_url'];?>img/favicon.ico" />
-	<link rel="icon" sizes="32x32" href="<?php echo $conf['view_url'];?>img/favicon.ico">
-	<link rel="Bookmark" href="<?php echo $conf['view_url'];?>img/favicon.ico" />
+	<link rel="shortcut icon" href="<?php echo $conf['favicon_url'];?>" />
+	<link rel="icon" sizes="32x32" href="<?php echo $conf['favicon_url'];?>">
+	<link rel="Bookmark" href="<?php echo $conf['favicon_url'];?>" />
 	
 	<!--{hook header_bootstrap_before.htm}-->
 	<?php $bootstrap_css = !empty($bootstrap_css) ? $bootstrap_css : $conf['view_url']."css/bootstrap.min.css".$static_version; ?>

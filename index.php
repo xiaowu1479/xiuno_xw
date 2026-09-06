@@ -29,6 +29,7 @@ $conf = (@include APP_PATH.'conf/conf.php') OR exit('<script>window.location="in
 !isset($conf['user_create_on']) AND $conf['user_create_on'] = 1;
 !isset($conf['logo_mobile_url']) AND $conf['logo_mobile_url'] = 'view/img/logo.png';
 !isset($conf['logo_pc_url']) AND $conf['logo_pc_url'] = 'view/img/logo.png';
+!isset($conf['favicon_url']) AND $conf['favicon_url'] = 'view/img/favicon.ico';
 !isset($conf['logo_water_url']) AND $conf['logo_water_url'] = 'view/img/water-small.png';
 // 图形验证码 (XIUNO XW)
 !isset($conf['captcha_on']) AND $conf['captcha_on'] = 0;

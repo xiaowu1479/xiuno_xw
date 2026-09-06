@@ -108,6 +108,8 @@ return array(
 	'sitename'=>'站点名称',
 	'sitebrief'=>'站点介绍',
 	'sitebrief_tips'=>'注：支持 HTML 标签，换行请使用 &lt;br&gt;',
+	'favicon_url'=>'浏览器标签图标',
+	'favicon_url_tips'=>'输入图标 URL（如 /upload/favicon.ico 或 https://example.com/favicon.ico），留空则使用默认 view/img/favicon.ico',
 	'runlevel'=>'站点访问限制',
 	'user_create_on'=>'开启用户注册',
 	'captcha'=>'图形验证码',
