@@ -241,37 +241,9 @@ function admin_update_do() {
 	// 7.5 执行数据库升级脚本
 	$db_upgrade = admin_update_run_db_upgrade($srcdir);
 
-	// 7.6 同步版本号到 conf/conf.php（新版 index.php 的版本号覆盖旧 conf 里的）
-	$_new_index = @file_get_contents(APP_PATH.'index.php');
-	if(preg_match('/\$conf\[.version.\]\s*=\s*[\'"]([^\'"]+)/', $_new_index, $_m)) {
-		$_new_ver = $_m[1];
-		$_conf_file = APP_PATH.'conf/conf.php';
-		$_conf_content = @file_get_contents($_conf_file);
-		if($_conf_content !== false) {
-			// 备份原 conf.php，失败可回滚
-			$_conf_backup = $conf['tmp_path'].'conf_backup_'.date('Ymd_His').'.php';
-			@file_put_contents($_conf_backup, $_conf_content);
-
-			// 用 preg_replace_callback 避免 $1+数字 被误解析为多位捕获组
-			$_conf_content = preg_replace_callback('/(\'version\'\s*=>\s*\')[^\']*\'/s', function($m) use ($_new_ver) {
-				return $m[1] . $_new_ver . "'";
-			}, $_conf_content);
-			$_conf_content = preg_replace_callback('/("version"\s*=>\s*")[^"]*"/s', function($m) use ($_new_ver) {
-				return $m[1] . $_new_ver . '"';
-			}, $_conf_content);
-
-			// 写入前先用 PHP 临时校验语法，防止写坏 conf.php 导致站点全挂
-			$_conf_test = AdminUpdateValidateConf($_conf_content);
-			if($_conf_test === TRUE) {
-				@file_put_contents($_conf_file, $_conf_content);
-				$conf['version'] = $_new_ver;
-			} else {
-				// 校验失败，恢复备份并记录错误
-				@file_put_contents($_conf_file, $_conf_backup);
-				xn_log('[XIUNO XW] conf.php 版本号校验失败已回滚: '.$_conf_test, 'error');
-			}
-		}
-	}
+	// 7.6 版本号由 index.php:40 的 $conf['version'] 权威定义，不再写 conf/conf.php
+	// （移除此步骤：旧代码的 preg_replace('$1'.版本号) 会触发 PCRE $1+数字 解析 bug，
+	//   例如 $11.7.1 → 组11 不存在 → .7.1' 残渣，导致站点 500）
 
 	// 8. 清理（保留 backup/ 目录，回滚用）
 	@xn_unlink($tmpfile);
