@@ -248,8 +248,8 @@ function admin_update_do() {
 		$_conf_file = APP_PATH.'conf/conf.php';
 		$_conf_content = @file_get_contents($_conf_file);
 		if($_conf_content !== false) {
-			$_conf_content = preg_replace('/(\'version\'\s*=>\s*\')[^\']*/', '$1'.$_new_ver, $_conf_content);
-			$_conf_content = preg_replace('/("version"\s*=>\s*")[^"]*/', '$1'.$_new_ver, $_conf_content);
+			$_conf_content = preg_replace('/(\'version\'\s*=>\s*\')[^\']*\'/', '${1}'.$_new_ver.'\'', $_conf_content);
+			$_conf_content = preg_replace('/("version"\s*=>\s*")[^"]*"/', '${1}'.$_new_ver.'"', $_conf_content);
 			@file_put_contents($_conf_file, $_conf_content);
 			$conf['version'] = $_new_ver;
 		}
