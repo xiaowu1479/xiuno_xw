@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?php echo $s['page_title']; ?></title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="plugin/xw_navigation/static/navigation.css">
+</head>
+<body>
+    <nav class="xw-nav">
+        <div class="xw-container">
+            <a href="./" class="xw-brand"><i class="fas fa-home"></i> <?php echo $conf['sitename']; ?></a>
+            <a href="#" class="xw-brand xw-active xw-nav-link" data-page="navigation"><i class="fas fa-fire"></i> <?php echo $s['page_title']; ?></a>
+        </div>
+    </nav>
+    
+    <div class="xw-hero">
+        <h1><?php echo $s['page_title']; ?></h1>
+        <?php if($s['page_description']) { ?><p><?php echo $s['page_description']; ?></p><?php } ?>
+    </div>
+    
+    <div class="xw-container">
+        <?php if($s['show_stats']) { ?>
+        <div class="xw-stats">
+            <div class="xw-stat"><div class="xw-num"><?php echo $stats['total_links']; ?></div><div>收录网站</div></div>
+            <div class="xw-stat"><div class="xw-num"><?php echo $stats['total_categories']; ?></div><div>分类目录</div></div>
+            <div class="xw-stat"><div class="xw-num"><?php echo $stats['total_clicks']; ?></div><div>总访问量</div></div>
+        </div>
+        <?php } ?>
+        
+        <h2 class="xw-section-title"><i class="fas fa-th-large"></i> <?php echo $current_title; ?></h2>
+        
+        <div class="xw-layout">
+            <?php if($s['show_sidebar'] && $categories) { ?>
+            <aside class="xw-sidebar">
+                <div class="xw-sidebar-title">分类导航</div>
+                <ul class="xw-cat-list">
+                    <li><a href="#" class="xw-nav-link <?php echo !$category_id && !$keyword ? 'active' : ''; ?>" data-page="navigation"><i class="fas fa-th"></i> 全部</a></li>
+                    <?php foreach($categories as $cat) { ?>
+                    <li><a href="#" class="xw-nav-link <?php echo $category_id == $cat['id'] ? 'active' : ''; ?>" data-page="navigation" data-cat="<?php echo $cat['id']; ?>"><i class="<?php echo $cat['icon']; ?>"></i> <?php echo $cat['title']; ?></a></li>
+                    <?php } ?>
+                </ul>
+            </aside>
+            <?php } ?>
+            
+            <div class="xw-content">
+                <?php if($links) { ?>
+                <div class="xw-links">
+                    <?php foreach($links as $link) { ?>
+                    <a href="#" class="xw-link-card xw-nav-link" data-page="navigation" data-click="<?php echo $link['id']; ?>" target="_blank">
+                        <div class="xw-link-icon" <?php if($link['color']) echo 'style="background:'.$link['color'].'"'; ?>>
+                            <?php if(strpos($link['icon'], 'fa') === 0) { ?>
+                            <i class="<?php echo htmlspecialchars($link['icon']); ?>"></i>
+                            <?php } elseif($link['icon']) { ?>
+                            <img src="<?php echo htmlspecialchars($link['icon']); ?>" alt="<?php echo htmlspecialchars($link['title']); ?>" style="width:28px;height:28px;object-fit:contain">
+                            <?php } else { ?>
+                            <img src="https://www.google.com/s2/favicons?domain=<?php echo urlencode(parse_url($link['url'], PHP_URL_HOST)); ?>&sz=32" alt="<?php echo htmlspecialchars($link['title']); ?>" style="width:28px;height:28px;object-fit:contain" onerror="this.parentElement.innerHTML='<i class=\'fas fa-globe\'></i>'">
+                            <?php } ?>
+                        </div>
+                        <h4><?php echo $link['title']; ?></h4>
+                        <p><?php echo $link['description']; ?></p>
+                    </a>
+                    <?php } ?>
+                </div>
+                <?php } else { ?>
+                <div class="xw-empty">暂无链接</div>
+                <?php } ?>
+            </div>
+        </div>
+    </div>
+    
+    <footer class="xw-footer"><p>&copy; <?php echo date('Y'); ?> <?php echo $conf['sitename']; ?></p></footer>
+    <script>
+    (function() {
+        var path = location.pathname;
+        var base = path.replace(/index\.php.*$/, '').replace(/\/$/, '/');
+        var navUrl = base + 'index.php?navigation';
+        
+        var links = document.querySelectorAll('.xw-nav-link');
+        for (var i = 0; i < links.length; i++) {
+            var el = links[i];
+            var url = navUrl;
+            var cat = el.getAttribute('data-cat');
+            var click = el.getAttribute('data-click');
+            if (cat) url += '&category_id=' + cat;
+            if (click) url += '&click_id=' + click;
+            el.href = url;
+        }
+    })();
+    </script>
+</body>
+</html>

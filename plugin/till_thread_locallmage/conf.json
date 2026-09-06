@@ -3,8 +3,8 @@
     "brief": "编辑器中增加图片本地化功能",
     "version": "1.0.0",
     "bbs_version": "4.0.4",
-    "installed": 0,
-    "enable": 0,
+    "installed": 1,
+    "enable": 1,
     "hooks_rank": [],
     "overwrites_rank": [],
     "dependencies": []

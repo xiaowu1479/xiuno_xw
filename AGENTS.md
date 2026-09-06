@@ -69,8 +69,9 @@ Invoke-RestMethod -Method Patch -Uri "https://api.github.com/repos/xiaowu1479/xi
 ### ⚠️ 编码坑（重要）
 
 - **PowerShell 命令行里直接写中文会变乱码**（`?`/`????????`）。Release body 含中文时：
-  1. 先用文本工具（Write/Edit）把 body 写进 UTF-8 JSON 文件，如 `{"body":"...中文..."}`
-  2. 再用 `[System.IO.File]::ReadAllText(路径, [System.Text.Encoding]::UTF8)` 读出作为 `-Body`
+  1. **用 PHP 脚本写 UTF-8 JSON 文件**（Write/Edit 工具写 `.php` 文件，再用 `php.exe` 执行）
+  2. **用 curl.exe 发请求**（curl 自动处理 UTF-8 编码），不要用 `Invoke-RestMethod` 的 `-Body` 参数传 string（会用系统默认编码 GBK）
+  3. 正确做法：`curl.exe -X PATCH ... -d "@json文件路径"` 或 `-d @-` 从 stdin 读取
 - 控制台回显中文乱码**不代表数据错误**，可能是控制台代码页问题；用 API GET 取回正文写文件即可验证是否正常。
 
 ## 四、注意点

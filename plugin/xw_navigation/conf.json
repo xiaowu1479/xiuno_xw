@@ -1,0 +1,18 @@
+{
+    "name": "XW导航页",
+    "brief": "分类导航页插件，支持多分类链接管理，修罗主题风格",
+    "version": "1.0.0",
+    "bbs_version": "4.0",
+    "installed": 1,
+    "enable": 1,
+    "hooks_rank": {
+        "model_inc_file.php": 10,
+        "index_route_case_end.php": 10,
+        "admin_index_route_case_end.php": 10,
+        "lang_zh_cn_bbs.php": 10,
+        "header_nav_forum_end.htm": 10
+    },
+    "overwrites_rank": [],
+    "dependencies": [],
+    "type": "plugin"
+}

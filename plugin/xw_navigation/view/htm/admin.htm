@@ -1,0 +1,364 @@
+<?php include _include(ADMIN_PATH.'view/htm/header.inc.htm');?>
+
+<div class="container-fluid p-0 p-md-3">
+
+<!-- 基本设置 -->
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title mb-0">基本设置</h5>
+    </div>
+    <div class="card-body">
+        <form method="post" action="" id="xw_nav_settings_form">
+            <?php echo csrf_token_hidden(); ?>
+            <input type="hidden" name="xw_nav_action" value="save_settings">
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label class="form-label">页面标题</label>
+                    <input type="text" class="form-control" name="page_title" value="<?php echo htmlspecialchars($s['page_title']); ?>">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">页面描述</label>
+                    <input type="text" class="form-control" name="page_description" value="<?php echo htmlspecialchars($s['page_description']); ?>">
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label class="form-check">
+                        <input type="checkbox" class="form-check-input" name="show_search" value="1" <?php echo $s['show_search'] ? 'checked' : ''; ?>>
+                        <span class="form-check-label">显示搜索框</span>
+                    </label>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-check">
+                        <input type="checkbox" class="form-check-input" name="show_stats" value="1" <?php echo $s['show_stats'] ? 'checked' : ''; ?>>
+                        <span class="form-check-label">显示统计</span>
+                    </label>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-check">
+                        <input type="checkbox" class="form-check-input" name="show_sidebar" value="1" <?php echo $s['show_sidebar'] ? 'checked' : ''; ?>>
+                        <span class="form-check-label">显示侧边栏</span>
+                    </label>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary" data-loading-text="保存中...">保存设置</button>
+        </form>
+    </div>
+</div>
+
+<!-- 分类管理 -->
+<div class="card mt-3">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0">分类管理</h5>
+        <button type="button" class="btn btn-sm btn-primary" onclick="showCategoryModal()"><i class="icon-plus"></i> 添加分类</button>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered table-sm mb-0" style="min-width: 600px;">
+                <thead class="thead-light">
+                    <tr><th width="50">ID</th><th width="60">图标</th><th>名称</th><th width="80">排序</th><th width="70">状态</th><th width="140">操作</th></tr>
+                </thead>
+                <tbody>
+                    <?php if($categories) foreach($categories as $cat) { ?>
+                    <tr>
+                        <td><?php echo $cat['id']; ?></td>
+                        <td><i class="<?php echo htmlspecialchars($cat['icon']); ?>"></i></td>
+                        <td><?php echo htmlspecialchars($cat['title']); ?></td>
+                        <td><?php echo $cat['sort_order']; ?></td>
+                        <td><?php echo $cat['status'] ? '<span class="text-primary">启用</span>' : '<span class="text-muted">禁用</span>'; ?></td>
+                        <td>
+                            <button type="button" class="btn btn-sm btn-outline-primary" onclick="editCategory(<?php echo htmlspecialchars(json_encode($cat)); ?>)">编辑</button>
+                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteItem('delete_category', <?php echo $cat['id']; ?>, '分类')">删除</button>
+                        </td>
+                    </tr>
+                    <?php } else { ?>
+                    <tr><td colspan="6" class="text-center text-muted">暂无分类</td></tr>
+                    <?php } ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- 链接管理 -->
+<div class="card mt-3">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0">链接管理</h5>
+        <button type="button" class="btn btn-sm btn-primary" onclick="showLinkModal()"><i class="icon-plus"></i> 添加链接</button>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered table-sm mb-0" style="min-width: 800px;">
+                <thead class="thead-light">
+                    <tr><th width="50">ID</th><th width="60">图标</th><th>标题</th><th>URL</th><th>分类</th><th width="70">状态</th><th width="140">操作</th></tr>
+                </thead>
+                <tbody>
+                    <?php if($links) foreach($links as $link) { ?>
+                    <tr>
+                        <td><?php echo $link['id']; ?></td>
+                        <td>
+                            <?php if(strpos($link['icon'], 'fa') === 0) { ?>
+                            <i class="<?php echo htmlspecialchars($link['icon']); ?>" style="<?php echo $link['color'] ? 'color:'.$link['color'] : ''; ?>"></i>
+                            <?php } elseif($link['icon']) { ?>
+                            <img src="<?php echo htmlspecialchars($link['icon']); ?>" width="16" height="16" style="vertical-align:middle" onerror="this.style.display='none'">
+                            <?php } elseif($link['url']) { ?>
+                            <img src="https://www.google.com/s2/favicons?domain=<?php echo urlencode(parse_url($link['url'], PHP_URL_HOST)); ?>&sz=16" width="16" height="16" style="vertical-align:middle" onerror="this.style.display='none'">
+                            <?php } ?>
+                        </td>
+                        <td><?php echo htmlspecialchars($link['title']); ?></td>
+                        <td><a href="<?php echo htmlspecialchars($link['url']); ?>" target="_blank" title="<?php echo htmlspecialchars($link['url']); ?>"><?php echo htmlspecialchars(mb_substr($link['url'], 0, 35)); ?><?php echo mb_strlen($link['url']) > 35 ? '...' : ''; ?></a></td>
+                        <td><?php echo htmlspecialchars($link['category_title']); ?></td>
+                        <td><?php echo $link['status'] ? '<span class="text-primary">启用</span>' : '<span class="text-muted">禁用</span>'; ?></td>
+                        <td>
+                            <button type="button" class="btn btn-sm btn-outline-primary" onclick="editLink(<?php echo htmlspecialchars(json_encode($link)); ?>)">编辑</button>
+                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteItem('delete_link', <?php echo $link['id']; ?>, '链接')">删除</button>
+                        </td>
+                    </tr>
+                    <?php } else { ?>
+                    <tr><td colspan="7" class="text-center text-muted">暂无链接</td></tr>
+                    <?php } ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+</div>
+
+<!-- 分类弹窗 -->
+<div class="modal fade" id="categoryModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="categoryModalTitle">添加分类</h5>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="cat_id">
+                <div class="form-group">
+                    <label class="form-label">名称 <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="cat_title" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">图标 (Font Awesome)</label>
+                    <input type="text" class="form-control" id="cat_icon" placeholder="fas fa-fire">
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">排序</label>
+                            <input type="number" class="form-control" id="cat_sort" value="0">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">状态</label>
+                            <select class="form-control" id="cat_status"><option value="1">启用</option><option value="0">禁用</option></select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" id="catSubmitBtn" onclick="submitCategory()">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 链接弹窗 -->
+<div class="modal fade" id="linkModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="linkModalTitle">添加链接</h5>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="link_id">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">标题 <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="link_title" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">分类 <span class="text-danger">*</span></label>
+                            <select class="form-control" id="link_category_id">
+                                <?php foreach($categories as $cat) { ?>
+                                <option value="<?php echo $cat['id']; ?>"><?php echo htmlspecialchars($cat['title']); ?></option>
+                                <?php } ?>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">URL <span class="text-danger">*</span></label>
+                    <input type="url" class="form-control" id="link_url" placeholder="https://">
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-label">图标 (留空自动获取favicon)</label>
+                            <input type="text" class="form-control" id="link_icon" placeholder="图片URL 或 fas fa-globe">
+                            <small class="form-text text-muted">留空则根据URL自动获取网站图标，也可填图片链接或 Font Awesome class</small>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-label">颜色</label>
+                            <input type="color" class="form-control" id="link_color" value="#3b82f6">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-label">打开方式</label>
+                            <select class="form-control" id="link_target"><option value="1">新窗口</option><option value="0">当前窗口</option></select>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">描述</label>
+                    <input type="text" class="form-control" id="link_desc">
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">排序</label>
+                            <input type="number" class="form-control" id="link_sort" value="0">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">状态</label>
+                            <select class="form-control" id="link_status"><option value="1">启用</option><option value="0">禁用</option></select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" id="linkSubmitBtn" onclick="submitLink()">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+var baseUrl = window.location.href;
+
+function postAction(action, data, btn) {
+    data = data || {};
+    data.xw_nav_action = action;
+    $(btn || '#body').loading();
+    $.xpost(baseUrl, data, function(r) {
+        $(btn || '#body').loading('close');
+        if(r.code == 0 || r.code == '0') {
+            $.alert(r.message || '操作成功', function(){ location.reload(); });
+        } else {
+            $.alert(r.message || '操作失败');
+        }
+    });
+}
+
+// 设置
+$('#xw_nav_settings_form').on('submit', function(e) {
+    e.preventDefault();
+    var data = {};
+    $(this).serializeArray().forEach(function(item) { data[item.name] = item.value; });
+    postAction('save_settings', data, '#xw_nav_settings_form button[type="submit"]');
+});
+
+// 分类
+function showCategoryModal() {
+    $('#categoryModalTitle').text('添加分类');
+    $('#cat_id').val('');
+    $('#cat_title').val('');
+    $('#cat_icon').val('');
+    $('#cat_sort').val('0');
+    $('#cat_status').val('1');
+    $('#categoryModal').modal('show');
+}
+
+function editCategory(cat) {
+    $('#categoryModalTitle').text('编辑分类');
+    $('#cat_id').val(cat.id);
+    $('#cat_title').val(cat.title);
+    $('#cat_icon').val(cat.icon);
+    $('#cat_sort').val(cat.sort_order);
+    $('#cat_status').val(cat.status);
+    $('#categoryModal').modal('show');
+}
+
+function submitCategory() {
+    var id = $('#cat_id').val();
+    var data = {
+        id: id,
+        title: $('#cat_title').val(),
+        icon: $('#cat_icon').val(),
+        sort_order: $('#cat_sort').val(),
+        status: $('#cat_status').val()
+    };
+    postAction(id ? 'update_category' : 'add_category', data, '#catSubmitBtn');
+}
+
+// 链接
+function showLinkModal() {
+    $('#linkModalTitle').text('添加链接');
+    $('#link_id').val('');
+    $('#link_title').val('');
+    $('#link_url').val('');
+    $('#link_icon').val('');
+    $('#link_color').val('#3b82f6');
+    $('#link_desc').val('');
+    $('#link_sort').val('0');
+    $('#link_status').val('1');
+    $('#link_target').val('1');
+    if($('#link_category_id option').length) {
+        $('#link_category_id').val($('#link_category_id option:first').val());
+    }
+    $('#linkModal').modal('show');
+}
+
+function editLink(link) {
+    $('#linkModalTitle').text('编辑链接');
+    $('#link_id').val(link.id);
+    $('#link_title').val(link.title);
+    $('#link_url').val(link.url);
+    $('#link_icon').val(link.icon);
+    $('#link_color').val(link.color || '#3b82f6');
+    $('#link_desc').val(link.description);
+    $('#link_sort').val(link.sort_order);
+    $('#link_status').val(link.status);
+    $('#link_target').val(link.target_blank);
+    $('#link_category_id').val(link.category_id);
+    $('#linkModal').modal('show');
+}
+
+function submitLink() {
+    var id = $('#link_id').val();
+    var data = {
+        id: id,
+        category_id: $('#link_category_id').val(),
+        title: $('#link_title').val(),
+        url: $('#link_url').val(),
+        icon: $('#link_icon').val(),
+        color: $('#link_color').val(),
+        description: $('#link_desc').val(),
+        sort_order: $('#link_sort').val(),
+        status: $('#link_status').val(),
+        target_blank: $('#link_target').val()
+    };
+    postAction(id ? 'update_link' : 'add_link', data, '#linkSubmitBtn');
+}
+
+function deleteItem(action, id, name) {
+    $.confirm('确定删除该' + name + '？', function() {
+        postAction(action, {id: id});
+    });
+}
+</script>
+
+<?php include _include(ADMIN_PATH.'view/htm/footer.inc.htm');?>
