@@ -3,7 +3,28 @@
 <!--{hook index_start.htm}-->
 
 <div class="row">
-	<div class="col-lg-9 main">
+	<div class="col-lg-2 d-none d-lg-block">
+		<div class="card mb-3">
+			<div class="card-header">版块展示</div>
+			<ul class="list-unstyled mb-0">
+				<li class="border-bottom">
+					<a class="d-flex align-items-center py-2 px-3 text-body font-weight-bold" href="./">
+						<img class="rounded mr-2" src="view/img/forum.png" style="width:24px;height:24px;">
+						<span>综合</span>
+					</a>
+				</li>
+				<?php foreach($forumlist_show as $_forum) { ?>
+				<li class="border-bottom">
+					<a class="d-flex align-items-center py-2 px-3 text-body" href="<?php echo url("forum-$_forum[fid]");?>">
+						<img class="rounded mr-2" src="<?php echo $_forum['icon_url'];?>" style="width:24px;height:24px;">
+						<span class="text-truncate"><?php echo _e($_forum['name']);?></span>
+					</a>
+				</li>
+				<?php } ?>
+			</ul>
+		</div>
+	</div>
+	<div class="col-lg-7 main">
 		<!--{hook index_main_start.htm}-->
 		<div class="card card-threadlist">
 			<div class="card-header">

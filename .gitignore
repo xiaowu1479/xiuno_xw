@@ -28,3 +28,6 @@ tools/
 plugin/备份/
 # 自动更新回滚备份（运行时生成，不纳入仓库）
 backup/*
+
+# 轻鸿主题（不再随发行版分发）
+plugin/zaesky_theme_light/

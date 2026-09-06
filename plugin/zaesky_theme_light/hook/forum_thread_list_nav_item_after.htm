@@ -1,6 +1,0 @@
-<?php if (isset($light_config['new_threadlist']) && $light_config['new_threadlist'] == 1) { ?>
-<li class="nav-item">
-	<a class="nav-link nav-digest  <?php echo $active == 'newpost' ? 'active' : '';?>" href="<?php echo url("forum-$fid-1", array('digest'=>5) + $_GET);?>">
-		新帖</a>
-</li>
- <?php } ?>
