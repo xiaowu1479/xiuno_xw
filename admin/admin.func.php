@@ -409,6 +409,9 @@ function admin_update_is_harmless_error($err) {
 		'/already exists/i',
 		'/Key .* does not exist/i',
 		'/doesn\'t have a key/i',
+		'/Can\'t DROP/i',
+		'/check that column\/key exists/i',
+		'/Unknown column|Unknown key/i',
 	);
 	foreach($patterns as $p) {
 		if(preg_match($p, $err)) return true;
