@@ -248,6 +248,10 @@ function admin_update_do() {
 		$_conf_file = APP_PATH.'conf/conf.php';
 		$_conf_content = @file_get_contents($_conf_file);
 		if($_conf_content !== false) {
+			// 备份原 conf.php，失败可回滚
+			$_conf_backup = $conf['tmp_path'].'conf_backup_'.date('Ymd_His').'.php';
+			@file_put_contents($_conf_backup, $_conf_content);
+
 			// 用 preg_replace_callback 避免 $1+数字 被误解析为多位捕获组
 			$_conf_content = preg_replace_callback('/(\'version\'\s*=>\s*\')[^\']*\'/s', function($m) use ($_new_ver) {
 				return $m[1] . $_new_ver . "'";
@@ -255,8 +259,17 @@ function admin_update_do() {
 			$_conf_content = preg_replace_callback('/("version"\s*=>\s*")[^"]*"/s', function($m) use ($_new_ver) {
 				return $m[1] . $_new_ver . '"';
 			}, $_conf_content);
-			@file_put_contents($_conf_file, $_conf_content);
-			$conf['version'] = $_new_ver;
+
+			// 写入前先用 PHP 临时校验语法，防止写坏 conf.php 导致站点全挂
+			$_conf_test = AdminUpdateValidateConf($_conf_content);
+			if($_conf_test === TRUE) {
+				@file_put_contents($_conf_file, $_conf_content);
+				$conf['version'] = $_new_ver;
+			} else {
+				// 校验失败，恢复备份并记录错误
+				@file_put_contents($_conf_file, $_conf_backup);
+				xn_log('[XIUNO XW] conf.php 版本号校验失败已回滚: '.$_conf_test, 'error');
+			}
 		}
 	}
 
@@ -274,6 +287,39 @@ function admin_update_do() {
 	$msg .= '<br>'.lang('admin_update_backup_done', array('dir'=>$backupshown));
 	if(isset($db_upgrade['msg'])) $msg .= '<br>'.$db_upgrade['msg'];
 	message(0, $msg);
+}
+
+// 校验 conf.php 内容是否为合法 PHP（防止更新时写坏配置文件导致站点全挂）
+// 返回 TRUE 表示合法；返回字符串表示错误原因
+function AdminUpdateValidateConf($content) {
+	global $conf;
+	if(empty($content)) return '内容为空';
+	// 用 PHP CLI 校验语法（最可靠），失败则拒绝写入
+	$tmpfile = $conf['tmp_path'].'conf_validate_'.md5($content).'.php';
+	if(@file_put_contents($tmpfile, $content) === FALSE) return '无法写入临时校验文件';
+	$output = array();
+	$code = 0;
+	$php_bin = PHP_BINARY;
+	if($php_bin && is_file($php_bin)) {
+		exec(escapeshellarg($php_bin).' -l '.escapeshellarg($tmpfile).' 2>&1', $output, $code);
+		@unlink($tmpfile);
+		if($code != 0) {
+			return trim(implode("\n", $output));
+		}
+		return TRUE;
+	}
+	// PHP CLI 不可用时，用 token 检测数组语法完整性（括号平衡兜底）
+	@unlink($tmpfile);
+	$tokens = @token_get_all($content);
+	$depth = 0;
+	foreach($tokens as $tok) {
+		$t = is_array($tok) ? $tok[0] : $tok;
+		if($t == '(' || $t == '[' || $t == '{') $depth++;
+		if($t == ')' || $t == ']' || $t == '}') $depth--;
+		if($depth < 0) return '数组括号不匹配';
+	}
+	if($depth > 0) return '数组括号未闭合';
+	return TRUE;
 }
 
 // 下载大文件（不限制 4MB）
