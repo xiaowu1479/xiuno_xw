@@ -248,8 +248,13 @@ function admin_update_do() {
 		$_conf_file = APP_PATH.'conf/conf.php';
 		$_conf_content = @file_get_contents($_conf_file);
 		if($_conf_content !== false) {
-			$_conf_content = preg_replace('/(\'version\'\s*=>\s*\')[^\']*\'/', '${1}'.$_new_ver.'\'', $_conf_content);
-			$_conf_content = preg_replace('/("version"\s*=>\s*")[^"]*"/', '${1}'.$_new_ver.'"', $_conf_content);
+			// 用 preg_replace_callback 避免 $1+数字 被误解析为多位捕获组
+			$_conf_content = preg_replace_callback('/(\'version\'\s*=>\s*\')[^\']*\'/s', function($m) use ($_new_ver) {
+				return $m[1] . $_new_ver . "'";
+			}, $_conf_content);
+			$_conf_content = preg_replace_callback('/("version"\s*=>\s*")[^"]*"/s', function($m) use ($_new_ver) {
+				return $m[1] . $_new_ver . '"';
+			}, $_conf_content);
 			@file_put_contents($_conf_file, $_conf_content);
 			$conf['version'] = $_new_ver;
 		}
