@@ -3,7 +3,7 @@ exit;
 
 'till_link_report' => '链接失效反馈',
 
-'till_link_report_btn' => '链接失效',
+'till_link_report_btn' => '失效',
 'till_link_report_btn_title' => '该帖子的资源链接可能已失效，点击通知楼主',
 'till_link_report_count_title' => '链接失效反馈次数',
 
