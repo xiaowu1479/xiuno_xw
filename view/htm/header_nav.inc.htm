@@ -47,6 +47,22 @@
 					<?php } ?>
 					<!--{hook header_nav_forum_end.htm}-->
 				</ul>
+				<!-- 移动端：版块列表（仅折叠菜单显示，PC 平铺导航隐藏） -->
+				<?php if(!empty($forumlist_show)) { ?>
+				<ul class="navbar-nav d-lg-none">
+					<li class="nav-item w-100">
+						<span class="nav-link text-muted small font-weight-bold border-bottom mb-1"><i class="icon-th d-md-none mr-1"></i>版块</span>
+					</li>
+					<?php foreach($forumlist_show as $_forum) { ?>
+					<li class="nav-item w-100" fid="<?php echo $_forum['fid'];?>" data-active="fid-<?php echo $_forum['fid'];?>">
+						<a class="nav-link d-flex align-items-center" href="<?php echo url("forum-$_forum[fid]");?>">
+							<img class="rounded mr-2" src="<?php echo $_forum['icon_url'];?>" style="width:22px;height:22px;">
+							<span class="text-truncate"><?php echo _e($_forum['name']);?></span>
+						</a>
+					</li>
+					<?php } ?>
+				</ul>
+				<?php } ?>
 				<!-- 右侧：用户 -->
 				<ul class="navbar-nav">
 					<!--{hook header_nav_user_start.htm}-->
