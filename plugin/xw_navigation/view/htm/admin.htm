@@ -1,4 +1,5 @@
 <?php include _include(ADMIN_PATH.'view/htm/header.inc.htm');?>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
 <div class="container-fluid p-0 p-md-3">
 
@@ -141,7 +142,12 @@
                 </div>
                 <div class="form-group">
                     <label class="form-label">图标 (Font Awesome)</label>
-                    <input type="text" class="form-control" id="cat_icon" placeholder="fas fa-fire">
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="cat_icon" placeholder="fas fa-fire">
+                        <div class="input-group-append">
+                            <button type="button" class="btn btn-outline-secondary" onclick="showIconPicker('cat_icon')">选择图标</button>
+                        </div>
+                    </div>
                 </div>
                 <div class="row">
                     <div class="col-md-6">
@@ -202,7 +208,12 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label class="form-label">图标 (留空自动获取favicon)</label>
-                            <input type="text" class="form-control" id="link_icon" placeholder="图片URL 或 fas fa-globe">
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="link_icon" placeholder="图片URL 或 fas fa-globe">
+                                <div class="input-group-append">
+                                    <button type="button" class="btn btn-outline-secondary" onclick="showIconPicker('link_icon')">选择图标</button>
+                                </div>
+                            </div>
                             <small class="form-text text-muted">留空则根据URL自动获取网站图标，也可填图片链接或 Font Awesome class</small>
                         </div>
                     </div>
@@ -246,8 +257,75 @@
     </div>
 </div>
 
+<!-- 图标选择器弹窗 -->
+<div class="modal fade" id="iconPickerModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">选择图标</h5>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <input type="text" class="form-control" id="iconPickerSearch" placeholder="搜索图标名称，如 home / star / github">
+                </div>
+                <div id="iconPickerBody" style="max-height:420px;overflow-y:auto;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
 var baseUrl = window.location.href;
+
+var XW_ICON_GROUPS = [
+    {name: '常用', icons: ['fas fa-home','fas fa-link','fas fa-globe','fas fa-star','fas fa-heart','fas fa-bookmark','fas fa-flag','fas fa-map-marker-alt','fas fa-compass','fas fa-search','fas fa-cog','fas fa-tools','fas fa-bell','fas fa-envelope','fas fa-comment','fas fa-comments','fas fa-user','fas fa-users','fas fa-fire','fas fa-bolt','fas fa-gift','fas fa-crown','fas fa-award','fas fa-trophy','fas fa-gem','fas fa-lightbulb','fas fa-magic','fas fa-rocket','fas fa-paper-plane','fas fa-thumbs-up','fas fa-thumbs-down','fas fa-share-alt','fas fa-download','fas fa-upload','fas fa-cloud','fas fa-lock','fas fa-unlock','fas fa-key','fas fa-shield-alt','fas fa-eye','fas fa-camera','fas fa-image','fas fa-video','fas fa-music','fas fa-headphones','fas fa-film','fas fa-gamepad','fas fa-puzzle-piece','fas fa-robot','fas fa-brain']},
+    {name: '网络', icons: ['fas fa-wifi','fas fa-signal','fas fa-rss','fas fa-server','fas fa-database','fas fa-cloud-download-alt','fas fa-cloud-upload-alt','fas fa-network-wired','fas fa-satellite','fas fa-globe-asia','fas fa-globe-americas','fas fa-external-link-alt','fas fa-user-secret','fas fa-fingerprint','fas fa-qrcode','fas fa-barcode']},
+    {name: '文件', icons: ['fas fa-file','fas fa-file-alt','fas fa-file-pdf','fas fa-file-word','fas fa-file-excel','fas fa-file-powerpoint','fas fa-file-image','fas fa-file-video','fas fa-file-audio','fas fa-file-code','fas fa-file-archive','fas fa-folder','fas fa-folder-open','fas fa-copy','fas fa-clipboard','fas fa-clipboard-list','fas fa-paste','fas fa-trash','fas fa-trash-alt','fas fa-edit','fas fa-pen','fas fa-pencil-alt','fas fa-print','fas fa-save']},
+    {name: '图表/商务', icons: ['fas fa-chart-line','fas fa-chart-bar','fas fa-chart-pie','fas fa-chart-area','fas fa-calculator','fas fa-percentage','fas fa-coins','fas fa-money-bill','fas fa-money-bill-wave','fas fa-wallet','fas fa-credit-card','fas fa-shopping-cart','fas fa-shopping-bag','fas fa-store','fas fa-tags','fas fa-tag','fas fa-briefcase','fas fa-building','fas fa-university','fas fa-graduation-cap']},
+    {name: '界面', icons: ['fas fa-check','fas fa-check-circle','fas fa-times','fas fa-times-circle','fas fa-plus','fas fa-plus-circle','fas fa-minus','fas fa-minus-circle','fas fa-info-circle','fas fa-question-circle','fas fa-exclamation-circle','fas fa-exclamation-triangle','fas fa-ban','fas fa-spinner','fas fa-sync','fas fa-redo','fas fa-undo','fas fa-clock','fas fa-calendar-alt','fas fa-calendar-check','fas fa-hourglass-half','fas fa-history','fas fa-mobile-alt','fas fa-tablet-alt','fas fa-laptop','fas fa-desktop','fas fa-tv']},
+    {name: '符号', icons: ['fas fa-sun','fas fa-moon','fas fa-snowflake','fas fa-umbrella','fas fa-leaf','fas fa-seedling','fas fa-tree','fas fa-paw','fas fa-fish','fas fa-cat','fas fa-dog','fas fa-dove','fas fa-spider','fas fa-bug','fas fa-feather','fas fa-dragon','fas fa-ghost','fas fa-skull','fas fa-meteor','fas fa-space-shuttle','fas fa-user-astronaut','fas fa-atom','fas fa-flask','fas fa-dna','fas fa-heartbeat','fas fa-heart-broken','fas fa-smile','fas fa-frown','fas fa-meh']},
+    {name: '品牌', icons: ['fab fa-github','fab fa-gitlab','fab fa-bitbucket','fab fa-twitter','fab fa-facebook','fab fa-youtube','fab fa-instagram','fab fa-linkedin','fab fa-reddit','fab fa-telegram','fab fa-whatsapp','fab fa-weixin','fab fa-qq','fab fa-weibo','fab fa-zhihu','fab fa-discord','fab fa-twitch','fab fa-steam','fab fa-apple','fab fa-android','fab fa-windows','fab fa-google','fab fa-chrome','fab fa-firefox','fab fa-js','fab fa-php','fab fa-python','fab fa-java','fab fa-html5','fab fa-css3-alt','fab fa-node-js','fab fa-vuejs','fab fa-react','fab fa-angular','fab fa-wordpress','fab fa-figma','fab fa-docker','fab fa-npm','fab fa-slack','fab fa-skype','fab fa-spotify','fab fa-snapchat','fab fa-tiktok','fab fa-alipay','fab fa-paypal','fab fa-amazon','fab fa-microsoft','fab fa-linux','fab fa-ubuntu','fab fa-digital-ocean','fab fa-codepen','fab fa-stack-overflow','fab fa-medium','fab fa-tumblr','fab fa-pinterest','fab fa-vimeo','fab fa-soundcloud','fab fa-dropbox','fab fa-bitcoin','fab fa-ethereum','fab fa-btc','fab fa-eth','fab fa-vk']}
+];
+
+var xwIconTarget = '';
+
+function showIconPicker(targetId) {
+    xwIconTarget = targetId;
+    $('#iconPickerSearch').val('');
+    renderIconPicker('');
+    $('#iconPickerModal').modal('show');
+    setTimeout(function(){ $('#iconPickerSearch').focus(); }, 300);
+}
+
+function renderIconPicker(keyword) {
+    keyword = (keyword || '').toLowerCase();
+    var html = '';
+    XW_ICON_GROUPS.forEach(function(g) {
+        var icons = g.icons.filter(function(ic) {
+            return !keyword || ic.toLowerCase().indexOf(keyword) !== -1;
+        });
+        if(!icons.length) return;
+        html += '<div class="mb-2"><div class="text-muted small mb-1">' + g.name + '</div><div class="d-flex flex-wrap">';
+        icons.forEach(function(ic) {
+            html += '<a href="javascript:;" class="xw-icon-item" data-icon="' + ic + '" title="' + ic + '" style="width:44px;height:44px;display:flex;align-items:center;justify-content:center;border:1px solid #eee;border-radius:4px;margin:2px;font-size:18px;color:#333;">'
+                 + '<i class="' + ic + '"></i></a>';
+        });
+        html += '</div></div>';
+    });
+    if(!html) html = '<div class="text-center text-muted py-4">没有匹配的图标</div>';
+    $('#iconPickerBody').html(html);
+}
+
+$(document).on('click', '.xw-icon-item', function() {
+    var icon = $(this).data('icon');
+    $('#' + xwIconTarget).val(icon);
+    $('#iconPickerModal').modal('hide');
+});
+
+$(document).on('input', '#iconPickerSearch', function() {
+    renderIconPicker($(this).val());
+});
 
 function postAction(action, data, btn) {
     data = data || {};
