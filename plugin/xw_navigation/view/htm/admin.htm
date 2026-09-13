@@ -253,12 +253,12 @@ function postAction(action, data, btn) {
     data = data || {};
     data.xw_nav_action = action;
     $(btn || '#body').loading();
-    $.xpost(baseUrl, data, function(r) {
+    $.xpost(baseUrl, data, function(code, message) {
         $(btn || '#body').loading('close');
-        if(r.code == 0 || r.code == '0') {
-            $.alert(r.message || '操作成功', function(){ location.reload(); });
+        if(code == 0) {
+            $.alert(message || '操作成功', function(){ location.reload(); });
         } else {
-            $.alert(r.message || '操作失败');
+            $.alert(message || '操作失败');
         }
     });
 }
