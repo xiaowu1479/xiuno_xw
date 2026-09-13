@@ -275,8 +275,24 @@
     </div>
 </div>
 
+<?php include _include(ADMIN_PATH.'view/htm/footer.inc.htm');?>
+
 <script>
 var baseUrl = window.location.href;
+
+// 弹窗叠加时提升 z-index，确保图标选择器显示在分类/链接弹窗之上且可点击
+$(document).on('show.bs.modal', '.modal', function() {
+    var zIndex = 1040 + (10 * $('.modal:visible').length);
+    $(this).css('z-index', zIndex);
+    setTimeout(function() {
+        $('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack');
+    }, 0);
+});
+$(document).on('hidden.bs.modal', '.modal', function() {
+    if($('.modal:visible').length) {
+        $('body').addClass('modal-open');
+    }
+});
 
 var XW_ICON_GROUPS = [
     {name: '常用', icons: ['fas fa-home','fas fa-link','fas fa-globe','fas fa-star','fas fa-heart','fas fa-bookmark','fas fa-flag','fas fa-map-marker-alt','fas fa-compass','fas fa-search','fas fa-cog','fas fa-tools','fas fa-bell','fas fa-envelope','fas fa-comment','fas fa-comments','fas fa-user','fas fa-users','fas fa-fire','fas fa-bolt','fas fa-gift','fas fa-crown','fas fa-award','fas fa-trophy','fas fa-gem','fas fa-lightbulb','fas fa-magic','fas fa-rocket','fas fa-paper-plane','fas fa-thumbs-up','fas fa-thumbs-down','fas fa-share-alt','fas fa-download','fas fa-upload','fas fa-cloud','fas fa-lock','fas fa-unlock','fas fa-key','fas fa-shield-alt','fas fa-eye','fas fa-camera','fas fa-image','fas fa-video','fas fa-music','fas fa-headphones','fas fa-film','fas fa-gamepad','fas fa-puzzle-piece','fas fa-robot','fas fa-brain']},
@@ -438,5 +454,3 @@ function deleteItem(action, id, name) {
     });
 }
 </script>
-
-<?php include _include(ADMIN_PATH.'view/htm/footer.inc.htm');?>
