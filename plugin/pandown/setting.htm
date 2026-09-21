@@ -17,6 +17,15 @@
 							</td>
 						</tr>
 						<tr>
+							<th>PC端弹窗样式</th>
+							<td>
+								<label class="checkbox-inline">
+									<input type="checkbox" name="pc_full" value="1" <?php echo !empty($setting['pc_full']) ? 'checked' : '';?>>
+									启用（PC端弹窗与手机端一致，显示完整链接、打开与复制按钮）
+								</label>
+							</td>
+						</tr>
+						<tr>
 							<th>二维码缓存</th>
 							<td>
 								<button type="button" class="btn btn-danger" id="btn_clear">立即清除所有二维码缓存</button>

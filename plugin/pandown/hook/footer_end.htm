@@ -1,6 +1,9 @@
 <?php if(!empty($GLOBALS['has_pandown'])): 
 // 移动端检测
 $is_mobile = preg_match('/(android|iphone|ipad|ipod|mobile|blackberry|iemobile|opera mini|windows phone)/i', $_SERVER['HTTP_USER_AGENT'] ?? '');
+// PC端是否也显示完整弹窗（链接、打开、复制按钮）
+$pandown_setting = setting_get('pandown_setting');
+$full_display = $is_mobile || !empty($pandown_setting['pc_full']);
 ?>
 <!-- 网盘链接二维码弹窗 -->
 <div class="modal fade" id="pandown_qr_modal" tabindex="-1" role="dialog" aria-hidden="true">
@@ -14,7 +17,7 @@ $is_mobile = preg_match('/(android|iphone|ipad|ipod|mobile|blackberry|iemobile|o
 			</div>
 			<div class="modal-body text-center">
 				<img id="pandown_qr_image" src="" alt="二维码" style="max-width:280px;width:100%;height:auto;" />
-				<?php if($is_mobile): ?>
+				<?php if($full_display): ?>
 				<div id="pandown_qr_url_display" class="mt-2 p-2 bg-light rounded text-break small text-muted"></div>
 				<p class="mt-3">
 					<a id="pandown_qr_link" href="#" target="_blank" rel="noopener" class="btn btn-primary">打开链接</a>
@@ -35,7 +38,7 @@ $(document).on('click', '.pandown-btn', function() {
 	if(!url) return;
 	$('#pandown_qr_image').attr('src', qr);
 	$('#pandown_qr_link').attr('href', url);
-	<?php if($is_mobile): ?>
+	<?php if($full_display): ?>
 	$('#pandown_qr_url_display').text(url);
 	<?php endif; ?>
 	// 兼容 Bootstrap 4（当前系统使用）与 Bootstrap 5 两种弹窗 API
@@ -54,7 +57,7 @@ $(document).on('click', '.pandown-btn', function() {
 	return false;
 });
 
-<?php if($is_mobile): ?>
+<?php if($full_display): ?>
 function pandownCopyLink() {
 	var url = $('#pandown_qr_link').attr('href');
 	if(navigator.clipboard) {

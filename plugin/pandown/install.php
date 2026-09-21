@@ -10,5 +10,6 @@ setting_set('pandown_setting', array(
     'qr_size' => 4,
     'error_level' => 'L',
     'clear_qrcode' => 0,
+    'pc_full' => 0,
 ));
 ?>

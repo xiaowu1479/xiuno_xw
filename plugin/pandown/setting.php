@@ -9,7 +9,9 @@ if ($method == 'GET') {
     $op = param('op');
     if ($op == 'save') {
         $setting = setting_get('pandown_setting');
+        if (!is_array($setting)) $setting = array();
         $setting['clear_qrcode'] = param('clear_qrcode', 0);
+        $setting['pc_full'] = param('pc_full', 0);
         setting_set('pandown_setting', $setting);
         message(0, '设置保存成功');
     } elseif ($op == 'clear') {
