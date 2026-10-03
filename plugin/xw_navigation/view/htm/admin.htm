@@ -350,7 +350,15 @@ function postAction(action, data, btn) {
     $.xpost(baseUrl, data, function(code, message) {
         $(btn || '#body').loading('close');
         if(code == 0) {
-            $.alert(message || '操作成功', function(){ location.reload(); });
+            // 先关闭已打开的弹窗，避免刷新时残留遮罩
+            $('.modal').modal('hide');
+            $('.modal-backdrop').remove();
+            $('body').removeClass('modal-open');
+            // 提示弹窗关闭（点击「关闭」或 ESC）后再刷新页面
+            var jmodal = $.alert(message || '操作成功');
+            jmodal.on('hidden.bs.modal', function() {
+                location.reload();
+            });
         } else {
             $.alert(message || '操作失败');
         }
