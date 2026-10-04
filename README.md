@@ -15,6 +15,14 @@
 
 ## 更新日志
 
+### v1.7.16 (2026-10-04)
+
+- **修复导航页插件「图标留空自动获取站点图标」失效**：原实现引用 `https://www.google.com/s2/favicons` 取图标，一是国内网络访问不到 `google.com`，二是本机若装有 Steamcommunity302 / Watt Toolkit 之类的「Google 验证码」劫持工具，该域名会被指向本地服务并返回一段 `text/plain` 中文提示页（HTTP 200 但内容不是图片），浏览器 `<img>` 加载失败后前台退回地球图标、后台列表直接隐藏图标，看起来就是「抓取不到图标」。现改为**服务端抓取 + 本地缓存**：新增 `model/NavIcon.php`，按「站点自身 `/favicon.ico` → `favicon.im` → `favicon.zhusl.com` → `faviconextractor.com`」多源依次抓取，带图片魔数校验（挡掉 HTML 错误页）、500KB 上限与超时保护，成功后落盘 `upload/nav_icon/` 并写入相对路径，重复访问直接命中本地文件、不再依赖访客网络
+- **链接图标留空即自动抓取，可开关**：添加/编辑链接时图标留空会在保存时自动抓取；后台「基本设置」新增开关可关闭该行为（避免服务器无法联网时保存变慢，抓取超时上游为 3 秒连接 / 6 秒读取）。链接列表新增「抓图标」单条按钮与「批量抓取图标（N）」按钮，批量时每次最多处理 20 条防止请求超时并提示剩余条数，未抓到的显示「—」
+- **修复后台链接列表图标显示不出来**：图标存的是相对站点根的路径，而后台入口是 `/admin/index.php`，相对路径会被解析成 `/admin/upload/...`（该地址被重写到 PHP，返回 HTML 而非图片）从而触发 `onerror` 隐藏图片。现统一经 `NavIcon::url()` 转成相对站点根的绝对路径，前台、后台与子目录安装均正确；前台卡片不再引用 Google，改为按候选源链式回退，全部失败才显示地球图标
+- **`nav_link` / `nav_category` 的 `icon` 字段由 VARCHAR(50) 扩到 255**：旧长度装不下本地图标路径，也会截断用户手填的长图片地址；后台首次打开插件设置页时自动执行一次 `ALTER`（以 `tmp/xw_navigation_icon255` 标记避免重复执行）
+- 插件 `xw_navigation` 版本 1.0.0 → 1.0.1；`install.php` / `uninstall.php` 的清理缓存补全了 `model.inc.php` 等编译产物 —— 只删 `model.min.php` 不足以让插件新增的模型文件生效，需一并清掉记录模型清单的 `model.inc.php`
+
 ### v1.7.15 (2026-10-03)
 
 - **统一前台导航栏「聊天室 / 导航」入口的图标**：`xw_chatroom` 与 `xw_navigation` 的 `hook/header_nav_forum_end.htm` 原来用 emoji（💬 / 🔗）当图标，与前台导航栏其它入口的 `<i class="icon-*">`（FontAwesome）字体系列不是一套，夹在「首页 / 版块 / 搜索 / 登录」之间显得突兀。现分别改为 `<i class="icon-comments"></i>` 与 `<i class="icon-compass"></i>`（导航刻意避开 `icon-link`，以免与「自定义导航项」的图标重复），风格与整条导航栏统一

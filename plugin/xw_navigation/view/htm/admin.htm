@@ -42,6 +42,14 @@
                     </label>
                 </div>
             </div>
+            <div class="row mb-3">
+                <div class="col-md-12">
+                    <label class="form-check">
+                        <input type="checkbox" class="form-check-input" name="auto_favicon" value="1" <?php echo $s['auto_favicon'] ? 'checked' : ''; ?>>
+                        <span class="form-check-label">图标留空时自动抓取站点图标（保存链接时联网抓取，内置多个国内可达图标源，成功后会缓存到 upload/nav_icon/）</span>
+                    </label>
+                </div>
+            </div>
             <button type="submit" class="btn btn-primary" data-loading-text="保存中...">保存设置</button>
         </form>
     </div>
@@ -82,28 +90,37 @@
 </div>
 
 <!-- 链接管理 -->
+<?php
+$missing_icon = 0;
+if($links) foreach($links as $l) { if(!trim(strval($l['icon']))) $missing_icon++; }
+?>
 <div class="card mt-3">
-    <div class="card-header d-flex justify-content-between align-items-center">
+    <div class="card-header d-flex justify-content-between align-items-center flex-wrap">
         <h5 class="card-title mb-0">链接管理</h5>
-        <button type="button" class="btn btn-sm btn-primary" onclick="showLinkModal()"><i class="icon-plus"></i> 添加链接</button>
+        <div>
+            <?php if($missing_icon) { ?>
+            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="grabIcons(this)"><i class="icon-refresh"></i> 批量抓取图标（<?php echo $missing_icon; ?>）</button>
+            <?php } ?>
+            <button type="button" class="btn btn-sm btn-primary" onclick="showLinkModal()"><i class="icon-plus"></i> 添加链接</button>
+        </div>
     </div>
     <div class="card-body">
         <div class="table-responsive">
             <table class="table table-bordered table-sm mb-0" style="min-width: 800px;">
                 <thead class="thead-light">
-                    <tr><th width="50">ID</th><th width="60">图标</th><th>标题</th><th>URL</th><th>分类</th><th width="70">状态</th><th width="140">操作</th></tr>
+                    <tr><th width="50">ID</th><th width="60">图标</th><th>标题</th><th>URL</th><th>分类</th><th width="70">状态</th><th width="180">操作</th></tr>
                 </thead>
                 <tbody>
                     <?php if($links) foreach($links as $link) { ?>
                     <tr>
                         <td><?php echo $link['id']; ?></td>
                         <td>
-                            <?php if(strpos($link['icon'], 'fa') === 0) { ?>
+                            <?php if(strpos(strval($link['icon']), 'fa') === 0) { ?>
                             <i class="<?php echo htmlspecialchars($link['icon']); ?>" style="<?php echo $link['color'] ? 'color:'.$link['color'] : ''; ?>"></i>
                             <?php } elseif($link['icon']) { ?>
-                            <img src="<?php echo htmlspecialchars($link['icon']); ?>" width="16" height="16" style="vertical-align:middle" onerror="this.style.display='none'">
-                            <?php } elseif($link['url']) { ?>
-                            <img src="https://www.google.com/s2/favicons?domain=<?php echo urlencode(parse_url($link['url'], PHP_URL_HOST)); ?>&sz=16" width="16" height="16" style="vertical-align:middle" onerror="this.style.display='none'">
+                            <img src="<?php echo htmlspecialchars(class_exists('NavIcon', false) ? NavIcon::url($link['icon']) : $link['icon']); ?>" width="16" height="16" style="vertical-align:middle" onerror="this.style.display='none'">
+                            <?php } else { ?>
+                            <span class="text-muted" title="未获取到图标，可点右侧「抓图标」">—</span>
                             <?php } ?>
                         </td>
                         <td><?php echo htmlspecialchars($link['title']); ?></td>
@@ -112,6 +129,7 @@
                         <td><?php echo $link['status'] ? '<span class="text-primary">启用</span>' : '<span class="text-muted">禁用</span>'; ?></td>
                         <td>
                             <button type="button" class="btn btn-sm btn-outline-primary" onclick="editLink(<?php echo htmlspecialchars(json_encode($link)); ?>)">编辑</button>
+                            <button type="button" class="btn btn-sm btn-outline-info" onclick="grabIcon(<?php echo $link['id']; ?>, this)">抓图标</button>
                             <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteItem('delete_link', <?php echo $link['id']; ?>, '链接')">删除</button>
                         </td>
                     </tr>
@@ -214,7 +232,7 @@
                                     <button type="button" class="btn btn-outline-secondary" onclick="showIconPicker('link_icon')">选择图标</button>
                                 </div>
                             </div>
-                            <small class="form-text text-muted">留空则根据URL自动获取网站图标，也可填图片链接或 Font Awesome class</small>
+                            <small class="form-text text-muted">留空则在保存时自动抓取网站图标（成功后缓存到 upload/nav_icon/），也可填图片链接或 Font Awesome class</small>
                         </div>
                     </div>
                     <div class="col-md-4">
@@ -363,6 +381,17 @@ function postAction(action, data, btn) {
             $.alert(message || '操作失败');
         }
     });
+}
+
+// 抓取单个链接的站点图标
+function grabIcon(id, btn) {
+    postAction('grab_icon', { id: id }, btn);
+}
+
+// 批量抓取图标为空的链接（每次 20 条，剩余数量会提示）
+function grabIcons(btn) {
+    if(!confirm('将联网抓取图标为空的链接，每次处理最多 20 条，可能耗时数秒，确定继续？')) return;
+    postAction('grab_icons', { limit: 20 }, btn);
 }
 
 // 设置

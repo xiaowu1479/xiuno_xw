@@ -20,6 +20,7 @@ if($method === 'POST' && !empty($_POST)) {
             'show_search' => param('show_search', 0) ? 1 : 0,
             'show_stats' => param('show_stats', 0) ? 1 : 0,
             'show_sidebar' => param('show_sidebar', 0) ? 1 : 0,
+            'auto_favicon' => param('auto_favicon', 0) ? 1 : 0,
         );
         NavigationService::saveSettings($s);
         message(0, '设置已保存');
@@ -94,6 +95,29 @@ if($method === 'POST' && !empty($_POST)) {
         $r['ok'] OR message(-1, $r['message']);
         message(0, '链接已删除');
     }
+    
+    // 抓取单条链接的站点图标
+    if($a === 'grab_icon') {
+        $r = NavigationService::grabIcon(param('id', 0));
+        $r['ok'] OR message(-1, $r['message']);
+        message(0, '图标已获取');
+    }
+    
+    // 批量抓取图标为空的链接
+    if($a === 'grab_icons') {
+        $r = NavigationService::grabIcons(param('limit', 20));
+        $msg = '本次成功 '.$r['done'].' 条，失败 '.$r['fail'].' 条';
+        if($r['rest'] > 0) $msg .= '；还有 '.$r['rest'].' 条待抓取，请再次点击';
+        message(0, $msg);
+    }
+}
+
+// 一次性结构升级：icon 字段扩容到 255
+// （旧版 50 字符装不下本地图标路径，也会截断用户手填的长图片地址）
+if(!is_file($conf['tmp_path'].'xw_navigation_icon255')) {
+    db_exec("ALTER TABLE {$db->tablepre}nav_link MODIFY icon VARCHAR(255) DEFAULT ''");
+    db_exec("ALTER TABLE {$db->tablepre}nav_category MODIFY icon VARCHAR(255) DEFAULT ''");
+    @file_put_contents($conf['tmp_path'].'xw_navigation_icon255', '1');
 }
 
 $s = NavigationService::settings();

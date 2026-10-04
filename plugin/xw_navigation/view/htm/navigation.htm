@@ -50,13 +50,31 @@
                     <?php foreach($links as $link) { ?>
                     <a href="#" class="xw-link-card xw-nav-link" data-page="navigation" data-click="<?php echo $link['id']; ?>" target="_blank">
                         <div class="xw-link-icon" <?php if($link['color']) echo 'style="background:'.$link['color'].'"'; ?>>
-                            <?php if(strpos($link['icon'], 'fa') === 0) { ?>
-                            <i class="<?php echo htmlspecialchars($link['icon']); ?>"></i>
-                            <?php } elseif($link['icon']) { ?>
-                            <img src="<?php echo htmlspecialchars($link['icon']); ?>" alt="<?php echo htmlspecialchars($link['title']); ?>" style="width:28px;height:28px;object-fit:contain">
-                            <?php } else { ?>
-                            <img src="https://www.google.com/s2/favicons?domain=<?php echo urlencode(parse_url($link['url'], PHP_URL_HOST)); ?>&sz=32" alt="<?php echo htmlspecialchars($link['title']); ?>" style="width:28px;height:28px;object-fit:contain" onerror="this.parentElement.innerHTML='<i class=\'fas fa-globe\'></i>'">
-                            <?php } ?>
+                            <?php
+                            // 图标为图片时，按「本地/自定义 → 多个可达图标源」依次回退，全部失败才显示地球图标
+                            // 注意：不再使用 google.com/s2/favicons（国内不可达，被 hosts 劫持还会返回纯文本错误页）
+                            $icon = trim(strval($link['icon']));
+                            if(strpos($icon, 'fa') === 0) {
+                                echo '<i class="'.htmlspecialchars($icon).'"></i>';
+                            } else {
+                                $host = class_exists('NavIcon', false)
+                                    ? NavIcon::host($link['url'])
+                                    : strtolower(strval(parse_url($link['url'], PHP_URL_HOST)));
+                                $chain = array();
+                                // 本地缓存路径要转成站点根路径，避免相对路径在子目录/后台页面下解析错误
+                                if($icon !== '') $chain[] = class_exists('NavIcon', false) ? NavIcon::url($icon) : $icon;
+                                if($host !== '') {
+                                    $chain[] = 'https://favicon.im/'.$host;
+                                    $chain[] = 'https://'.$host.'/favicon.ico';
+                                    $chain[] = 'https://favicon.zhusl.com/ico?url='.urlencode($host);
+                                }
+                                if($chain) {
+                                    echo '<img class="xw-favicon" src="'.htmlspecialchars($chain[0]).'" data-srcs="'.htmlspecialchars(implode('|', $chain)).'" data-idx="0" alt="'.htmlspecialchars($link['title']).'" style="width:28px;height:28px;object-fit:contain" onerror="xwIconNext(this)">';
+                                } else {
+                                    echo '<i class="fas fa-globe"></i>';
+                                }
+                            }
+                            ?>
                         </div>
                         <h4><?php echo $link['title']; ?></h4>
                         <p><?php echo $link['description']; ?></p>
@@ -72,6 +90,17 @@
     
     <footer class="xw-footer"><p>&copy; <?php echo date('Y'); ?> <?php echo $conf['sitename']; ?></p></footer>
     <script>
+    // 图标加载失败时按 data-srcs 里的候选源依次重试，全部失败才换成地球图标
+    function xwIconNext(img) {
+        var list = (img.getAttribute('data-srcs') || '').split('|');
+        var i = parseInt(img.getAttribute('data-idx') || '0', 10) + 1;
+        if (i < list.length && list[i]) {
+            img.setAttribute('data-idx', i);
+            img.src = list[i];
+        } else {
+            img.parentNode.innerHTML = '<i class="fas fa-globe"></i>';
+        }
+    }
     (function() {
         var path = location.pathname;
         var base = path.replace(/index\.php.*$/, '').replace(/\/$/, '/');

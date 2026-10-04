@@ -6,7 +6,7 @@ $table_category = $db->tablepre . 'nav_category';
 $sql_category = "CREATE TABLE IF NOT EXISTS $table_category (
     id INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
     title VARCHAR(100) NOT NULL DEFAULT '',
-    icon VARCHAR(50) DEFAULT '',
+    icon VARCHAR(255) DEFAULT '',
     sort_order INT(10) DEFAULT 0,
     status TINYINT(1) DEFAULT 1,
     created INT(10) UNSIGNED DEFAULT 0,
@@ -22,7 +22,7 @@ $sql_link = "CREATE TABLE IF NOT EXISTS $table_link (
     category_id INT(10) UNSIGNED NOT NULL DEFAULT 0,
     title VARCHAR(100) NOT NULL DEFAULT '',
     url VARCHAR(500) NOT NULL DEFAULT '',
-    icon VARCHAR(50) DEFAULT '',
+    icon VARCHAR(255) DEFAULT '',
     description VARCHAR(500) DEFAULT '',
     color VARCHAR(20) DEFAULT '',
     target_blank TINYINT(1) DEFAULT 1,
@@ -49,5 +49,12 @@ db_insert('nav_link', array('category_id' => 2, 'title' => 'VS Code', 'url' => '
 db_insert('nav_link', array('category_id' => 3, 'title' => 'Figma', 'url' => 'https://www.figma.com', 'icon' => 'fab fa-figma', 'description' => '设计工具', 'sort_order' => 1, 'status' => 1, 'clicks' => 0, 'created' => $now));
 db_insert('nav_link', array('category_id' => 4, 'title' => 'ChatGPT', 'url' => 'https://chat.openai.com', 'icon' => 'fas fa-brain', 'description' => 'AI助手', 'sort_order' => 1, 'status' => 1, 'clicks' => 0, 'created' => $now));
 
-// 清除缓存
+// 清除缓存（model.inc.php 里含插件模型列表，新增模型文件必须一起清掉才生效）
+@xn_unlink($conf['tmp_path'] . 'model.inc.php');
 @xn_unlink($conf['tmp_path'] . 'model.min.php');
+@xn_unlink($conf['tmp_path'] . 'xw_navigation_icon255');
+@xn_unlink($conf['tmp_path'] . 'plugin_xw_navigation_model_NavIcon.php');
+@xn_unlink($conf['tmp_path'] . 'plugin_xw_navigation_model_NavigationService.php');
+@xn_unlink($conf['tmp_path'] . 'plugin_xw_navigation_setting.php');
+@xn_unlink($conf['tmp_path'] . 'plugin_xw_navigation_view_htm_admin.htm');
+@xn_unlink($conf['tmp_path'] . 'plugin_xw_navigation_view_htm_navigation.htm');
