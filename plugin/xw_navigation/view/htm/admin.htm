@@ -43,6 +43,19 @@
                 </div>
             </div>
             <div class="row mb-3">
+                <div class="col-md-4">
+                    <label class="form-check">
+                        <input type="checkbox" class="form-check-input" name="show_hot" value="1" <?php echo $s['show_hot'] ? 'checked' : ''; ?>>
+                        <span class="form-check-label">显示「最常用」热门条</span>
+                    </label>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">热门条数量</label>
+                    <input type="number" class="form-control" name="hot_limit" min="1" max="20" value="<?php echo intval($s['hot_limit']); ?>">
+                    <small class="form-text text-muted">按点击量倒序取前 N 条（1-20），无点击时该条自动隐藏</small>
+                </div>
+            </div>
+            <div class="row mb-3">
                 <div class="col-md-12">
                     <label class="form-check">
                         <input type="checkbox" class="form-check-input" name="auto_favicon" value="1" <?php echo $s['auto_favicon'] ? 'checked' : ''; ?>>

@@ -1,42 +1,159 @@
-*{margin:0;padding:0;box-sizing:border-box}
-body{background:#f8fafc;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;color:#1e293b;font-size:15px;line-height:1.6}
-.xw-container{max-width:1200px;margin:0 auto;padding:0 20px}
-.xw-nav{background:#fff;border-bottom:1px solid #e2e8f0;box-shadow:0 1px 4px rgba(0,0,0,.04);padding:12px 0;position:sticky;top:0;z-index:100}
-.xw-nav .xw-container{display:flex;align-items:center;gap:20px}
-.xw-brand{font-size:18px;font-weight:700;color:#3b82f6;text-decoration:none;display:flex;align-items:center;gap:6px}
-.xw-active{color:#1e293b}
-.xw-hero{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;padding:50px 20px;text-align:center}
-.xw-hero h1{font-size:32px;font-weight:700;margin-bottom:10px}
-.xw-hero p{opacity:.9;margin-bottom:25px}
-.xw-search{max-width:500px;margin:0 auto;position:relative}
-.xw-search input{width:100%;padding:14px 20px 14px 50px;border:none;border-radius:50px;font-size:15px;box-shadow:0 4px 20px rgba(0,0,0,.1)}
-.xw-search input:focus{outline:none;box-shadow:0 4px 30px rgba(0,0,0,.15)}
-.xw-search i{position:absolute;left:20px;top:50%;transform:translateY(-50%);color:#94a3b8}
-.xw-stats{display:flex;gap:30px;padding:20px;background:#fff;border-radius:12px;border:1px solid #e2e8f0;margin:30px 0;justify-content:center}
-.xw-stat{text-align:center}
-.xw-num{font-size:24px;font-weight:700;color:#3b82f6}
-.xw-section-title{font-size:18px;font-weight:600;margin-bottom:20px;display:flex;align-items:center;gap:8px}
-.xw-section-title i{color:#3b82f6}
-.xw-layout{display:grid;grid-template-columns:220px 1fr;gap:24px;padding-bottom:40px}
-.xw-sidebar{background:#fff;border-radius:12px;border:1px solid #e2e8f0;padding:16px;position:sticky;top:80px;height:fit-content}
-.xw-sidebar-title{font-size:13px;font-weight:600;color:#94a3b8;margin-bottom:12px;padding:0 10px}
-.xw-cat-list{list-style:none}
-.xw-cat-list li{margin-bottom:4px}
-.xw-cat-list a{display:block;padding:10px 12px;color:#475569;text-decoration:none;border-radius:6px;transition:all .2s;font-size:14px}
-.xw-cat-list a:hover{background:#f1f5f9;color:#1e293b}
-.xw-cat-list a.active{background:#3b82f6;color:#fff}
-.xw-cat-list a i{width:18px;text-align:center;margin-right:4px}
-.xw-links{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px}
-.xw-link-card{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:24px 20px;text-align:center;text-decoration:none;color:inherit;transition:all .3s;position:relative;overflow:hidden}
-.xw-link-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(135deg,#60a5fa,#3b82f6);transform:scaleX(0);transition:transform .3s}
-.xw-link-card:hover::before{transform:scaleX(1)}
-.xw-link-card:hover{transform:translateY(-4px);box-shadow:0 4px 20px rgba(0,0,0,.08);border-color:#3b82f6}
-.xw-link-icon{width:52px;height:52px;background:linear-gradient(135deg,#60a5fa,#3b82f6);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;color:#fff;font-size:22px}
-.xw-link-icon img{width:28px;height:28px;object-fit:contain;border-radius:4px}
-.xw-link-card h4{font-size:15px;font-weight:600;margin-bottom:6px}
-.xw-link-card p{font-size:13px;color:#94a3b8}
-.xw-empty{text-align:center;padding:60px 20px;background:#fff;border-radius:12px;border:1px solid #e2e8f0;color:#94a3b8}
-.xw-footer{text-align:center;padding:30px 20px;color:#94a3b8;font-size:13px;border-top:1px solid #e2e8f0;margin-top:40px}
-@media(max-width:900px){.xw-layout{grid-template-columns:1fr}.xw-sidebar{position:static}.xw-cat-list{display:flex;flex-wrap:wrap;gap:6px}.xw-cat-list li{margin-bottom:0}}
-@media(max-width:600px){.xw-links{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:400px){.xw-links{grid-template-columns:1fr}}
+/*
+ * XW导航页 —— 前台样式
+ *
+ * 重要：本页现在复用论坛的 header/footer，所以旧版那套「全局通配符归零 reset」
+ *   加 body 覆写会污染整个论坛（把 Bootstrap 的间距、字体全冲掉），已全部移除；
+ *   所有规则一律限定在 #xw_navpage 作用域内。
+ *
+ * 配色统一走主题 CSS 变量（zaesky-theme-light 的 :root），
+ * 第二个参数是主题未启用时的回退色，保证两种情况都不跑版。
+ */
+
+#xw_navpage { color: var(--gray-800, #1e293b); }
+
+/* ---------- 统计条 ---------- */
+#xw_navpage .xw-stats { display: flex; flex-wrap: wrap; gap: 12px 36px; justify-content: center; }
+#xw_navpage .xw-stat { min-width: 80px; text-align: center; }
+#xw_navpage .xw-num { font-size: 22px; font-weight: 700; line-height: 1.2; color: var(--primary, #3b82f6); }
+#xw_navpage .xw-label { margin-top: 2px; font-size: 13px; color: var(--gray-500, #64748b); }
+
+/* ---------- 搜索框（前端实时过滤，无需提交） ---------- */
+#xw_navpage .xw-search { position: relative; max-width: 520px; margin: 0 auto 14px; }
+#xw_navpage .xw-search input {
+	width: 100%;
+	padding: 10px 40px 10px 38px;
+	font-size: 14px;
+	color: var(--gray-800, #1e293b);
+	background: var(--gray-50, #f8fafc);
+	border: 1px solid var(--gray-200, #e2e8f0);
+	border-radius: var(--border-radius-6, .375rem);
+	transition: border-color .15s, box-shadow .15s, background-color .15s;
+}
+#xw_navpage .xw-search input::placeholder { color: var(--gray-400, #94a3b8); }
+#xw_navpage .xw-search input:focus {
+	outline: none;
+	background: #fff;
+	border-color: var(--primary, #3b82f6);
+	box-shadow: 0 0 0 3px rgba(59, 130, 246, .12);
+}
+#xw_navpage .xw-search > i {
+	position: absolute; left: 13px; top: 50%;
+	transform: translateY(-50%);
+	font-size: 14px;
+	color: var(--gray-400, #94a3b8);
+	pointer-events: none;
+}
+
+/* ---------- 「最常用」热门条 ---------- */
+#xw_navpage .xw-hot-list { display: flex; flex-wrap: wrap; gap: 8px; }
+#xw_navpage .xw-hot-item {
+	display: flex; align-items: center; gap: 8px;
+	padding: 6px 10px;
+	background: var(--gray-50, #f8fafc);
+	border: 1px solid var(--gray-200, #e2e8f0);
+	border-radius: var(--border-radius-6, .375rem);
+	color: var(--gray-600, #475569);
+	text-decoration: none;
+	font-size: 13px;
+	transition: border-color .15s, background-color .15s, color .15s;
+}
+#xw_navpage .xw-hot-item:hover {
+	background: #fff;
+	border-color: var(--primary, #3b82f6);
+	color: var(--gray-800, #1e293b);
+	text-decoration: none;
+}
+#xw_navpage .xw-hot-icon {
+	display: flex; align-items: center; justify-content: center;
+	flex: 0 0 18px; width: 18px; height: 18px;
+	font-size: 13px;
+	color: var(--primary, #3b82f6);
+}
+#xw_navpage .xw-hot-icon img { width: 16px; height: 16px; object-fit: contain; border-radius: 3px; }
+#xw_navpage .xw-hot-name { max-width: 11em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#xw_navpage .xw-hot-clicks {
+	padding: 1px 7px;
+	font-size: 11px;
+	color: var(--gray-400, #94a3b8);
+	background: #fff;
+	border-radius: 9px;
+}
+#xw_navpage .xw-hot-item:hover .xw-hot-clicks { color: var(--primary, #3b82f6); }
+
+/* ---------- 分类列表 ---------- */
+#xw_navpage .xw-cat-list { list-style: none; margin: 0; padding: 0; }
+#xw_navpage .xw-cat-list li { margin-bottom: 2px; }
+#xw_navpage .xw-cat-list a {
+	display: flex; align-items: center; gap: 8px;
+	padding: 8px 10px;
+	font-size: 14px;
+	color: var(--gray-600, #475569);
+	text-decoration: none;
+	border-radius: var(--border-radius-6, .375rem);
+	transition: background-color .15s, color .15s;
+}
+#xw_navpage .xw-cat-list a:hover { background: var(--gray-100, #f1f5f9); color: var(--gray-800, #1e293b); text-decoration: none; }
+#xw_navpage .xw-cat-list a.active { background: var(--primary, #3b82f6); color: #fff; }
+#xw_navpage .xw-cat-list a i { flex: 0 0 18px; width: 18px; font-size: 14px; text-align: center; }
+
+/* ---------- 链接卡片（方案B：降调 —— 小圆角、无阴影、悬停不上浮） ---------- */
+/* 注：容器卡片 .card 的圆角不用本文件管 —— 当前生效的是基础模板
+   view/css/bootstrap-bbs.min.css，其中 --xc-radius 就是 8px，
+   .card 直接用它，与这里的链接卡片（8px）本来就一致，加覆盖反而是多余代码。 */
+#xw_navpage .xw-links { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 12px; }
+#xw_navpage .xw-link-card {
+	display: block;
+	padding: 14px 12px;
+	text-align: center;
+	background: #fff;
+	border: 1px solid var(--gray-200, #e2e8f0);
+	border-radius: 8px;
+	color: inherit;
+	text-decoration: none;
+	transition: border-color .15s, background-color .15s;
+}
+/* 悬停只做很轻的描边变化，不再上浮、不再投影 */
+#xw_navpage .xw-link-card:hover {
+	border-color: var(--gray-300, #cbd5e1);
+	background: #fff;
+	color: inherit;
+	text-decoration: none;
+}
+/* 图标：浅灰底 + 彩色图标（原来是实心蓝底 + 白图标）。
+   链接自定义颜色现在通过内联 style 的 color 生效，作为图标色调 */
+#xw_navpage .xw-link-icon {
+	display: flex; align-items: center; justify-content: center;
+	width: 34px; height: 34px;
+	margin: 0 auto 8px;
+	overflow: hidden;
+	background: var(--gray-100, #f1f5f9);
+	color: var(--primary, #3b82f6);
+	border-radius: 8px;
+	font-size: 16px;
+}
+#xw_navpage .xw-link-icon img { width: 20px; height: 20px; object-fit: contain; border-radius: 4px; }
+#xw_navpage .xw-link-card h4 { margin: 0 0 4px; font-size: 13.5px; font-weight: 600; color: var(--gray-800, #1e293b); }
+#xw_navpage .xw-link-card p { margin: 0; font-size: 11.5px; line-height: 1.5; color: var(--gray-400, #94a3b8); }
+
+/* ---------- 空状态 ---------- */
+#xw_navpage .xw-empty {
+	padding: 56px 20px;
+	text-align: center;
+	color: var(--gray-400, #94a3b8);
+	background: #fff;
+	border: 1px dashed var(--gray-200, #e2e8f0);
+	border-radius: 8px;
+}
+
+/* ---------- 响应式 ---------- */
+@media (max-width: 991.98px) {
+	#xw_navpage .xw-cat-list { display: flex; flex-wrap: wrap; gap: 4px; }
+	#xw_navpage .xw-cat-list li { margin-bottom: 0; }
+	#xw_navpage .xw-cat-list a { padding: 6px 12px; }
+}
+@media (max-width: 600px) {
+	#xw_navpage .xw-links { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 380px) {
+	#xw_navpage .xw-links { grid-template-columns: 1fr; }
+}

@@ -1,122 +1,164 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo $s['page_title']; ?></title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="stylesheet" href="plugin/xw_navigation/static/navigation.css">
-</head>
-<body>
-    <nav class="xw-nav">
-        <div class="xw-container">
-            <a href="./" class="xw-brand"><i class="fas fa-home"></i> <?php echo $conf['sitename']; ?></a>
-            <a href="#" class="xw-brand xw-active xw-nav-link" data-page="navigation"><i class="fas fa-fire"></i> <?php echo $s['page_title']; ?></a>
-        </div>
-    </nav>
-    
-    <div class="xw-hero">
-        <h1><?php echo $s['page_title']; ?></h1>
-        <?php if($s['page_description']) { ?><p><?php echo $s['page_description']; ?></p><?php } ?>
-    </div>
-    
-    <div class="xw-container">
-        <?php if($s['show_stats']) { ?>
-        <div class="xw-stats">
-            <div class="xw-stat"><div class="xw-num"><?php echo $stats['total_links']; ?></div><div>收录网站</div></div>
-            <div class="xw-stat"><div class="xw-num"><?php echo $stats['total_categories']; ?></div><div>分类目录</div></div>
-            <div class="xw-stat"><div class="xw-num"><?php echo $stats['total_clicks']; ?></div><div>总访问量</div></div>
-        </div>
-        <?php } ?>
-        
-        <h2 class="xw-section-title"><i class="fas fa-th-large"></i> <?php echo $current_title; ?></h2>
-        
-        <div class="xw-layout">
-            <?php if($s['show_sidebar'] && $categories) { ?>
-            <aside class="xw-sidebar">
-                <div class="xw-sidebar-title">分类导航</div>
-                <ul class="xw-cat-list">
-                    <li><a href="#" class="xw-nav-link <?php echo !$category_id && !$keyword ? 'active' : ''; ?>" data-page="navigation"><i class="fas fa-th"></i> 全部</a></li>
-                    <?php foreach($categories as $cat) { ?>
-                    <li><a href="#" class="xw-nav-link <?php echo $category_id == $cat['id'] ? 'active' : ''; ?>" data-page="navigation" data-cat="<?php echo $cat['id']; ?>"><i class="<?php echo $cat['icon']; ?>"></i> <?php echo $cat['title']; ?></a></li>
-                    <?php } ?>
-                </ul>
-            </aside>
-            <?php } ?>
-            
-            <div class="xw-content">
-                <?php if($links) { ?>
-                <div class="xw-links">
-                    <?php foreach($links as $link) { ?>
-                    <a href="#" class="xw-link-card xw-nav-link" data-page="navigation" data-click="<?php echo $link['id']; ?>" target="_blank">
-                        <div class="xw-link-icon" <?php if($link['color']) echo 'style="background:'.$link['color'].'"'; ?>>
-                            <?php
-                            // 图标为图片时，按「本地/自定义 → 多个可达图标源」依次回退，全部失败才显示地球图标
-                            // 注意：不再使用 google.com/s2/favicons（国内不可达，被 hosts 劫持还会返回纯文本错误页）
-                            $icon = trim(strval($link['icon']));
-                            if(strpos($icon, 'fa') === 0) {
-                                echo '<i class="'.htmlspecialchars($icon).'"></i>';
-                            } else {
-                                $host = class_exists('NavIcon', false)
-                                    ? NavIcon::host($link['url'])
-                                    : strtolower(strval(parse_url($link['url'], PHP_URL_HOST)));
-                                $chain = array();
-                                // 本地缓存路径要转成站点根路径，避免相对路径在子目录/后台页面下解析错误
-                                if($icon !== '') $chain[] = class_exists('NavIcon', false) ? NavIcon::url($icon) : $icon;
-                                if($host !== '') {
-                                    $chain[] = 'https://favicon.im/'.$host;
-                                    $chain[] = 'https://'.$host.'/favicon.ico';
-                                    $chain[] = 'https://favicon.zhusl.com/ico?url='.urlencode($host);
-                                }
-                                if($chain) {
-                                    echo '<img class="xw-favicon" src="'.htmlspecialchars($chain[0]).'" data-srcs="'.htmlspecialchars(implode('|', $chain)).'" data-idx="0" alt="'.htmlspecialchars($link['title']).'" style="width:28px;height:28px;object-fit:contain" onerror="xwIconNext(this)">';
-                                } else {
-                                    echo '<i class="fas fa-globe"></i>';
-                                }
-                            }
-                            ?>
-                        </div>
-                        <h4><?php echo $link['title']; ?></h4>
-                        <p><?php echo $link['description']; ?></p>
-                    </a>
-                    <?php } ?>
-                </div>
-                <?php } else { ?>
-                <div class="xw-empty">暂无链接</div>
-                <?php } ?>
-            </div>
-        </div>
-    </div>
-    
-    <footer class="xw-footer"><p>&copy; <?php echo date('Y'); ?> <?php echo $conf['sitename']; ?></p></footer>
-    <script>
-    // 图标加载失败时按 data-srcs 里的候选源依次重试，全部失败才换成地球图标
-    function xwIconNext(img) {
-        var list = (img.getAttribute('data-srcs') || '').split('|');
-        var i = parseInt(img.getAttribute('data-idx') || '0', 10) + 1;
-        if (i < list.length && list[i]) {
-            img.setAttribute('data-idx', i);
-            img.src = list[i];
-        } else {
-            img.parentNode.innerHTML = '<i class="fas fa-globe"></i>';
-        }
-    }
-    (function() {
-        var path = location.pathname;
-        var base = path.replace(/index\.php.*$/, '').replace(/\/$/, '/');
-        var navUrl = base + 'index.php?navigation';
-        
-        var links = document.querySelectorAll('.xw-nav-link');
-        for (var i = 0; i < links.length; i++) {
-            var el = links[i];
-            var url = navUrl;
-            var cat = el.getAttribute('data-cat');
-            var click = el.getAttribute('data-click');
-            if (cat) url += '&category_id=' + cat;
-            if (click) url += '&click_id=' + click;
-            el.href = url;
-        }
-    })();
-    </script>
-</body>
-</html>
+<?php
+/*
+ * XW导航页 —— 前台模板
+ *
+ * 这里不再输出独立的 <!DOCTYPE html>/<head>/<body>，而是复用论坛的
+ * header.inc.htm + footer.inc.htm：站点导航条、用户菜单、底部、主题样式
+ * 全部由论坛提供，导航页才像"论坛里的一页"而不是一个外挂的独立站点。
+ *
+ * header.inc.htm / footer.inc.htm 都通过 _include() 引入，
+ * 会自动命中当前主题的 overwrite 版本（如未启用主题则用默认模板）。
+ */
+include _include(APP_PATH.'view/htm/header.inc.htm');
+?>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<link rel="stylesheet" href="plugin/xw_navigation/static/navigation.css<?php echo $static_version;?>">
+<script>
+// 图标加载失败时按 data-srcs 里的候选源依次重试，全部失败才换成通用图标。
+// 必须定义在卡片之前：<img onerror> 在加载失败时会立刻调用它。
+function xwIconNext(img) {
+	var list = (img.getAttribute('data-srcs') || '').split('|');
+	var i = parseInt(img.getAttribute('data-idx') || '0', 10) + 1;
+	if (i < list.length && list[i]) {
+		img.setAttribute('data-idx', i);
+		img.src = list[i];
+	} else {
+		img.parentNode.innerHTML = '<i class="fas fa-globe"></i>';
+	}
+}
+</script>
+
+<div id="xw_navpage">
+
+	<div class="card mb-3">
+		<div class="card-header d-flex align-items-center justify-content-between flex-wrap">
+			<h5 class="mb-0"><i class="icon-compass"></i> <?php echo htmlspecialchars($s['page_title']);?></h5>
+			<?php if($s['page_description']) { ?>
+			<small class="text-muted mt-1 mt-md-0"><?php echo htmlspecialchars($s['page_description']);?></small>
+			<?php } ?>
+		</div>
+		<?php if(($s['show_search'] && $links) || $s['show_stats']) { ?>
+		<div class="card-body py-3">
+			<?php if($s['show_search'] && $links) { ?>
+			<div class="xw-search">
+				<i class="icon-search"></i>
+				<input type="search" id="xw_search" autocomplete="off" placeholder="搜索网站、工具、资源...">
+			</div>
+			<?php } ?>
+			<?php if($s['show_stats']) { ?>
+			<div class="xw-stats">
+				<div class="xw-stat"><div class="xw-num"><?php echo $stats['total_links'];?></div><div class="xw-label">收录网站</div></div>
+				<div class="xw-stat"><div class="xw-num"><?php echo $stats['total_categories'];?></div><div class="xw-label">分类目录</div></div>
+				<div class="xw-stat"><div class="xw-num"><?php echo $stats['total_clicks'];?></div><div class="xw-label">总点击</div></div>
+			</div>
+			<?php } ?>
+		</div>
+		<?php } ?>
+	</div>
+
+	<?php if($hot_links) { ?>
+	<div class="card mb-3">
+		<div class="card-header"><i class="icon-fire"></i> 最常用</div>
+		<div class="card-body py-2">
+			<div class="xw-hot-list">
+				<?php foreach($hot_links as $hot) { ?>
+				<a class="xw-hot-item" href="<?php echo htmlspecialchars(url('navigation', array('click_id' => $hot['id'])));?>" target="<?php echo $hot['target_blank'] ? '_blank' : '_self';?>" rel="noopener noreferrer" title="<?php echo htmlspecialchars(trim($hot['title'].($hot['description'] ? ' - '.$hot['description'] : '')));?>">
+					<span class="xw-hot-icon"<?php if($hot['color']) echo ' style="color:'.htmlspecialchars($hot['color']).'"';?>><?php echo NavigationService::iconHtml($hot);?></span>
+					<span class="xw-hot-name"><?php echo htmlspecialchars($hot['title']);?></span>
+					<span class="xw-hot-clicks"><?php echo intval($hot['clicks']);?></span>
+				</a>
+				<?php } ?>
+			</div>
+		</div>
+	</div>
+	<?php } ?>
+
+	<div class="row">
+		<?php if($s['show_sidebar'] && $categories) { ?>
+		<div class="col-lg-3 mb-3 mb-lg-0">
+			<div class="card">
+				<div class="card-header"><i class="icon-list"></i> 分类导航</div>
+				<div class="card-body py-2">
+					<ul class="xw-cat-list">
+						<li><a href="<?php echo htmlspecialchars(url('navigation'));?>" class="<?php echo !$category_id ? 'active' : '';?>"><i class="icon-th"></i> 全部</a></li>
+						<?php foreach($categories as $cat) { ?>
+						<?php $cat_icon = trim(strval($cat['icon'])); ?>
+						<li><a href="<?php echo htmlspecialchars(url('navigation', array('category_id' => $cat['id'])));?>" class="<?php echo $category_id == $cat['id'] ? 'active' : '';?>"><i class="<?php echo htmlspecialchars($cat_icon !== '' ? $cat_icon : 'icon-link');?>"></i> <?php echo htmlspecialchars($cat['title']);?></a></li>
+						<?php } ?>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<?php } ?>
+
+		<div class="<?php echo ($s['show_sidebar'] && $categories) ? 'col-lg-9' : 'col-12';?>">
+			<div class="d-flex align-items-center justify-content-between mb-3">
+				<h5 class="mb-0"><i class="icon-th-large"></i> <?php echo htmlspecialchars($current_title);?></h5>
+				<small class="text-muted">共 <span id="xw_count"><?php echo count($links);?></span> 个</small>
+			</div>
+
+			<?php if($links) { ?>
+			<div class="xw-links">
+				<?php foreach($links as $link) { ?>
+				<a href="<?php echo htmlspecialchars(url('navigation', array('click_id' => $link['id'])));?>" class="xw-link-card" target="<?php echo $link['target_blank'] ? '_blank' : '_self';?>" rel="noopener noreferrer">
+					<div class="xw-link-icon"<?php if($link['color']) echo ' style="color:'.htmlspecialchars($link['color']).'"';?>>
+					<?php
+					// 图标 HTML 由 NavigationService::iconHtml() 统一生成，主列表与热门条共用同一套回退链
+					echo NavigationService::iconHtml($link);
+					?>
+					</div>
+					<h4><?php echo htmlspecialchars($link['title']);?></h4>
+					<?php if(trim(strval($link['description'])) !== '') { ?>
+					<p><?php echo htmlspecialchars($link['description']);?></p>
+					<?php } ?>
+				</a>
+				<?php } ?>
+			</div>
+			<div class="xw-empty" id="xw_search_empty" style="display:none">没有匹配的网站，换个关键词试试</div>
+			<?php } else { ?>
+			<div class="xw-empty">暂无链接</div>
+			<?php } ?>
+		</div>
+	</div>
+
+</div>
+<script>
+// 搜索：本页已一次性载入全部链接（getAllLinks 无分页），所以直接在前端实时过滤，
+// 不提交表单、不产生额外请求。放在内容末尾，此时所有卡片都已存在于 DOM 中。
+(function () {
+	var input = document.getElementById('xw_search');
+	if (!input) return;
+
+	var cards = document.querySelectorAll('#xw_navpage .xw-link-card');
+	var counter = document.getElementById('xw_count');
+	var emptyBox = document.getElementById('xw_search_empty');
+	var total = cards.length;
+
+	function apply() {
+		var q = input.value.trim().toLowerCase();
+		var hit = 0;
+		for (var i = 0; i < cards.length; i++) {
+			// textContent 已包含卡片里的标题与描述，直接匹配即可
+			var matched = q === '' || (cards[i].textContent || '').toLowerCase().indexOf(q) !== -1;
+			cards[i].style.display = matched ? '' : 'none';
+			if (matched) hit++;
+		}
+		if (counter) counter.textContent = q === '' ? total : hit;
+		if (emptyBox) emptyBox.style.display = (q !== '' && hit === 0) ? '' : 'none';
+	}
+
+	input.addEventListener('input', apply);
+	input.addEventListener('keydown', function (e) {
+		if (e.key === 'Escape') { input.value = ''; apply(); }
+	});
+	// 按 "/" 快速聚焦搜索框；正在输入框里打字时不干扰
+	document.addEventListener('keydown', function (e) {
+		var tag = (document.activeElement && document.activeElement.tagName) || '';
+		if (e.key === '/' && tag !== 'INPUT' && tag !== 'TEXTAREA') {
+			e.preventDefault();
+			input.focus();
+		}
+	});
+})();
+</script>
+<?php include _include(APP_PATH.'view/htm/footer.inc.htm');?>

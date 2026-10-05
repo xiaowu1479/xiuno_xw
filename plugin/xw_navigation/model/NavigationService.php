@@ -10,6 +10,8 @@ class NavigationService {
             'show_search' => 1,
             'show_stats' => 1,
             'show_sidebar' => 1,
+            'show_hot' => 1,
+            'hot_limit' => 8,
             'auto_favicon' => 1,
         );
     }
@@ -111,6 +113,44 @@ class NavigationService {
         $where = $onlyActive ? "WHERE l.status=1" : "";
         $sql = "SELECT l.*, c.title AS category_title FROM {$db->tablepre}nav_link l LEFT JOIN {$db->tablepre}nav_category c ON l.category_id=c.id $where ORDER BY l.sort_order ASC, l.id ASC";
         return db_sql_find($sql);
+    }
+    
+    // 热门链接：按点击量倒序，只取有点击量的，供前台「最常用」条使用
+    public static function getHotLinks($limit = 8) {
+        global $db;
+        $limit = max(1, min(20, intval($limit)));
+        $sql = "SELECT l.*, c.title AS category_title FROM {$db->tablepre}nav_link l LEFT JOIN {$db->tablepre}nav_category c ON l.category_id=c.id WHERE l.status=1 AND l.clicks>0 ORDER BY l.clicks DESC, l.id ASC LIMIT $limit";
+        $list = db_sql_find($sql);
+        return $list ? $list : array();
+    }
+    
+    // 生成链接图标的 HTML：FA 类名直接用；图片按「本地/自定义 → 多个可达图标源」链式回退。
+    // 前台主列表与热门条共用，避免两处重复同一套回退逻辑。
+    public static function iconHtml($link, $img_class = 'xw-favicon') {
+        $icon = trim(strval($link['icon']));
+        if(strpos($icon, 'fa') === 0) {
+            return '<i class="'.htmlspecialchars($icon).'"></i>';
+        }
+        $has_navicon = class_exists('NavIcon', FALSE);
+        $host = $has_navicon
+            ? NavIcon::host($link['url'])
+            : strtolower(strval(parse_url($link['url'], PHP_URL_HOST)));
+        $chain = array();
+        // 本地缓存路径要转成站点根路径，避免相对路径在子目录下解析错误
+        if($icon !== '') $chain[] = $has_navicon ? NavIcon::url($icon) : $icon;
+        if($host !== '') {
+            // 不使用 google.com/s2/favicons（国内不可达，被 hosts 劫持还会返回纯文本错误页）
+            $chain[] = 'https://favicon.im/'.$host;
+            $chain[] = 'https://'.$host.'/favicon.ico';
+            $chain[] = 'https://favicon.zhusl.com/ico?url='.urlencode($host);
+        }
+        if(!$chain) return '<i class="fas fa-globe"></i>';
+        return '<img class="'.htmlspecialchars($img_class).'"'
+            .' src="'.htmlspecialchars($chain[0]).'"'
+            .' data-srcs="'.htmlspecialchars(implode('|', $chain)).'"'
+            .' data-idx="0"'
+            .' alt="'.htmlspecialchars($link['title']).'"'
+            .' onerror="xwIconNext(this)">';
     }
     
     public static function addLink($arr) {
