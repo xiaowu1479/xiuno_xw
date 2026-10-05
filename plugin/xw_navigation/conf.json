@@ -1,7 +1,7 @@
 {
     "name": "XW导航页",
     "brief": "分类导航页插件，支持多分类链接管理，修罗主题风格",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "bbs_version": "4.0",
     "installed": 1,
     "enable": 1,

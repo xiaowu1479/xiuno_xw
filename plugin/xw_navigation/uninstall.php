@@ -17,3 +17,4 @@ setting_set('xw_navigation', NULL);
 @xn_unlink($conf['tmp_path'] . 'plugin_xw_navigation_setting.php');
 @xn_unlink($conf['tmp_path'] . 'plugin_xw_navigation_view_htm_admin.htm');
 @xn_unlink($conf['tmp_path'] . 'plugin_xw_navigation_view_htm_navigation.htm');
+@xn_unlink($conf['tmp_path'] . 'plugin_xw_navigation_route_index.php');

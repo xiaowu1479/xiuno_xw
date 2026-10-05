@@ -31,3 +31,45 @@ backup/*
 
 # 轻鸿主题（不再随发行版分发）
 plugin/zaesky_theme_light/
+
+# ============================================================
+# 本地调试产物（不属于发行版，务必保持 ignored）
+#
+# ⚠️ 这一段是「防 git add . 」的保险：下面这些文件当前是 untracked 但没被忽略，
+#    一旦有人执行 git add . / git add -A，就会被提交并推送到公开仓库。
+#    尤其 /curl*.txt 是 curl 的 cookie 罐，里面是有效的 bbs_sid 与 csrf_token，
+#    推上去等于公开后台会话，事后删除也无法完全撤回。
+#    新增这类临时文件时请顺手补一行，不要依赖「我记得别加」。
+# ============================================================
+
+# curl cookie 罐（含会话 ID / CSRF token）
+/curl*.txt
+# 根目录一次性调试脚本
+/test_*.php
+/debug_*.php
+/analyze_*.php
+/check_*.php
+/fix_*.php
+/verify_*.py
+/install_nav.php
+/del.inc.php
+/dex.inc.php
+# 调试用 HTML 快照
+/*_debug.html
+/icon_check.html
+# 被误写到根目录的编译产物（正常只应存在于 tmp/）
+/model.min.php
+/model_*.func.php
+/plugin_*.php
+# PHP 错误日志目录（按年月生成）
+/20[0-9][0-9][0-9][0-9]/
+# 设计稿与本地客户端压缩包
+/nav_designs/
+/navigation_demo.html
+/xwdi_client_*.zip
+# AI 工具目录（含内部开发文档；其 node_modules 由自身 .gitignore 处理）
+/.opencode/
+# 导航页图标抓取缓存（运行时生成）
+upload/nav_icon/
+# 错误重定向产生的异常文件名
+/nul*

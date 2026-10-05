@@ -35,19 +35,24 @@ $sql_link = "CREATE TABLE IF NOT EXISTS $table_link (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
 db_exec($sql_link);
 
-// 插入默认分类
-$now = time();
-db_insert('nav_category', array('title' => '常用工具', 'icon' => 'fas fa-fire', 'sort_order' => 1, 'status' => 1, 'created' => $now));
-db_insert('nav_category', array('title' => '开发资源', 'icon' => 'fas fa-code', 'sort_order' => 2, 'status' => 1, 'created' => $now));
-db_insert('nav_category', array('title' => '设计工具', 'icon' => 'fas fa-palette', 'sort_order' => 3, 'status' => 1, 'created' => $now));
-db_insert('nav_category', array('title' => 'AI工具', 'icon' => 'fas fa-robot', 'sort_order' => 4, 'status' => 1, 'created' => $now));
+// 插入默认分类与链接：仅在全新建库时执行。
+// 卸载时并不会删除 nav_category 表（见 uninstall.php），若无条件插入，
+// 重新安装就会产生一批重复的默认分类；而且默认链接原来硬编码 category_id=1..4，
+// 表里已有数据时会挂到错误的分类下，这里改用 db_insert 返回的真实 ID。
+if(!db_count('nav_category') && !db_count('nav_link')) {
+    $now = time();
 
-// 插入默认链接
-db_insert('nav_link', array('category_id' => 1, 'title' => 'GitHub', 'url' => 'https://github.com', 'icon' => 'fab fa-github', 'description' => '代码托管平台', 'sort_order' => 1, 'status' => 1, 'clicks' => 0, 'created' => $now));
-db_insert('nav_link', array('category_id' => 1, 'title' => 'Google', 'url' => 'https://www.google.com', 'icon' => 'fas fa-search', 'description' => '搜索引擎', 'sort_order' => 2, 'status' => 1, 'clicks' => 0, 'created' => $now));
-db_insert('nav_link', array('category_id' => 2, 'title' => 'VS Code', 'url' => 'https://code.visualstudio.com', 'icon' => 'fas fa-code', 'description' => '代码编辑器', 'sort_order' => 1, 'status' => 1, 'clicks' => 0, 'created' => $now));
-db_insert('nav_link', array('category_id' => 3, 'title' => 'Figma', 'url' => 'https://www.figma.com', 'icon' => 'fab fa-figma', 'description' => '设计工具', 'sort_order' => 1, 'status' => 1, 'clicks' => 0, 'created' => $now));
-db_insert('nav_link', array('category_id' => 4, 'title' => 'ChatGPT', 'url' => 'https://chat.openai.com', 'icon' => 'fas fa-brain', 'description' => 'AI助手', 'sort_order' => 1, 'status' => 1, 'clicks' => 0, 'created' => $now));
+    $cid_common = db_insert('nav_category', array('title' => '常用工具', 'icon' => 'fas fa-fire', 'sort_order' => 1, 'status' => 1, 'created' => $now));
+    $cid_dev    = db_insert('nav_category', array('title' => '开发资源', 'icon' => 'fas fa-code', 'sort_order' => 2, 'status' => 1, 'created' => $now));
+    $cid_design = db_insert('nav_category', array('title' => '设计工具', 'icon' => 'fas fa-palette', 'sort_order' => 3, 'status' => 1, 'created' => $now));
+    $cid_ai     = db_insert('nav_category', array('title' => 'AI工具', 'icon' => 'fas fa-robot', 'sort_order' => 4, 'status' => 1, 'created' => $now));
+
+    db_insert('nav_link', array('category_id' => $cid_common, 'title' => 'GitHub', 'url' => 'https://github.com', 'icon' => 'fab fa-github', 'description' => '代码托管平台', 'sort_order' => 1, 'status' => 1, 'clicks' => 0, 'created' => $now));
+    db_insert('nav_link', array('category_id' => $cid_common, 'title' => 'Google', 'url' => 'https://www.google.com', 'icon' => 'fas fa-search', 'description' => '搜索引擎', 'sort_order' => 2, 'status' => 1, 'clicks' => 0, 'created' => $now));
+    db_insert('nav_link', array('category_id' => $cid_dev, 'title' => 'VS Code', 'url' => 'https://code.visualstudio.com', 'icon' => 'fas fa-code', 'description' => '代码编辑器', 'sort_order' => 1, 'status' => 1, 'clicks' => 0, 'created' => $now));
+    db_insert('nav_link', array('category_id' => $cid_design, 'title' => 'Figma', 'url' => 'https://www.figma.com', 'icon' => 'fab fa-figma', 'description' => '设计工具', 'sort_order' => 1, 'status' => 1, 'clicks' => 0, 'created' => $now));
+    db_insert('nav_link', array('category_id' => $cid_ai, 'title' => 'ChatGPT', 'url' => 'https://chat.openai.com', 'icon' => 'fas fa-brain', 'description' => 'AI助手', 'sort_order' => 1, 'status' => 1, 'clicks' => 0, 'created' => $now));
+}
 
 // 清除缓存（model.inc.php 里含插件模型列表，新增模型文件必须一起清掉才生效）
 @xn_unlink($conf['tmp_path'] . 'model.inc.php');
@@ -58,3 +63,4 @@ db_insert('nav_link', array('category_id' => 4, 'title' => 'ChatGPT', 'url' => '
 @xn_unlink($conf['tmp_path'] . 'plugin_xw_navigation_setting.php');
 @xn_unlink($conf['tmp_path'] . 'plugin_xw_navigation_view_htm_admin.htm');
 @xn_unlink($conf['tmp_path'] . 'plugin_xw_navigation_view_htm_navigation.htm');
+@xn_unlink($conf['tmp_path'] . 'plugin_xw_navigation_route_index.php');

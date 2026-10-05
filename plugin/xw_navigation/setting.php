@@ -115,11 +115,15 @@ if($method === 'POST' && !empty($_POST)) {
 }
 
 // 一次性结构升级：icon 字段扩容到 255
-// （旧版 50 字符装不下本地图标路径，也会截断用户手填的长图片地址）
-if(!is_file($conf['tmp_path'].'xw_navigation_icon255')) {
-    db_exec("ALTER TABLE {$db->tablepre}nav_link MODIFY icon VARCHAR(255) DEFAULT ''");
-    db_exec("ALTER TABLE {$db->tablepre}nav_category MODIFY icon VARCHAR(255) DEFAULT ''");
-    @file_put_contents($conf['tmp_path'].'xw_navigation_icon255', '1');
+// 旧版 50 字符装不下本地图标路径，也会截断用户手填的长图片地址。
+// 注意：不能用 tmp 下的标记文件判断「是否已升级」—— tmp 会被后台「清空临时文件」
+// 反复清掉，那样每清一次缓存、打开本页就又跑一遍 ALTER（会重建表）。
+// 这里直接读列定义，天然幂等。
+foreach(array('nav_link', 'nav_category') as $tbl) {
+    $col = db_sql_find_one("SHOW COLUMNS FROM {$db->tablepre}{$tbl} LIKE 'icon'");
+    if($col && isset($col['Type']) && preg_match('#varchar\((\d+)\)#i', $col['Type'], $m) && intval($m[1]) < 255) {
+        db_exec("ALTER TABLE {$db->tablepre}{$tbl} MODIFY icon VARCHAR(255) DEFAULT ''");
+    }
 }
 
 $s = NavigationService::settings();

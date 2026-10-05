@@ -246,16 +246,13 @@ class NavigationService {
     }
     
     public static function getStats() {
+        global $db;
         $total_links = db_count('nav_link', array('status' => 1));
         $total_categories = db_count('nav_category', array('status' => 1));
-        // 获取总点击量
-        $links = db_find('nav_link', array(), array(), 1, 1000, '', array('clicks'));
-        $total_clicks = 0;
-        if($links) {
-            foreach($links as $link) {
-                $total_clicks += intval($link['clicks']);
-            }
-        }
+        // 总点击量：直接走 SQL 聚合。原来是 db_find 最多取 1000 行再在 PHP 里累加，
+        // 一是白读一整表数据，二是超过 1000 条链接时统计会偏小。
+        $r = db_sql_find_one("SELECT COALESCE(SUM(clicks), 0) AS c FROM {$db->tablepre}nav_link");
+        $total_clicks = $r ? intval($r['c']) : 0;
         return array(
             'total_links' => intval($total_links),
             'total_categories' => intval($total_categories),

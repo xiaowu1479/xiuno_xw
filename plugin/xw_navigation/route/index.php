@@ -10,10 +10,15 @@ if(trim(strval($s['page_title'])) === '') $s['page_title'] = '站点导航';
 $click_id = param('click_id', 0, 'intval');
 if($click_id > 0) {
     $link = NavigationService::getLink($click_id);
-    if($link) {
-        NavigationService::incrementClicks($click_id);
-        header('Location: ' . $link['url']);
-        exit;
+    // 只统计「启用中」的链接（前台本来就不会渲染禁用的，手动构造 URL 也不该被跳转）；
+    // 目标地址去掉换行，避免把 CR/LF 带进 Location 响应头
+    if($link && intval($link['status']) === 1) {
+        $target = str_replace(array("\r", "\n"), '', strval($link['url']));
+        if($target !== '') {
+            NavigationService::incrementClicks($click_id);
+            header('Location: ' . $target);
+            exit;
+        }
     }
 }
 
