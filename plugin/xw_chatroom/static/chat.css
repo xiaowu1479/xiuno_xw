@@ -215,6 +215,16 @@
 .xw-chat-jump:hover { filter: brightness(.94); }
 .xw-chat-jump[hidden] { display: none; }
 .xw-chat-emoji-wrap { position: relative; }
+/* 表情按钮：原来是 btn-sm（只有 27px 高），比输入框矮一截、看着不齐；
+   这里按 form-control 的高度公式做成同高方块，输入栏放大/换主题也自动跟随 */
+.xw-chat-emoji-btn {
+    flex: 0 0 auto;
+    width: calc(1.5em + .75rem + 2px);
+    height: calc(1.5em + .75rem + 2px);
+    padding: 0;
+    line-height: 1;
+    font-size: 1em;
+}
 .xw-chat-emoji-panel {
     position: absolute;
     bottom: 100%;
@@ -241,8 +251,12 @@
     line-height: 1;
 }
 .xw-chat-emoji-grid button:hover { background: var(--bs-secondary-bg, #e9ecef); }
-.xw-chat-input-form { flex: 1; display: flex; gap: .5rem; align-items: flex-end; }
-.xw-chat-input { resize: none; max-height: 120px; }
+.xw-chat-input-form { flex: 1; display: flex; gap: .5rem; align-items: flex-end; min-width: 0; }
+/* 输入框是 flex 子项：必须显式让出宽度 —— .form-control 自带 width:100%，
+   不覆盖的话它会吃掉整行，把发送按钮挤成「竖排两行」的窄块（实测 49×55，比输入框还高） */
+.xw-chat-input { flex: 1 1 auto; width: auto; min-width: 0; resize: none; max-height: 120px; }
+/* 发送按钮：不参与收缩，文字不换行 */
+.xw-chat-send { flex: 0 0 auto; white-space: nowrap; }
 .xw-chat-empty { color: var(--bs-secondary-color, #6c757d); }
 
 /* 轻提示：替代 alert，自动消失且不阻塞操作 */
