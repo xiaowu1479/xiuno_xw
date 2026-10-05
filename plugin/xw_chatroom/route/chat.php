@@ -105,8 +105,10 @@ $chat_init_messages = ChatroomService::messages(intval($ch['id']), 0, intval($s[
 foreach($chat_init_messages as $m) {
     if(intval($m['id']) > $chat_last_id) $chat_last_id = intval($m['id']);
 }
-// 初始在线数（传给模板立即显示，不等 JS fetch）
-$chat_current_online = ChatroomService::getOnlineCount(intval($ch['id']));
+// 初始在线数：一次查出所有频道，侧栏与头部徽章用同一口径（心跳表），
+// 不再用频道表里那个由 cron 每 5 分钟刷一次、且按「发过消息」统计的旧值
+$chat_online_counts = ChatroomService::getOnlineCounts();
+$chat_current_online = isset($chat_online_counts[intval($ch['id'])]) ? intval($chat_online_counts[intval($ch['id'])]) : 0;
 $header['title'] = '聊天室';
 $header['mobile_title'] = '聊天室';
 include _include(APP_PATH.'plugin/xw_chatroom/view/chat.htm');

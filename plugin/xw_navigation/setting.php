@@ -21,7 +21,7 @@ if($method === 'POST' && !empty($_POST)) {
             'show_stats' => param('show_stats', 0) ? 1 : 0,
             'show_sidebar' => param('show_sidebar', 0) ? 1 : 0,
             'show_hot' => param('show_hot', 0) ? 1 : 0,
-            'hot_limit' => max(1, min(20, intval(param('hot_limit', 8)))),
+            'hot_limit' => max(1, min(NavigationService::HOT_MAX, intval(param('hot_limit', NavigationService::HOT_DEFAULT)))),
             'auto_favicon' => param('auto_favicon', 0) ? 1 : 0,
         );
         NavigationService::saveSettings($s);

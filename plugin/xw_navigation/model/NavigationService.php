@@ -3,6 +3,12 @@
 
 class NavigationService {
     
+    // 「最常用」热门条的数量上限与默认值。
+    // 抽成常量是为了让三处（后台输入框 / 保存时钳制 / 查询时钳制）只认这一个来源，以后改一处即可。
+    // 上限刻意压得低：它是一行横向排列的胶囊，条数一多就会折行，反而不好看。
+    const HOT_MAX = 6;
+    const HOT_DEFAULT = 6;
+    
     public static function defaults() {
         return array(
             'page_title' => '站点导航',
@@ -11,7 +17,7 @@ class NavigationService {
             'show_stats' => 1,
             'show_sidebar' => 1,
             'show_hot' => 1,
-            'hot_limit' => 8,
+            'hot_limit' => self::HOT_DEFAULT,
             'auto_favicon' => 1,
         );
     }
@@ -116,9 +122,10 @@ class NavigationService {
     }
     
     // 热门链接：按点击量倒序，只取有点击量的，供前台「最常用」条使用
-    public static function getHotLinks($limit = 8) {
+    public static function getHotLinks($limit = self::HOT_DEFAULT) {
         global $db;
-        $limit = max(1, min(20, intval($limit)));
+        // 查询时再钳一次：即使库里存着旧的大数值（比如老版本设的 20），也不会真的取那么多
+        $limit = max(1, min(self::HOT_MAX, intval($limit)));
         $sql = "SELECT l.*, c.title AS category_title FROM {$db->tablepre}nav_link l LEFT JOIN {$db->tablepre}nav_category c ON l.category_id=c.id WHERE l.status=1 AND l.clicks>0 ORDER BY l.clicks DESC, l.id ASC LIMIT $limit";
         $list = db_sql_find($sql);
         return $list ? $list : array();

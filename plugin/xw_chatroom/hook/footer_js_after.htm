@@ -1,1 +1,5 @@
-<?php $_xw_chat_js = $conf['view_url'] . '../plugin/xw_chatroom/static/chat.js'; ?><script src="<?php echo $_xw_chat_js; ?>?v=1.4"></script>
+<?php if(isset($route) && $route === 'chat') {
+    // 同上：用文件修改时间当版本号，自动破缓存
+    $_xw_chat_js_f = APP_PATH.'plugin/xw_chatroom/static/chat.js';
+    $_xw_chat_js_v = is_file($_xw_chat_js_f) ? filemtime($_xw_chat_js_f) : 0;
+?><script src="<?php echo $conf['view_url']; ?>../plugin/xw_chatroom/static/chat.js?v=<?php echo $_xw_chat_js_v; ?>"></script><?php } ?>

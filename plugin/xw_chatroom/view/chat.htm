@@ -5,9 +5,23 @@ $chat_current = $ch;
 $chat_settings = $s;
 $chat_uid = intval($uid);
 $chat_can_send = (!empty($s['allow_guest_send']) || $chat_uid > 0) && !empty($s['enabled']);
-$chat_channels_json = xn_json_encode(array_values(array_map(function ($c) {
-    return array('id' => intval($c['id']), 'name' => $c['name'], 'slug' => $c['slug'], 'online_count' => intval($c['online_count']), 'is_default' => intval($c['is_default']), 'description' => $c['description']);
-}, $chat_channels)));
+// 在线数统一口径：由路由一次性算好的「心跳表」映射，侧栏与头部徽章共用同一个来源，
+// 不再用频道表里那个由 cron 刷、且按「发过消息」统计的旧值
+$chat_online_counts = (isset($chat_online_counts) && is_array($chat_online_counts)) ? $chat_online_counts : array();
+$chat_current_online = isset($chat_online_counts[intval($ch['id'])]) ? intval($chat_online_counts[intval($ch['id'])]) : 0;
+$chat_channels_json_list = array();
+foreach ($chat_channels as $c) {
+    $cid = intval($c['id']);
+    $chat_channels_json_list[] = array(
+        'id' => $cid,
+        'name' => $c['name'],
+        'slug' => $c['slug'],
+        'online_count' => isset($chat_online_counts[$cid]) ? intval($chat_online_counts[$cid]) : 0,
+        'is_default' => intval($c['is_default']),
+        'description' => $c['description'],
+    );
+}
+$chat_channels_json = xn_json_encode($chat_channels_json_list);
 $chat_current_json = xn_json_encode(array('id' => intval($ch['id']), 'name' => $ch['name'], 'slug' => $ch['slug'], 'description' => $ch['description'], 'is_default' => intval($ch['is_default'])));
 $chat_init_json = xn_json_encode($chat_init_messages);
 ?>
@@ -15,19 +29,19 @@ $chat_init_json = xn_json_encode($chat_init_messages);
     <div class="xw-chat-layout">
         <aside class="xw-chat-sidebar" id="xw-chat-sidebar">
             <div class="xw-chat-sidebar-head">
-                <h5 class="mb-0">💬 <?php echo $lang['xw_chat_title']; ?></h5>
-                <button type="button" class="btn btn-sm btn-outline-secondary d-lg-none" id="xw-chat-close-sidebar" aria-label="关闭">✕</button>
+                <h5 class="mb-0"><i class="icon-comments"></i> <?php echo $lang['xw_chat_title']; ?></h5>
+                <button type="button" class="btn btn-sm btn-outline-secondary d-lg-none" id="xw-chat-close-sidebar" aria-label="关闭"><i class="icon-times"></i></button>
             </div>
             <div class="xw-chat-sidebar-body">
                 <div class="xw-chat-sidebar-label">频道</div>
                 <ul class="xw-chat-channel-list" id="xw-chat-channel-list">
-                    <?php foreach ($chat_channels as $c) { $active = (intval($c['id']) === intval($ch['id'])); ?>
+                    <?php foreach ($chat_channels as $c) { $active = (intval($c['id']) === intval($ch['id'])); $c_online = isset($chat_online_counts[intval($c['id'])]) ? intval($chat_online_counts[intval($c['id'])]) : 0; ?>
                     <li>
                         <a href="<?php echo url('chat-' . $c['slug']); ?>" class="xw-chat-channel-item<?php echo $active ? ' active' : ''; ?>" data-id="<?php echo intval($c['id']); ?>" data-slug="<?php echo $c['slug']; ?>">
                             <span class="xw-chat-channel-icon">#</span>
                             <span class="xw-chat-channel-name"><?php echo htmlspecialchars($c['name']); ?></span>
-                            <?php if (intval($c['online_count']) >= 0) { ?><span class="xw-chat-channel-online"><?php echo intval($c['online_count']); ?></span><?php } ?>
-                            <?php if (intval($c['is_default']) === 1) { ?><span class="xw-chat-channel-default">★</span><?php } ?>
+                            <?php if ($c_online > 0) { ?><span class="xw-chat-channel-online" title="查看在线用户"><?php echo $c_online; ?></span><?php } ?>
+                            <?php if (intval($c['is_default']) === 1) { ?><span class="xw-chat-channel-default"><i class="icon-star"></i></span><?php } ?>
                         </a>
                     </li>
                     <?php } ?>
@@ -36,18 +50,23 @@ $chat_init_json = xn_json_encode($chat_init_messages);
         </aside>
         <main class="xw-chat-main">
             <header class="xw-chat-header">
-                <button type="button" class="btn btn-sm btn-outline-secondary d-lg-none me-2" id="xw-chat-open-sidebar" aria-label="频道">☰</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary d-lg-none mr-2" id="xw-chat-open-sidebar" aria-label="频道"><i class="icon-bars"></i></button>
                 <div class="xw-chat-header-title">
                     <h6 class="mb-0" id="xw-chat-current-name"># <?php echo htmlspecialchars($ch['name']); ?><?php if (intval($ch['is_default']) === 1) { ?> <span class="badge bg-warning">默认</span><?php } ?></h6>
                     <small class="text-muted" id="xw-chat-current-desc"><?php echo htmlspecialchars($ch['description']); ?></small>
-                    <span class="xw-chat-online-badge ms-2" id="xw-chat-current-online"><i class="fa fa-user"></i> <span id="xw-chat-current-online-count"><?php echo isset($chat_current_online) ? intval($chat_current_online) : 0; ?></span> 在线</span>
+                    <button type="button" class="xw-chat-online-badge ml-2" id="xw-chat-current-online" title="查看在线用户"><i class="icon-user"></i> <span id="xw-chat-current-online-count"><?php echo $chat_current_online; ?></span> 在线</button>
                 </div>
                 <div class="xw-chat-header-actions">
-                    <button type="button" class="btn btn-sm btn-outline-primary" id="xw-chat-share-btn" data-toggle="modal" data-target="#xw-chat-share-modal" title="分享频道">↗ 分享</button>
+                    <button type="button" class="btn btn-sm btn-outline-primary" id="xw-chat-share-btn" data-toggle="modal" data-target="#xw-chat-share-modal" title="分享频道"><i class="icon-share"></i> 分享</button>
+                </div>
+                <div class="xw-chat-online-panel" id="xw-chat-online-panel" hidden>
+                    <div class="xw-chat-online-panel-head" id="xw-chat-online-panel-title">在线用户</div>
+                    <div class="xw-chat-online-panel-list" id="xw-chat-online-panel-list"></div>
                 </div>
             </header>
             <div class="xw-chat-messages" id="xw-chat-messages"></div>
             <footer class="xw-chat-input-bar">
+                <button type="button" class="xw-chat-jump" id="xw-chat-jump" hidden>↓ <span id="xw-chat-jump-count">0</span> 条新消息</button>
                 <div class="xw-chat-emoji-wrap">
                     <button type="button" class="btn btn-sm btn-light xw-chat-emoji-btn" id="xw-chat-emoji-btn" title="表情">😊</button>
                     <div class="xw-chat-emoji-panel" id="xw-chat-emoji-panel" hidden></div>
@@ -63,12 +82,18 @@ $chat_init_json = xn_json_encode($chat_init_messages);
     </div>
 </div>
 
+<!-- 轻提示：替代原来满屏的 alert，自动消失、不阻塞操作 -->
+<div class="xw-chat-toast-box" id="xw-chat-toast-box" aria-live="polite"></div>
+
+<!-- 移动端侧栏抽屉的遮罩：点它关闭抽屉 -->
+<div class="xw-chat-backdrop" id="xw-chat-backdrop" hidden></div>
+
 <div class="modal fade" id="xw-chat-share-modal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">↗ 分享频道到...</h5>
-                <button type="button" class="btn-close" data-dismiss="modal" aria-label="关闭"></button>
+                <h5 class="modal-title"><i class="icon-share"></i> 分享频道到...</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="关闭"><i class="icon-times"></i></button>
             </div>
             <div class="modal-body">
                 <p class="text-muted small mb-2">将当前频道「<strong id="xw-chat-share-from-name"><?php echo htmlspecialchars($ch['name']); ?></strong>」作为卡片分享到其他频道。</p>
@@ -92,6 +117,7 @@ window.xw_chat_DATA = {
     lastId: <?php echo intval($chat_last_id); ?>,
     uid: <?php echo $chat_uid; ?>,
     pollInterval: <?php echo intval($s['poll_interval']); ?>,
+    heartbeatInterval: <?php echo intval($s['heartbeat_interval']); ?>,
     canSend: <?php echo $chat_can_send ? 'true' : 'false'; ?>
 };
 window.xw_chat_I18N = {

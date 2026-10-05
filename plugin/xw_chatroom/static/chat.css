@@ -54,10 +54,13 @@
     border-radius: 999px;
     padding: 0 .4rem;
     line-height: 1.4;
+    cursor: pointer;                 /* 点它可以看在线用户，由 JS 阻止跳转频道 */
+    user-select: none;
 }
 .xw-chat-channel-default { opacity: .8; font-size: .8rem; }
 .xw-chat-main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
 .xw-chat-header {
+    position: relative;              /* 在线用户面板以它为定位基准 */
     display: flex;
     align-items: center;
     gap: .5rem;
@@ -71,14 +74,98 @@
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+/* 头部的在线数徽章：做成可点的小胶囊，点击展开在线用户面板 */
+.xw-chat-online-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: .25rem;
+    border: 0;
+    padding: .1rem .55rem;
+    border-radius: 999px;
+    font-size: .75rem;
+    line-height: 1.5;
+    color: var(--bs-success, #198754);
+    background: rgba(25, 135, 84, .12);
+    cursor: pointer;
+    vertical-align: middle;
+}
+.xw-chat-online-badge:hover { background: rgba(25, 135, 84, .2); }
+/* 在线用户面板（替代原来的 alert） */
+.xw-chat-online-panel {
+    position: absolute;
+    top: 100%;
+    right: 1rem;
+    z-index: 1040;
+    width: 240px;
+    max-height: 300px;
+    overflow-y: auto;
+    background: var(--bs-body-bg, #fff);
+    border: 1px solid var(--bs-border-color, #dee2e6);
+    border-radius: .5rem;
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15);
+}
+.xw-chat-online-panel[hidden] { display: none; }
+.xw-chat-online-panel-head {
+    padding: .5rem .75rem;
+    font-size: .75rem;
+    color: var(--bs-secondary-color, #6c757d);
+    border-bottom: 1px solid var(--bs-border-color, #dee2e6);
+}
+.xw-chat-online-panel-list { padding: .25rem; }
+.xw-chat-online-item {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .35rem .5rem;
+    border-radius: .375rem;
+    color: inherit;
+    text-decoration: none;
+    font-size: .85rem;
+}
+.xw-chat-online-item:hover { background: var(--bs-secondary-bg, #e9ecef); }
+.xw-chat-online-item img {
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+.xw-chat-online-item span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.xw-chat-online-empty {
+    padding: .9rem .5rem;
+    text-align: center;
+    font-size: .8rem;
+    color: var(--bs-secondary-color, #6c757d);
+}
 .xw-chat-messages { flex: 1; overflow-y: auto; padding: 1rem; }
 .xw-chat-msg { display: flex; gap: .6rem; margin-bottom: .9rem; }
 .xw-chat-msg-self { flex-direction: row-reverse; }
-.xw-chat-msg-avatar { width: 36px; height: 36px; flex-shrink: 0; }
+.xw-chat-msg-avatar {
+    width: 36px; height: 36px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+}
+/* 没有头像时的兜底图标（原来是 👤 emoji） */
+.xw-chat-msg-avatar i { font-size: 1.5rem; color: var(--bs-secondary-color, #6c757d); }
 .xw-chat-msg-avatar img { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; }
 .xw-chat-msg-body { max-width: 75%; }
 .xw-chat-msg-meta { font-size: .75rem; color: var(--bs-secondary-color, #6c757d); margin-bottom: .15rem; }
 .xw-chat-msg-self .xw-chat-msg-meta { text-align: right; }
+/* 日期分隔条：跨天处插入「今天 / 昨天 / 10月5日」，否则每条只有 H:i，分不清哪天 */
+.xw-chat-day {
+    margin: .9rem 0 .6rem;
+    text-align: center;
+    font-size: .72rem;
+    color: var(--bs-secondary-color, #6c757d);
+}
+.xw-chat-day::before,
+.xw-chat-day::after {
+    content: '';
+    display: inline-block;
+    width: 2rem;
+    height: 1px;
+    margin: 0 .5rem;
+    vertical-align: middle;
+    background: var(--bs-border-color, #dee2e6);
+}
 .xw-chat-msg-bubble {
     display: inline-block;
     padding: .5rem .75rem;
@@ -100,12 +187,33 @@
 }
 .xw-chat-share-card:hover { text-decoration: underline; }
 .xw-chat-input-bar {
+    position: relative;              /* 「N 条新消息」按钮以它为定位基准 */
     display: flex;
     align-items: flex-end;
     gap: .5rem;
     padding: .75rem 1rem;
     border-top: 1px solid var(--bs-border-color, #dee2e6);
 }
+/* 「N 条新消息」按钮：浮在输入栏正上方，输入栏变高（多行输入）时自动跟随 */
+.xw-chat-jump {
+    position: absolute;
+    top: -.5rem;
+    left: 50%;
+    transform: translate(-50%, -100%);
+    z-index: 5;
+    border: 0;
+    border-radius: 999px;
+    padding: .3rem .85rem;
+    font-size: .8rem;
+    line-height: 1.4;
+    white-space: nowrap;
+    color: #fff;
+    background: var(--bs-primary, #0d6efd);
+    box-shadow: 0 .25rem .75rem rgba(0,0,0,.2);
+    cursor: pointer;
+}
+.xw-chat-jump:hover { filter: brightness(.94); }
+.xw-chat-jump[hidden] { display: none; }
 .xw-chat-emoji-wrap { position: relative; }
 .xw-chat-emoji-panel {
     position: absolute;
@@ -137,6 +245,40 @@
 .xw-chat-input { resize: none; max-height: 120px; }
 .xw-chat-empty { color: var(--bs-secondary-color, #6c757d); }
 
+/* 轻提示：替代 alert，自动消失且不阻塞操作 */
+.xw-chat-toast-box {
+    position: fixed;
+    left: 50%;
+    bottom: 2rem;
+    transform: translateX(-50%);
+    z-index: 1080;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .4rem;
+    pointer-events: none;
+}
+.xw-chat-toast {
+    padding: .4rem .9rem;
+    border-radius: 999px;
+    font-size: .82rem;
+    color: #fff;
+    background: rgba(33, 37, 41, .9);
+    box-shadow: 0 .25rem .75rem rgba(0,0,0,.2);
+    transition: opacity .25s, transform .25s;
+}
+.xw-chat-toast-error { background: rgba(220, 53, 69, .92); }
+.xw-chat-toast-out { opacity: 0; transform: translateY(.4rem); }
+
+/* 移动端侧栏抽屉的遮罩：点它关抽屉 */
+.xw-chat-backdrop {
+    position: fixed;
+    top: 0; right: 0; bottom: 0; left: 0;
+    z-index: 1044;
+    background: rgba(0, 0, 0, .35);
+}
+.xw-chat-backdrop[hidden] { display: none; }
+
 /* 移动端：频道列表抽屉式 */
 @media (max-width: 991.98px) {
     .xw-chat-layout { flex-direction: column; height: auto; min-height: calc(100vh - 130px); }
@@ -156,4 +298,5 @@
     .xw-chat-sidebar.open { transform: translateX(0); }
     .xw-chat-main { min-height: calc(100vh - 130px); }
     .xw-chat-msg-body { max-width: 85%; }
+    .xw-chat-online-panel { right: .5rem; width: 200px; max-height: 60vh; }
 }

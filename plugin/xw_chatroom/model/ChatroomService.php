@@ -17,6 +17,11 @@ class ChatroomService {
             'msg_interval' => 3,
             'history_limit' => 50,
             'poll_interval' => 3000,
+            // 这两项原先只在 install.php 里写过，defaults() 里没有：
+            // 结果 saving 设置时会因为「整体覆盖」被抹掉，前台也读不到心跳间隔。
+            // 这里补成唯一来源，install.php 与后台保存都从 defaults() 出发。
+            'heartbeat_interval' => 30000,
+            'online_timeout' => 120,
             'url_filter_mode' => 'none',
             'url_whitelist' => '',
             'url_blacklist' => '',
@@ -194,8 +199,22 @@ class ChatroomService {
         $msg['type'] = intval($msg['type']);
         $msg['ref_channel_id'] = intval($msg['ref_channel_id']);
         $msg['created'] = intval($msg['created']);
-        $msg['created_txt'] = date('H:i', intval($msg['created']));
         $msg['content'] = strval($msg['content']);
+        $ts = intval($msg['created']);
+        $msg['created_txt'] = date('H:i', $ts);
+        // 日期分组：前端按 day_txt 变化插入「今天 / 昨天 / 10月5日」分隔条，
+        // 否则跨天看时每条消息只显示 H:i，分不清是哪天的
+        $day = date('Y-m-d', $ts);
+        $msg['day_txt'] = $day;
+        if($day === date('Y-m-d')) {
+            $msg['day_label'] = '今天';
+        } elseif($day === date('Y-m-d', time() - 86400)) {
+            $msg['day_label'] = '昨天';
+        } elseif(date('Y', $ts) === date('Y')) {
+            $msg['day_label'] = date('n月j日', $ts);
+        } else {
+            $msg['day_label'] = date('Y年n月j日', $ts);
+        }
     }
 
     public static function sendMessage($channelId, $uid, $content, $type = 0, $refChannelId = 0) {
@@ -293,18 +312,14 @@ class ChatroomService {
         return self::sendMessage($toChannelId, $uid, $content, self::MSG_SHARE, $fromChannelId);
     }
 
-    // 定时刷新在线数（最近5分钟发消息的不同用户数）
+    // 定时把在线数刷进频道表（供后台列表显示）。
+    // 口径必须与前台一致：用「有心跳的用户数」，而不是「最近发过消息的用户数」——
+    // 后者会让同一个「在线」在侧栏和头部显示成两个不同的数字。
     public static function refreshOnline() {
-        global $db;
-        $cutoff = time() - 300;
-        $rows = db_sql_find("SELECT channel_id, COUNT(DISTINCT uid) AS cnt FROM {$db->tablepre}xw_chat_message WHERE created >= " . intval($cutoff) . " AND uid > 0 GROUP BY channel_id");
-        $cntMap = array();
-        if(is_array($rows)) {
-            foreach($rows as $r) { $cntMap[intval($r['channel_id'])] = intval($r['cnt']); }
-        }
+        $map = self::getOnlineCounts();
         $chs = self::allChannels();
         foreach($chs as $ch) {
-            $cnt = isset($cntMap[intval($ch['id'])]) ? $cntMap[intval($ch['id'])] : 0;
+            $cnt = isset($map[intval($ch['id'])]) ? $map[intval($ch['id'])] : 0;
             db_update('xw_chat_channel', array('id' => $ch['id']), array('online_count' => $cnt));
         }
     }
@@ -329,7 +344,9 @@ class ChatroomService {
             error_log('[xw_chatroom] heartbeat exception: '.$e->getMessage().' uid='.$uid.' channel_id='.$channelId);
             return array('ok' => false, 'message' => '心跳异常: '.$e->getMessage());
         }
-        return array('ok' => true, 'online' => self::getOnlineCount($channelId));
+        // 顺带把所有频道的在线数一起返回：前端一次心跳就能刷新整个侧栏，
+        // 不用为每个频道各发一次请求
+        return array('ok' => true, 'online' => self::getOnlineCount($channelId), 'counts' => self::getOnlineCounts());
     }
 
     // 获取频道在线人数
@@ -341,6 +358,21 @@ class ChatroomService {
         $cutoff = time() - $timeout;
         $r = db_sql_find_one("SELECT COUNT(*) AS cnt FROM {$db->tablepre}xw_chat_online WHERE channel_id = $channelId AND last_heartbeat >= $cutoff");
         return $r ? intval($r['cnt']) : 0;
+    }
+
+    // 一次查出所有频道的在线数（口径与 getOnlineCount 完全一致：心跳表 + online_timeout）。
+    // 侧栏、头部徽章、后台列表全都用它，避免出现「侧栏一个数、头部另一个数」。
+    public static function getOnlineCounts() {
+        global $db;
+        $s = self::settings();
+        $timeout = intval(isset($s['online_timeout']) ? $s['online_timeout'] : 120);
+        $cutoff = time() - $timeout;
+        $rows = db_sql_find("SELECT channel_id, COUNT(*) AS cnt FROM {$db->tablepre}xw_chat_online WHERE last_heartbeat >= $cutoff GROUP BY channel_id");
+        $map = array();
+        if(is_array($rows)) {
+            foreach($rows as $r) { $map[intval($r['channel_id'])] = intval($r['cnt']); }
+        }
+        return $map;
     }
 
     // 获取频道在线用户列表（最多50个）

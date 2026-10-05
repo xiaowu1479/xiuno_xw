@@ -1,1 +1,6 @@
-<?php $_xw_chat_css = $conf['view_url'] . '../plugin/xw_chatroom/static/chat.css'; ?><link rel="stylesheet" href="<?php echo $_xw_chat_css; ?>?v=1.0">
+<?php if(isset($route) && $route === 'chat') {
+    // 用文件修改时间当版本号：文件一改，URL 就变，浏览器立刻拿到新版。
+    // 不用 $conf['static_version']——它在本站是固定的 ?1.0，改了文件也不会变，起不到破缓存作用。
+    $_xw_chat_css_f = APP_PATH.'plugin/xw_chatroom/static/chat.css';
+    $_xw_chat_css_v = is_file($_xw_chat_css_f) ? filemtime($_xw_chat_css_f) : 0;
+?><link rel="stylesheet" href="<?php echo $conf['view_url']; ?>../plugin/xw_chatroom/static/chat.css?v=<?php echo $_xw_chat_css_v; ?>"><?php } ?>

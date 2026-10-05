@@ -22,19 +22,25 @@ if($click_id > 0) {
     }
 }
 
-// 分类筛选（分类 ID 不存在时回落到「全部」，避免标题/列表对不上）
+// 分类筛选：分类 ID 不存在时回落到「全部」，避免标题/列表对不上
 $category_id = param('category_id', 0, 'intval');
 $cat = $category_id > 0 ? NavigationService::getCategory($category_id) : NULL;
+if(!$cat) $category_id = 0;
 
-if($cat) {
-    $links = NavigationService::getLinksByCategory($category_id);
+// 一次性载入全部链接。
+// 前台切换分类改由浏览器端过滤（不刷新页面），所以页面必须同时持有所有分类的卡片；
+// 服务端负责把不属于当前分类的卡片先标成 display:none，
+// 这样即使浏览器禁用 JS，首屏看到的分类也仍然正确（此时点分类走原生跳转）。
+$links = NavigationService::getAllLinks();
+
+$current_title = '全部链接';
+$visible_count = count($links);
+if($category_id) {
     $current_title = $cat['title'];
-    foreach($links as &$link) $link['category_title'] = $cat['title'];
-    unset($link);
-} else {
-    $category_id = 0;
-    $links = NavigationService::getAllLinks();
-    $current_title = '全部链接';
+    $visible_count = 0;
+    foreach($links as $l) {
+        if(intval($l['category_id']) === $category_id) $visible_count++;
+    }
 }
 
 $categories = NavigationService::getCategories();

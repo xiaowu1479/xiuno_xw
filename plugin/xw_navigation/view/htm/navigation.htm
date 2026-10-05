@@ -28,7 +28,7 @@ function xwIconNext(img) {
 }
 </script>
 
-<div id="xw_navpage">
+<div id="xw_navpage" data-cat="<?php echo intval($category_id);?>">
 
 	<div class="card mb-3">
 		<div class="card-header d-flex align-items-center justify-content-between flex-wrap">
@@ -80,10 +80,10 @@ function xwIconNext(img) {
 				<div class="card-header"><i class="icon-list"></i> 分类导航</div>
 				<div class="card-body py-2">
 					<ul class="xw-cat-list">
-						<li><a href="<?php echo htmlspecialchars(url('navigation'));?>" class="<?php echo !$category_id ? 'active' : '';?>"><i class="icon-th"></i> 全部</a></li>
+						<li><a href="<?php echo htmlspecialchars(url('navigation'));?>" class="xw-cat-link<?php echo !$category_id ? ' active' : '';?>" data-cat="0" data-title="全部链接"><i class="icon-th"></i> 全部</a></li>
 						<?php foreach($categories as $cat) { ?>
 						<?php $cat_icon = trim(strval($cat['icon'])); ?>
-						<li><a href="<?php echo htmlspecialchars(url('navigation', array('category_id' => $cat['id'])));?>" class="<?php echo $category_id == $cat['id'] ? 'active' : '';?>"><i class="<?php echo htmlspecialchars($cat_icon !== '' ? $cat_icon : 'icon-link');?>"></i> <?php echo htmlspecialchars($cat['title']);?></a></li>
+						<li><a href="<?php echo htmlspecialchars(url('navigation', array('category_id' => $cat['id'])));?>" class="xw-cat-link<?php echo $category_id == $cat['id'] ? ' active' : '';?>" data-cat="<?php echo intval($cat['id']);?>" data-title="<?php echo htmlspecialchars($cat['title']);?>"><i class="<?php echo htmlspecialchars($cat_icon !== '' ? $cat_icon : 'icon-link');?>"></i> <?php echo htmlspecialchars($cat['title']);?></a></li>
 						<?php } ?>
 					</ul>
 				</div>
@@ -93,14 +93,20 @@ function xwIconNext(img) {
 
 		<div class="<?php echo ($s['show_sidebar'] && $categories) ? 'col-lg-9' : 'col-12';?>">
 			<div class="d-flex align-items-center justify-content-between mb-3">
-				<h5 class="mb-0"><i class="icon-th-large"></i> <?php echo htmlspecialchars($current_title);?></h5>
-				<small class="text-muted">共 <span id="xw_count"><?php echo count($links);?></span> 个</small>
+				<h5 class="mb-0"><i class="icon-th-large"></i> <span id="xw_cat_title"><?php echo htmlspecialchars($current_title);?></span></h5>
+				<small class="text-muted">共 <span id="xw_count"><?php echo intval($visible_count);?></span> 个</small>
 			</div>
 
 			<?php if($links) { ?>
 			<div class="xw-links">
 				<?php foreach($links as $link) { ?>
-				<a href="<?php echo htmlspecialchars(url('navigation', array('click_id' => $link['id'])));?>" class="xw-link-card" target="<?php echo $link['target_blank'] ? '_blank' : '_self';?>" rel="noopener noreferrer">
+				<?php
+				// 所有分类的卡片一次性渲染出来：切换分类由浏览器端过滤完成（不刷新页面）。
+				// 不属于当前分类的先标 display:none，这样即使禁用 JS，首屏分类依然正确。
+				$link_cat = intval($link['category_id']);
+				$link_show = (!$category_id || $link_cat === $category_id);
+				?>
+				<a href="<?php echo htmlspecialchars(url('navigation', array('click_id' => $link['id'])));?>" class="xw-link-card" data-cat="<?php echo $link_cat;?>"<?php if(!$link_show) echo ' style="display:none"';?> target="<?php echo $link['target_blank'] ? '_blank' : '_self';?>" rel="noopener noreferrer">
 					<div class="xw-link-icon"<?php if($link['color']) echo ' style="color:'.htmlspecialchars($link['color']).'"';?>>
 					<?php
 					// 图标 HTML 由 NavigationService::iconHtml() 统一生成，主列表与热门条共用同一套回退链
@@ -114,7 +120,7 @@ function xwIconNext(img) {
 				</a>
 				<?php } ?>
 			</div>
-			<div class="xw-empty" id="xw_search_empty" style="display:none">没有匹配的网站，换个关键词试试</div>
+			<div class="xw-empty" id="xw_search_empty" style="display:none">没有符合条件的网站</div>
 			<?php } else { ?>
 			<div class="xw-empty">暂无链接</div>
 			<?php } ?>
@@ -123,42 +129,108 @@ function xwIconNext(img) {
 
 </div>
 <script>
-// 搜索：本页已一次性载入全部链接（getAllLinks 无分页），所以直接在前端实时过滤，
-// 不提交表单、不产生额外请求。放在内容末尾，此时所有卡片都已存在于 DOM 中。
+// 分类切换 + 搜索：都在浏览器端完成，不刷新页面、不产生额外请求。
+//
+// 之所以能不请求服务器：route/index.php 已把全部链接一次性渲染进本页，
+// 并给每张卡片标好了 data-cat；不属于首屏分类的卡片由 PHP 预先设为 display:none。
+// 因此禁用 JS 时首屏分类依然正确（此时点分类走原生跳转，服务端同样渲染正确的那一类）。
+//
+// 地址栏用 history.pushState 同步，所以切换后仍可刷新、可分享、前进后退可用。
 (function () {
-	var input = document.getElementById('xw_search');
-	if (!input) return;
+	var root = document.getElementById('xw_navpage');
+	if (!root) return;
 
-	var cards = document.querySelectorAll('#xw_navpage .xw-link-card');
-	var counter = document.getElementById('xw_count');
+	var input    = document.getElementById('xw_search');
+	var counter  = document.getElementById('xw_count');
 	var emptyBox = document.getElementById('xw_search_empty');
-	var total = cards.length;
+	var titleEl  = document.getElementById('xw_cat_title');
+	var cards    = root.querySelectorAll('.xw-link-card');
+	var catLinks = root.querySelectorAll('.xw-cat-link');
 
-	function apply() {
-		var q = input.value.trim().toLowerCase();
-		var hit = 0;
-		for (var i = 0; i < cards.length; i++) {
-			// textContent 已包含卡片里的标题与描述，直接匹配即可
-			var matched = q === '' || (cards[i].textContent || '').toLowerCase().indexOf(q) !== -1;
-			cards[i].style.display = matched ? '' : 'none';
-			if (matched) hit++;
-		}
-		if (counter) counter.textContent = q === '' ? total : hit;
-		if (emptyBox) emptyBox.style.display = (q !== '' && hit === 0) ? '' : 'none';
+	function num(el, attr) {
+		return parseInt(el.getAttribute(attr) || '0', 10) || 0;
+	}
+	function curCat() {
+		return num(root, 'data-cat');
 	}
 
-	input.addEventListener('input', apply);
-	input.addEventListener('keydown', function (e) {
-		if (e.key === 'Escape') { input.value = ''; apply(); }
-	});
-	// 按 "/" 快速聚焦搜索框；正在输入框里打字时不干扰
-	document.addEventListener('keydown', function (e) {
-		var tag = (document.activeElement && document.activeElement.tagName) || '';
-		if (e.key === '/' && tag !== 'INPUT' && tag !== 'TEXTAREA') {
-			e.preventDefault();
-			input.focus();
+	// 唯一的一处过滤：分类与关键词同时生效（也就是「在当前分类内搜索」）
+	function render() {
+		var cat = curCat();
+		var q = input ? input.value.trim().toLowerCase() : '';
+		var hit = 0;
+		for (var i = 0; i < cards.length; i++) {
+			var c = cards[i];
+			var okCat = (cat === 0 || num(c, 'data-cat') === cat);
+			// textContent 已包含卡片里的标题与描述，直接匹配即可
+			var okTxt = (q === '' || (c.textContent || '').toLowerCase().indexOf(q) !== -1);
+			var show = okCat && okTxt;
+			c.style.display = show ? '' : 'none';
+			if (show) hit++;
 		}
+		if (counter) counter.textContent = hit;
+		if (emptyBox) emptyBox.style.display = (hit === 0) ? '' : 'none';
+	}
+
+	function markActive(cat) {
+		for (var i = 0; i < catLinks.length; i++) {
+			catLinks[i].className = (num(catLinks[i], 'data-cat') === cat) ? 'xw-cat-link active' : 'xw-cat-link';
+		}
+	}
+
+	function setTitle(cat) {
+		if (!titleEl) return;
+		for (var i = 0; i < catLinks.length; i++) {
+			if (num(catLinks[i], 'data-cat') === cat) {
+				titleEl.textContent = catLinks[i].getAttribute('data-title') || titleEl.textContent;
+				return;
+			}
+		}
+	}
+
+	// push=true：同步地址栏（点分类时）；push=false：仅回放界面（前进后退时）
+	function switchTo(cat, href, push) {
+		root.setAttribute('data-cat', cat);
+		markActive(cat);
+		setTitle(cat);
+		if (push && href && window.history && history.pushState) {
+			history.pushState({ cat: cat }, '', href);
+		}
+		render();
+	}
+
+	for (var i = 0; i < catLinks.length; i++) {
+		catLinks[i].addEventListener('click', function (e) {
+			// 修饰键 / 中键点击交给浏览器开新标签页，不拦截
+			if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+			e.preventDefault();
+			switchTo(num(this, 'data-cat'), this.getAttribute('href'), true);
+		});
+	}
+
+	if (input) {
+		input.addEventListener('input', render);
+		input.addEventListener('keydown', function (e) {
+			if (e.key === 'Escape') { input.value = ''; render(); }
+		});
+		// 按 "/" 快速聚焦搜索框；正在输入框里打字时不干扰
+		document.addEventListener('keydown', function (e) {
+			var tag = (document.activeElement && document.activeElement.tagName) || '';
+			if (e.key === '/' && tag !== 'INPUT' && tag !== 'TEXTAREA') {
+				e.preventDefault();
+				input.focus();
+			}
+		});
+	}
+
+	// 前进 / 后退：从地址栏解析 category_id 回放界面
+	window.addEventListener('popstate', function () {
+		var m = /[?&]category_id=(\d+)/.exec(location.search);
+		switchTo(m ? parseInt(m[1], 10) : 0, null, false);
 	});
+
+	// 首屏校正一次：PHP 已按分类设好 display，这里只保证计数与状态一致
+	render();
 })();
 </script>
 <?php include _include(APP_PATH.'view/htm/footer.inc.htm');?>

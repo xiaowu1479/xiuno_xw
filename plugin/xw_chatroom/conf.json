@@ -1,7 +1,7 @@
 {
     "name": "聊天室",
     "brief": "实时频道聊天室：站长后台创建频道、emoji 表情、网址白黑名单过滤、频道快捷分享。",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "bbs_version": "4.0",
     "installed": 1,
     "enable": 1,

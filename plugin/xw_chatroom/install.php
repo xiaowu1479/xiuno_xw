@@ -75,25 +75,17 @@ if(!$_exist) {
     ));
 }
 
-// 默认设置
-setting_set('xw_chatroom', array(
-    'enabled' => 1,
-    'show_nav' => 1,
-    'msg_max_length' => 500,
-    'msg_interval' => 3,
-    'history_limit' => 50,
-    'poll_interval' => 3000,
-    'heartbeat_interval' => 30000,
-    'online_timeout' => 120,
-    'url_filter_mode' => 'none',
-    'url_whitelist' => '',
-    'url_blacklist' => '',
-    'url_replace' => '[链接已屏蔽]',
-    'allow_guest_read' => 1,
-    'allow_guest_send' => 0,
-));
+// 默认设置：以 ChatroomService::defaults() 为唯一来源。
+// 原先这里手写一份、模型 defaults() 里又写一份，两份会漂移
+// （heartbeat_interval / online_timeout 就是因为 defaults() 里没有而被后台保存时抹掉的）。
+if(!class_exists('ChatroomService', false)) {
+    @include_once APP_PATH.'plugin/xw_chatroom/model/ChatroomService.php';
+}
+class_exists('ChatroomService', false) OR message(-1, '聊天室服务加载失败，请先清理 tmp/model.min.php');
+setting_set('xw_chatroom', ChatroomService::defaults());
 
-// 清理缓存
+// 清理缓存：model.inc.php 记录模型清单，只清 model.min.php 不足以让新增模型生效
 if(isset($conf['tmp_path']) && function_exists('xn_unlink')) {
+    @xn_unlink($conf['tmp_path'].'model.inc.php');
     @xn_unlink($conf['tmp_path'].'model.min.php');
 }

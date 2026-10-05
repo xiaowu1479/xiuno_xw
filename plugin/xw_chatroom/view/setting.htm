@@ -3,7 +3,7 @@
 <div class="container-fluid p-0 p-md-3">
     <div class="card">
         <div class="card-header">
-            <h5 class="card-title mb-0">💬 聊天室设置</h5>
+            <h5 class="card-title mb-0"><i class="icon-comments"></i> 聊天室设置</h5>
         </div>
         <div class="card-body">
             <form method="post" action="">
@@ -13,14 +13,14 @@
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label class="form-label">启用聊天室</label>
-                        <select name="enabled" class="form-select">
+                        <select name="enabled" class="form-control">
                             <option value="1" <?php echo $s['enabled'] ? 'selected' : ''; ?>>是</option>
                             <option value="0" <?php echo !$s['enabled'] ? 'selected' : ''; ?>>否</option>
                         </select>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">导航栏显示</label>
-                        <select name="show_nav" class="form-select">
+                        <select name="show_nav" class="form-control">
                             <option value="1" <?php echo $s['show_nav'] ? 'selected' : ''; ?>>是</option>
                             <option value="0" <?php echo !$s['show_nav'] ? 'selected' : ''; ?>>否</option>
                         </select>
@@ -49,17 +49,30 @@
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">访客可阅读</label>
-                        <select name="allow_guest_read" class="form-select">
+                        <select name="allow_guest_read" class="form-control">
                             <option value="1" <?php echo $s['allow_guest_read'] ? 'selected' : ''; ?>>是</option>
                             <option value="0" <?php echo !$s['allow_guest_read'] ? 'selected' : ''; ?>>否</option>
                         </select>
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">访客可发送</label>
-                        <select name="allow_guest_send" class="form-select">
+                        <select name="allow_guest_send" class="form-control">
                             <option value="1" <?php echo $s['allow_guest_send'] ? 'selected' : ''; ?>>是</option>
                             <option value="0" <?php echo !$s['allow_guest_send'] ? 'selected' : ''; ?>>否</option>
                         </select>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label class="form-label">心跳间隔（毫秒）</label>
+                        <input type="number" name="heartbeat_interval" class="form-control" value="<?php echo intval($s['heartbeat_interval']); ?>" min="5000" max="300000">
+                        <small class="form-text text-muted">在线状态多久刷新一次，建议 30000</small>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">在线超时（秒）</label>
+                        <input type="number" name="online_timeout" class="form-control" value="<?php echo intval($s['online_timeout']); ?>" min="30" max="3600">
+                        <small class="form-text text-muted">超过此时长无心跳即不再计为在线，应大于心跳间隔</small>
                     </div>
                 </div>
 
@@ -69,7 +82,7 @@
                 <div class="row mb-3">
                     <div class="col-md-4">
                         <label class="form-label">过滤模式</label>
-                        <select name="url_filter_mode" class="form-select">
+                        <select name="url_filter_mode" class="form-control">
                             <option value="none" <?php echo $s['url_filter_mode'] === 'none' ? 'selected' : ''; ?>>不过滤</option>
                             <option value="whitelist" <?php echo $s['url_filter_mode'] === 'whitelist' ? 'selected' : ''; ?>>白名单</option>
                             <option value="blacklist" <?php echo $s['url_filter_mode'] === 'blacklist' ? 'selected' : ''; ?>>黑名单</option>
@@ -124,7 +137,7 @@
                         <td><?php echo intval($c['sort_order']); ?></td>
                         <td><?php echo intval($c['is_default']) ? '✓' : ''; ?></td>
                         <td><?php echo intval($c['status']) ? '启用' : '禁用'; ?></td>
-                        <td><?php echo intval($c['online_count']); ?></td>
+                        <td><?php echo isset($chat_online_counts[intval($c['id'])]) ? intval($chat_online_counts[intval($c['id'])]) : 0; ?></td>
                         <td>
                             <a href="../?chat-<?php echo urlencode($c['slug']); ?>.htm" class="btn btn-sm btn-outline-primary" target="_blank">访问</a>
                         </td>
