@@ -20,7 +20,8 @@
 									<th width="100" class="text-center"><?php echo lang('port');?></th>
 									<th><?php echo lang('username');?></th>
 									<th><?php echo lang('password');?></th>
-									<th><?php echo lang('delete');?></th>
+									<th width="80" class="text-center"><?php echo lang('smtp_test');?></th>
+									<th width="80"><?php echo lang('delete');?></th>
 								</tr>
 							<thead>
 							<tbody id="smtp_body">
@@ -31,13 +32,26 @@
 									<td width="100" class="text-center"><input type="text" class="form-control" name="port[]" value="{port}" placeholder="<?php echo lang('port');?>"/></td>
 									<td><input type="text" class="form-control" name="user[]" value="{user}" placeholder="<?php echo lang('username');?>"  /></td>
 									<td><input type="password" class="form-control" name="pass[]" value="{pass}" placeholder="<?php echo lang('password');?>"  /></td>
-									<td><a class="btn row_delete" role="btn"><?php echo lang('delete');?></a></td>
+									<td width="80" class="text-center"><a class="btn btn-outline-primary row_test" role="btn"><?php echo lang('smtp_test');?></a></td>
+									<td width="80"><a class="btn row_delete" role="btn"><?php echo lang('delete');?></a></td>
 								</tr>
 								</script>
 							</tbody>
 						</table>
 					</div>
 					<p><a role="button" class="btn row_add">[+]<?php echo lang('add_new_line');?></a></p>
+					
+					<hr class="mt-1 mb-3" />
+					
+					<!-- 测试收件邮箱：点表格里某行的「测试」按钮，用该行配置实发一封测试邮件 -->
+					<div class="form-group row">
+						<label class="col-sm-2 form-control-label" for="test_email"><?php echo lang('smtp_test_to');?>：</label>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" id="test_email" name="test_email" value="<?php echo htmlspecialchars($test_email);?>" placeholder="you@example.com" style="max-width: 22rem;" />
+							<p class="mt-2 mb-0 text-muted small"><?php echo lang('smtp_test_tips');?></p>
+						</div>
+					</div>
+					
 					<p class="text-center">
 						<button type="submit" class="btn btn-primary" id="submit" data-loading-text="<?php echo lang('submiting');?>..." style="width: 10rem;"><?php echo lang('confirm');?></button>
 					</p>
@@ -86,6 +100,31 @@ jform.on('submit', function(){
 			alert(message);
 			jsubmit.button('reset');
 		}
+	});
+	return false;
+});
+
+// 测试发信：用页面上该行当前填写的配置（含尚未保存的修改）发一封测试邮件
+var SMTP_TEST_TEXT = '<?php echo lang('smtp_test');?>';
+var SMTP_TEST_SENDING = '<?php echo lang('smtp_test_sending');?>';
+$('.arrlist').on('click', 'a.row_test', function() {
+	var jbtn = $(this);
+	var jtr = jbtn.parents('tr');
+	var testTo = $.trim($('#test_email').val());
+	if(!testTo) {
+		alert('<?php echo lang('smtp_test_email_required');?>');
+		$('#test_email').focus();
+		return false;
+	}
+	// 行号取「前面还有多少个 tr」，与后端 email[] / host[] 数组下标一致
+	var postdata = jform.serializeArray();
+	postdata.push({name: 'smtp_action', value: 'test'});
+	postdata.push({name: 'test_row', value: jtr.prevAll('tr').length});
+	postdata.push({name: 'test_email', value: testTo});
+	jbtn.text(SMTP_TEST_SENDING);
+	$.xpost(jform.attr('action'), postdata, function(code, message) {
+		jbtn.text(SMTP_TEST_TEXT);
+		$.alert(message);
 	});
 	return false;
 });

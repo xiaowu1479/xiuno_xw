@@ -53,6 +53,11 @@
 	<script src="<?php echo $conf['view_url'];?>js/bbs.js<?php echo $static_version;?>"></script>
 	<!--{hook footer_js_after.htm}-->
 	
+	<?php if(!empty($conf['statistic_code'])) { ?>
+	<!-- 统计代码（后台 → 设置 → 基本设置） statistic_code -->
+	<?php echo $conf['statistic_code'];?>
+	<?php } ?>
+	
 </body>
 <!--{hook footer_body_after.htm}-->
 </html>

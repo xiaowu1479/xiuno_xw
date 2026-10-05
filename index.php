@@ -30,6 +30,8 @@ $conf = (@include APP_PATH.'conf/conf.php') OR exit('<script>window.location="in
 !isset($conf['logo_mobile_url']) AND $conf['logo_mobile_url'] = 'view/img/logo.png';
 !isset($conf['logo_pc_url']) AND $conf['logo_pc_url'] = 'view/img/logo.png';
 !isset($conf['favicon_url']) AND $conf['favicon_url'] = 'view/img/favicon.ico';
+// 统计代码 (XIUNO XW)：输出到前台 </body> 之前
+!isset($conf['statistic_code']) AND $conf['statistic_code'] = '';
 !isset($conf['logo_water_url']) AND $conf['logo_water_url'] = 'view/img/water-small.png';
 // 图形验证码 (XIUNO XW)
 !isset($conf['captcha_on']) AND $conf['captcha_on'] = 0;
@@ -38,7 +40,7 @@ $conf = (@include APP_PATH.'conf/conf.php') OR exit('<script>window.location="in
 !isset($conf['captcha_post_on']) AND $conf['captcha_post_on'] = 0;
 // 更新检测地址 (XIUNO XW)，默认 GitHub Releases API，可改为自建镜像
 !isset($conf['update_check_url']) AND $conf['update_check_url'] = 'https://api.github.com/repos/xiaowu1479/xiuno_xw/releases/latest';
-$conf['version'] = '1.8.1';		// 定义版本号！避免手工修改 conf/conf.php
+$conf['version'] = '1.8.2';		// 定义版本号！避免手工修改 conf/conf.php
 
 // 转换为绝对路径，防止被包含时出错。
 substr($conf['log_path'], 0, 2) == './' AND $conf['log_path'] = APP_PATH.$conf['log_path']; 
