@@ -6,6 +6,13 @@
 		缺点：结构稍微有点复杂
 	-->
 	
+	<?php
+	// 夜间模式切换按钮：图标由 dark.css 按 html[data-theme] 自动切换（日间显示月亮、夜间显示太阳）
+	$theme_toggle_title = htmlspecialchars(lang('theme_toggle'), ENT_QUOTES);
+	// 页头里算好的「时段自动档」：dark / light / os（os = 跟随访问者系统偏好）
+	$xw_theme_auto = isset($xw_theme_auto) ? $xw_theme_auto : 'os';
+	?>
+	
 	<!--{hook header_nav_start.htm}-->
 	<header class="navbar navbar-expand-lg navbar-light bg-white" id="header">
 		<div class="container">
@@ -31,6 +38,9 @@
 			<?php } ?>
 			
 			<!--{hook header_nav_user_icon_after.htm}-->
+			
+			<!-- 夜间模式切换（手机端：折叠菜单外，始终可见） -->
+			<a class="navbar-brand hidden-lg xw-theme-toggle" href="javascript:;" role="button" title="<?php echo $theme_toggle_title;?>" aria-label="<?php echo $theme_toggle_title;?>"><i class="icon-moon-o"></i><i class="icon-sun-o"></i></a>
 			
 			<div class="collapse navbar-collapse" id="nav">
 				<!-- 左侧：版块 -->
@@ -66,7 +76,9 @@
 				<!-- 右侧：用户 -->
 				<ul class="navbar-nav">
 					<!--{hook header_nav_user_start.htm}-->
-				<?php if(empty($uid)) { ?>
+					<!-- 夜间模式切换（PC 端，小屏由上面的折叠菜单外那处负责） -->
+					<li class="nav-item d-none d-lg-block xw-theme-toggle"><a class="nav-link" href="javascript:;" role="button" title="<?php echo $theme_toggle_title;?>" aria-label="<?php echo $theme_toggle_title;?>"><i class="icon-moon-o"></i><i class="icon-sun-o"></i></a></li>
+					<?php if(empty($uid)) { ?>
 					<li class="nav-item"><a class="nav-link" href="<?php echo url('user-login');?>"><i class="icon-user"></i> <?php echo lang('login');?></a></li>
 					<!--<li class="nav-item"><a class="nav-link" href="<?php echo url('user-create');?>"><?php echo lang('register');?></a></li>-->
 				<?php } else { ?>
@@ -84,3 +96,64 @@
 		</div>
 	</header>
 	<!--{hook header_nav_end.htm}-->
+	
+	<!-- 夜间模式切换：点一下必定在 日间 / 夜间 之间翻转（不再有"点了没反应"的那一下）
+	     访客的手动选择只在「站点时段没翻篇」时有效，时段翻篇后自动回到跟随时段
+	     写 localStorage 并切换 <html data-theme>，图标由 dark.css 按 data-theme 显示/隐藏 -->
+	<script>
+	(function () {
+		var AUTO = '<?php echo $xw_theme_auto;?>';   // dark / light / os
+		var MODE = {
+			auto: '<?php echo addslashes(lang('theme_mode_auto'));?>',
+			light: '<?php echo addslashes(lang('theme_mode_light'));?>',
+			dark: '<?php echo addslashes(lang('theme_mode_dark'));?>'
+		};
+		var BASE = '<?php echo addslashes($theme_toggle_title);?>';
+
+		function read(k) {
+			try { return localStorage.getItem(k); } catch (e) { return null; }
+		}
+		function write(k, v) {
+			try { if (v === null) { localStorage.removeItem(k); } else { localStorage.setItem(k, v); } } catch (e) {}
+		}
+		// 当前生效的手动选择；站点时段翻篇后返回 null，表示回到跟随时段
+		function manual() {
+			var s = read('xw_theme');
+			return (s === 'dark' || s === 'light') && read('xw_theme_auto') === AUTO ? s : null;
+		}
+		// 自动档解析成实际主题（与页头预置脚本同一套规则）
+		function autoTheme() {
+			if (AUTO === 'dark' || AUTO === 'light') return AUTO;
+			return (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+		}
+		// 悬停提示：手动固定时显示具体模式，跟随时段时说明是自动
+		function syncTitle() {
+			var m = manual();
+			var txt = m ? MODE[m] : (AUTO === 'os' ? MODE[autoTheme()] : MODE.auto);
+			var els = document.querySelectorAll('.xw-theme-toggle');
+			for (var i = 0; i < els.length; i++) {
+				els[i].setAttribute('title', txt + ' ｜ ' + BASE);
+				els[i].setAttribute('aria-label', txt);
+			}
+		}
+
+		document.addEventListener('click', function (e) {
+			var el = e.target;
+			while (el && el.parentNode) {
+				if (el.classList && el.classList.contains('xw-theme-toggle')) {
+					// 只看当前实际显示的主题：点一下必定翻转，不存在"点了没反应"的那一下
+					var next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+					document.documentElement.setAttribute('data-theme', next);
+					write('xw_theme', next);
+					write('xw_theme_auto', AUTO);   // 记下选择时的时段，便于翻篇后自动回落
+					syncTitle();
+					if (e.preventDefault) e.preventDefault();
+					return false;
+				}
+				el = el.parentNode;
+			}
+		}, false);
+
+		syncTitle();
+	})();
+	</script>

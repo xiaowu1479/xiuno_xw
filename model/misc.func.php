@@ -131,6 +131,21 @@ function captcha_check($name = 'captcha') {
 	(empty($sess) || empty($code) || strcasecmp($code, $sess) != 0) AND message($name, lang('captcha_incorrect'));
 }
 
+// 昼夜模式：判断给定时刻是否落在「夜间时段」(XIUNO XW)
+// $start / $end 为 HH:MM，支持跨天（如 19:00 ~ 07:00）；起止相同视为不启用（返回 false）
+// 说明：前台页头与后台设置页共用这一处判断，避免两边逻辑不一致
+function theme_is_night($start, $end, $now = 0) {
+	$now OR $now = time();
+	$s = explode(':', strval($start));
+	$e = explode(':', strval($end));
+	$sm = intval(isset($s[0]) ? $s[0] : 0) * 60 + intval(isset($s[1]) ? $s[1] : 0);
+	$em = intval(isset($e[0]) ? $e[0] : 0) * 60 + intval(isset($e[1]) ? $e[1] : 0);
+	$nm = intval(date('G', $now)) * 60 + intval(date('i', $now));
+	if($sm === $em) return FALSE;
+	if($sm < $em) return $nm >= $sm && $nm < $em;   // 同日时段，如 08:00 ~ 18:00
+	return $nm >= $sm || $nm < $em;                 // 跨天时段，如 19:00 ~ 07:00
+}
+
 // 上锁
 function xn_lock_start($lockname = '', $life = 10) {
 	global $conf, $time;

@@ -1,7 +1,14 @@
 // 这个是配置文件, 请参考备注，问题反馈请到www.huux.cc
+
+// 夜间模式：跟随站点主题（html[data-theme="dark"]）切换编辑器皮肤与内容区配色。
+// 编辑器内容在 iframe 里，站点样式进不去，所以这里额外挂官方深色内容皮肤 + 内联底色。
+var xwTinyDark = document.documentElement.getAttribute('data-theme') === 'dark';
+
 tinymce.init({
     selector: '#message',
-    content_css: 'plugin/huux_tinymce/tinymce/style.css', // 编辑内容区附加css文件
+    content_css: xwTinyDark
+        ? ['plugin/huux_tinymce/tinymce/skins/content/dark/content.min.css', 'plugin/huux_tinymce/tinymce/style.css']
+        : 'plugin/huux_tinymce/tinymce/style.css', // 编辑内容区附加css文件
     language_url: 'plugin/huux_tinymce/tinymce/langs/zh_CN.js', // 本地化中文语言包
     language: 'zh_CN', // 默认语言简体中文
     menubar: false, // 隐藏菜单栏，显示请设置为true
@@ -78,7 +85,9 @@ tinymce.init({
     extended_valid_elements: 'span[style|class],b,i,a[href|target|rel]', // 保留span/b/i/a标签
     paste_remove_styles_if_webkit: false, // 禁用webkit粘贴过滤器，保留style样式，如果不想保留可选择后点击【清除样式】
     // forced_root_block : '', // 去掉换行自动加P（可以确保非块元素包含在块元素中），改为使用br换行
-    // skin: 'oxide-dark',  // 设置深色皮肤，默认为oxide
+    skin: xwTinyDark ? 'oxide-dark' : 'oxide',  // 夜间模式用深色皮肤，默认为 oxide
+    // 内容区底色（内联样式优先级最高，压住 style.css 里的浅色）
+    content_style: xwTinyDark ? 'body{background:#1e2127;color:#e6e8ec}body a{color:#4aa3ff}.huux-hide-box{background:#23272e;border-color:#3a4048;color:#b8bec9}.huux-hide-box--locked{background:#3a3018;border-color:#574824}.huux-hide-box--visible{background:#16362a;border-color:#1f5a43}' : '',
     cache_suffix: '?v=2.1.20',// 缓存css/js url自动添加后缀
     //////////////////////////////////////豆瓣信息获取插件设置////////////////////////////////////////////////////////////////////////
     douban_api_key: 'demo123123', // 请勿更改！！！！！

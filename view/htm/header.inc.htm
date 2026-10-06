@@ -14,6 +14,50 @@
 <html lang="<?php echo $conf['lang'];?>">
 <head>
 	
+	<?php
+	// 昼夜模式：后台「设置 → 基本设置 → 按时段自动切换昼夜模式」开启时，
+	// 由服务端按站点时区算出「现在该是日间还是夜间」，交给下面的脚本。
+	// 'os' 表示未开启时段设置，交给访客系统的深色偏好决定。
+	$xw_theme_auto = 'os';
+	if(!empty($conf['theme_auto_on']) && function_exists('theme_is_night')) {
+		$xw_now = G('time');
+		$xw_now OR $xw_now = time();
+		$xw_theme_auto = theme_is_night($conf['theme_night_start'], $conf['theme_night_end'], $xw_now) ? 'dark' : 'light';
+	}
+	?>
+	<!-- 夜间模式：必须在样式表之前执行，否则会先闪一下浅色（FOUC）
+	     取值优先级：URL 参数 theme=dark|light|auto → 访客手动选择（仅在站点时段没翻篇时有效）
+	                 → 站点时段（后台可配）→ 系统偏好
+	     说明：手动选择会额外记下当时的 AUTO 值，站点时段翻篇（如早上 7 点）后自动失效，
+	           回到跟随站点时段，避免访客一次点击就永久脱离时段设置 -->
+	<script>
+	(function () {
+		var AUTO = '<?php echo $xw_theme_auto;?>';   // dark / light / os（os = 跟随访问者系统偏好）
+		var t = '';
+		try {
+			var ls = window.localStorage;
+			var m = /[?&]theme=(dark|light|auto)\b/.exec(location.search);
+			if (m && m[1] === 'auto') {
+				// 显式要求自动：清掉手动选择
+				ls.removeItem('xw_theme'); ls.removeItem('xw_theme_auto');
+			} else if (m) {
+				// 显式指定：记住选择，同时记住当时的 AUTO
+				ls.setItem('xw_theme', m[1]); ls.setItem('xw_theme_auto', AUTO);
+				t = m[1];
+			} else if (ls.getItem('xw_theme') && ls.getItem('xw_theme_auto') === AUTO) {
+				// 手动选择仍然有效（站点时段没变过）
+				t = ls.getItem('xw_theme');
+			}
+		} catch (e) {}
+		if (t !== 'dark' && t !== 'light') {
+			t = (AUTO === 'os')
+				? ((window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light')
+				: AUTO;
+		}
+		document.documentElement.setAttribute('data-theme', t);
+	})();
+	</script>
+	
 	<?php echo defined('BASE_HREF') ? '<base href="'.BASE_HREF.'" />' : '' ;?>
 	
 	<!--{hook header_meta_before.htm}-->
@@ -50,6 +94,10 @@
 	<!--{hook header_bootstrap_bbs_after.htm}-->
 	
 	<!--{hook header_link_after.htm}-->
+	
+	<!-- 夜间模式样式：放最后，便于覆盖主题与插件里的浅色；用 filemtime 破缓存 -->
+	<?php $dark_css = !empty($dark_css) ? $dark_css : $conf['view_url']."css/dark.css?v=".(@filemtime(APP_PATH.'view/css/dark.css') ?: 1); ?>
+	<link rel="stylesheet" href="<?php echo $dark_css;?>">
 	
 </head>
 

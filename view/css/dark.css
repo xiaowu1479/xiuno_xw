@@ -1,0 +1,370 @@
+/* =========================================================
+   XIUNO XW 夜间模式 / Dark mode
+   ---------------------------------------------------------
+   启用方式：由 view/htm/header.inc.htm 里的「预置脚本」在 <html> 上写
+   data-theme="dark"（取值来自 localStorage，首次访问跟随系统偏好）；
+   本文件所有规则都以 html[data-theme="dark"] 开头，未启用时零影响。
+
+   配色思路：原生主题是变量驱动的（--xc-*），所以先覆盖变量，再处理
+   主题与 Bootstrap 里写死的浅色（#fff / #fafbfc / #dcdfe6 之类）。
+   ========================================================= */
+
+/* ---------- 1. 覆盖原生主题的设计变量 ---------- */
+html[data-theme="dark"] {
+    --xc-bg: #16181d;              /* 页面背景 */
+    --xc-card: #1e2127;            /* 卡片背景 */
+    --xc-border: #2c313a;          /* 边框 */
+    --xc-border-light: #24282f;    /* 浅边框 */
+    --xc-primary: #4aa3ff;         /* 主色：深底上提亮一档 */
+    --xc-primary-hover: #6fb8ff;
+    --xc-primary-bg: #1a2b3f;      /* 主色浅底 → 深底色 */
+    --xc-text: #e6e8ec;            /* 主文字 */
+    --xc-text-2: #b8bec9;          /* 次文字 */
+    --xc-text-3: #8b93a1;          /* 弱文字 */
+    --xc-shadow: 0 1px 3px rgba(0, 0, 0, .5);
+
+    /* 让滚动条、表单原生控件（下拉、日期、复选框）也跟着变暗 */
+    color-scheme: dark;
+
+    /* 供插件使用的 Bootstrap 语义变量：
+       聊天室 chat.css、导航页 navigation.css 里写的是 var(--bs-xxx, 兜底)，
+       在这里统一定义后，插件无需各自再改一遍，自动跟随夜间配色 */
+    --bs-body-bg: #1e2127;
+    --bs-secondary-bg: #262b33;
+    --bs-tertiary-bg: #262b33;
+    --bs-border-color: #2c313a;
+    --bs-secondary-color: #8b93a1;
+    --bs-primary: #4aa3ff;
+    --bs-white: #e6e8ec;
+    --bs-success: #3fbf7f;
+    --bs-warning-bg-subtle: #3a3018;
+}
+
+/* ---------- 2. 基础与原生主题里写死的浅色 ---------- */
+html[data-theme="dark"] body {
+    background: var(--xc-bg);
+    color: var(--xc-text);
+}
+
+html[data-theme="dark"] #header,
+html[data-theme="dark"] #nav_pc_2 {
+    background: var(--xc-card) !important;
+    border-bottom-color: var(--xc-border);
+}
+
+html[data-theme="dark"] #header {
+    box-shadow: 0 1px 4px rgba(0, 0, 0, .35);
+}
+
+/* 卡片头部原来是 #fafbfc */
+html[data-theme="dark"] .card > .card-header {
+    background: #23272e;
+}
+
+/* 主题列表 / 回帖列表的 hover 底色 */
+html[data-theme="dark"] .thread:hover,
+html[data-theme="dark"] .post:hover {
+    background-color: #22262d;
+}
+
+html[data-theme="dark"] .breadcrumb {
+    background-color: var(--xc-card) !important;
+}
+
+html[data-theme="dark"] .page-item.disabled .page-link {
+    color: #6b7280;
+}
+
+/* 表单：原生主题只改了边框色，背景仍是白的 */
+html[data-theme="dark"] .form-control,
+html[data-theme="dark"] .custom-select {
+    background-color: #23272e;
+    border-color: #3a4048;
+    color: var(--xc-text);
+}
+
+html[data-theme="dark"] .form-control:focus,
+html[data-theme="dark"] .custom-select:focus {
+    background-color: #262b33;
+    border-color: var(--xc-primary);
+    color: var(--xc-text);
+}
+
+html[data-theme="dark"] .form-control::placeholder {
+    color: #7d8592;
+}
+
+html[data-theme="dark"] .form-control:disabled,
+html[data-theme="dark"] .form-control[readonly] {
+    background-color: #1c1f24;
+    color: #9aa1ac;
+}
+
+html[data-theme="dark"] .input-group-text {
+    background-color: #262b33;
+    border-color: #3a4048;
+    color: var(--xc-text-2);
+}
+
+html[data-theme="dark"] .custom-control-input:checked ~ .custom-control-label::before {
+    border-color: var(--xc-primary);
+    background-color: var(--xc-primary);
+}
+
+/* 移动端折叠菜单的汉堡图标是深色 SVG，夜间会看不见 */
+html[data-theme="dark"] .navbar-light .navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(230,232,236,0.8)' stroke-width='2' stroke-linecap='round' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+html[data-theme="dark"] .navbar-light .navbar-brand,
+html[data-theme="dark"] .navbar-light .navbar-nav .nav-link {
+    color: var(--xc-text-2);
+}
+
+/* ---------- 3. Bootstrap 组件 ---------- */
+html[data-theme="dark"] .card,
+html[data-theme="dark"] .modal-content,
+html[data-theme="dark"] .dropdown-menu,
+html[data-theme="dark"] .list-group-item,
+html[data-theme="dark"] .jumbotron,
+html[data-theme="dark"] .popover,
+html[data-theme="dark"] .toast {
+    background-color: var(--xc-card);
+    border-color: var(--xc-border);
+    color: var(--xc-text);
+}
+
+html[data-theme="dark"] .card-footer {
+    background-color: #23272e;
+    border-top-color: var(--xc-border);
+    color: var(--xc-text-2);
+}
+
+html[data-theme="dark"] .modal-header,
+html[data-theme="dark"] .modal-footer {
+    border-color: var(--xc-border);
+}
+
+html[data-theme="dark"] .modal-body {
+    color: var(--xc-text);
+}
+
+html[data-theme="dark"] .close {
+    color: var(--xc-text);
+    text-shadow: none;
+    opacity: .7;
+}
+
+html[data-theme="dark"] .dropdown-item {
+    color: var(--xc-text);
+}
+
+html[data-theme="dark"] .dropdown-item:hover,
+html[data-theme="dark"] .dropdown-item:focus {
+    background-color: var(--xc-primary-bg);
+    color: var(--xc-primary);
+}
+
+html[data-theme="dark"] .dropdown-divider {
+    border-top-color: var(--xc-border);
+}
+
+/* 表格 */
+html[data-theme="dark"] .table {
+    color: var(--xc-text);
+}
+
+html[data-theme="dark"] .table th,
+html[data-theme="dark"] .table td,
+html[data-theme="dark"] .table-bordered th,
+html[data-theme="dark"] .table-bordered td {
+    border-color: var(--xc-border);
+}
+
+html[data-theme="dark"] .table thead th {
+    color: var(--xc-text-2);
+    border-color: var(--xc-border);
+}
+
+html[data-theme="dark"] .table-striped tbody tr:nth-of-type(odd),
+html[data-theme="dark"] .table-light,
+html[data-theme="dark"] .thead-light th {
+    background-color: #23272e;
+    color: var(--xc-text);
+}
+
+html[data-theme="dark"] .table-hover tbody tr:hover {
+    background-color: #262b33;
+    color: var(--xc-text);
+}
+
+/* 提示条 */
+html[data-theme="dark"] .alert-info {
+    background-color: #16324a;
+    border-color: #1d4a6b;
+    color: #cfe6ff;
+}
+
+html[data-theme="dark"] .alert-warning {
+    background-color: #3a3018;
+    border-color: #574824;
+    color: #f3e2b8;
+}
+
+html[data-theme="dark"] .alert-success {
+    background-color: #16362a;
+    border-color: #1f5a43;
+    color: #c8f0dd;
+}
+
+html[data-theme="dark"] .alert-danger {
+    background-color: #3b1d21;
+    border-color: #5e2c32;
+    color: #f5cdd2;
+}
+
+html[data-theme="dark"] .alert-light {
+    background-color: #23272e;
+    border-color: var(--xc-border);
+    color: var(--xc-text);
+}
+
+html[data-theme="dark"] .badge-light {
+    background-color: #2f343d;
+    color: var(--xc-text);
+}
+
+/* 代码 / 引用（帖子正文里很常见） */
+html[data-theme="dark"] code,
+html[data-theme="dark"] kbd {
+    background-color: #23272e;
+    color: #e3b7c8;
+}
+
+html[data-theme="dark"] pre {
+    background-color: #23272e;
+    color: var(--xc-text);
+    border-color: var(--xc-border);
+}
+
+html[data-theme="dark"] blockquote {
+    border-left-color: var(--xc-border);
+    color: var(--xc-text-2);
+}
+
+/* 其他小组件 */
+html[data-theme="dark"] .progress {
+    background-color: #262b33;
+}
+
+html[data-theme="dark"] .nav-tabs {
+    border-bottom-color: var(--xc-border);
+}
+
+html[data-theme="dark"] .nav-tabs .nav-link {
+    color: var(--xc-text-2);
+}
+
+html[data-theme="dark"] .nav-tabs .nav-link.active {
+    background-color: var(--xc-card);
+    border-color: var(--xc-border) var(--xc-border) var(--xc-card);
+    color: var(--xc-text);
+}
+
+html[data-theme="dark"] .btn-light {
+    background-color: #2f343d;
+    border-color: #3a4048;
+    color: var(--xc-text);
+}
+
+html[data-theme="dark"] .btn-light:hover,
+html[data-theme="dark"] .btn-light:not(:disabled):not(.disabled):active {
+    background-color: #383e48;
+    border-color: #454b55;
+    color: var(--xc-text);
+}
+
+html[data-theme="dark"] .btn-outline-secondary {
+    color: var(--xc-text-2);
+    border-color: #454b55;
+}
+
+html[data-theme="dark"] .btn-outline-secondary:hover {
+    background-color: #2f343d;
+    color: var(--xc-text);
+}
+
+html[data-theme="dark"] hr {
+    border-top-color: var(--xc-border);
+}
+
+/* ---------- 4. 工具类（Bootstrap 的 !important 工具类要一起压住） ---------- */
+html[data-theme="dark"] .bg-white {
+    background-color: var(--xc-card) !important;
+}
+
+html[data-theme="dark"] .bg-light {
+    background-color: #262b33 !important;
+}
+
+html[data-theme="dark"] .text-dark,
+html[data-theme="dark"] .text-body {
+    color: var(--xc-text) !important;
+}
+
+html[data-theme="dark"] .text-black-50 {
+    color: var(--xc-text-3) !important;
+}
+
+html[data-theme="dark"] .border,
+html[data-theme="dark"] .border-top,
+html[data-theme="dark"] .border-right,
+html[data-theme="dark"] .border-bottom,
+html[data-theme="dark"] .border-left {
+    border-color: var(--xc-border) !important;
+}
+
+/* ---------- 5. 第三方插件里写死的浅色 ---------- */
+/* fox_tags：容器被写成了 background:#fff!important */
+html[data-theme="dark"] .index-tags,
+html[data-theme="dark"] .index-page-tags {
+    background: var(--xc-card) !important;
+}
+
+html[data-theme="dark"] .index-tags .items a,
+html[data-theme="dark"] .index-page-tags .items a {
+    color: var(--xc-text-2);
+    border-color: var(--xc-border);
+}
+
+html[data-theme="dark"] .thread-tags a {
+    color: var(--xc-text-3) !important;
+}
+
+/* huux_tinymce 的「回复可见」提示框（帖子正文里显示） */
+html[data-theme="dark"] .huux-hide-box {
+    background: #23272e;
+    border-color: #3a4048;
+    color: var(--xc-text-2);
+}
+
+html[data-theme="dark"] .huux-hide-box--locked {
+    background: #3a3018;
+    border-color: #574824;
+}
+
+html[data-theme="dark"] .huux-hide-box--visible {
+    background: #16362a;
+    border-color: #1f5a43;
+}
+
+/* ---------- 6. 夜间模式切换按钮（导航栏） ---------- */
+.xw-theme-toggle {
+    cursor: pointer;
+    user-select: none;
+}
+
+/* 默认（日间）显示月亮 = 「点一下切到夜间」，夜间显示太阳 */
+.xw-theme-toggle .icon-sun-o { display: none; }
+html[data-theme="dark"] .xw-theme-toggle .icon-moon-o { display: none; }
+html[data-theme="dark"] .xw-theme-toggle .icon-sun-o { display: inline; }

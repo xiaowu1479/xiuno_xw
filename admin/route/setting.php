@@ -32,6 +32,23 @@ if($action == 'base') {
 		$input['lang'] = form_select('lang', array('zh-cn'=>lang('lang_zh_cn'), 'zh-tw'=>lang('lang_zh_tw'), 'en-us'=>lang('lang_en_us'), 'ru-ru'=>lang('lang_ru_ru'), 'th-th'=>lang('lang_th_th')), $conf['lang']);
 		$input['favicon_url'] = form_text('favicon_url', $conf['favicon_url']);
 		$input['statistic_code'] = form_textarea('statistic_code', $conf['statistic_code'], '100%', 150);
+		$input['theme_auto_on'] = form_radio_yes_no('theme_auto_on', $conf['theme_auto_on']);
+		$input['theme_night_start'] = form_text('theme_night_start', $conf['theme_night_start'], 90);
+		$input['theme_night_end'] = form_text('theme_night_end', $conf['theme_night_end'], 90);
+
+		// 当前时段提示：开着的时段设置到底有没有生效，一眼可见
+		$theme_now_hint = '';
+		if(!empty($conf['theme_auto_on'])) {
+			if(function_exists('theme_is_night')) {
+				$xw_now = time();
+				$theme_now_hint = date('H:i', $xw_now).' → '.(
+					theme_is_night($conf['theme_night_start'], $conf['theme_night_end'], $xw_now)
+						? lang('theme_mode_dark') : lang('theme_mode_light')
+				);
+			} else {
+				$theme_now_hint = lang('theme_cache_stale');
+			}
+		}
 		
 		$header['title'] = lang('admin_site_setting');
 		$header['mobile_title'] =lang('admin_site_setting');
@@ -58,6 +75,19 @@ if($action == 'base') {
 		$_lang = param('lang');
 		$favicon_url = param('favicon_url', '', FALSE);
 		$statistic_code = param('statistic_code', '', FALSE);
+
+		$theme_auto_on = param('theme_auto_on', 0) ? 1 : 0;
+		// 时段规范成 HH:MM，非法输入回退默认值，避免把配置写坏
+		$_theme_times = array('theme_night_start' => '19:00', 'theme_night_end' => '07:00');
+		foreach($_theme_times as $_tk => $_tdef) {
+			$_tv = trim(strval(param($_tk, '', FALSE)));
+			if(preg_match('/^(\d{1,2}):(\d{1,2})$/', $_tv, $_tm)) {
+				$_tv = sprintf('%02d:%02d', min(23, intval($_tm[1])), min(59, intval($_tm[2])));
+			} else {
+				$_tv = $_tdef;
+			}
+			$_theme_times[$_tk] = $_tv;
+		}
 		
 		// hook admin_setting_base_post_start.php
 		
@@ -77,6 +107,9 @@ if($action == 'base') {
 		$replace['lang'] = $_lang;
 		$replace['favicon_url'] = $favicon_url;
 		$replace['statistic_code'] = $statistic_code;
+		$replace['theme_auto_on'] = $theme_auto_on;
+		$replace['theme_night_start'] = $_theme_times['theme_night_start'];
+		$replace['theme_night_end'] = $_theme_times['theme_night_end'];
 		
 		file_replace_var(APP_PATH.'conf/conf.php', $replace);
 	

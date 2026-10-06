@@ -40,7 +40,11 @@ $conf = (@include APP_PATH.'conf/conf.php') OR exit('<script>window.location="in
 !isset($conf['captcha_post_on']) AND $conf['captcha_post_on'] = 0;
 // 更新检测地址 (XIUNO XW)，默认 GitHub Releases API，可改为自建镜像
 !isset($conf['update_check_url']) AND $conf['update_check_url'] = 'https://api.github.com/repos/xiaowu1479/xiuno_xw/releases/latest';
-$conf['version'] = '1.8.4';		// 定义版本号！避免手工修改 conf/conf.php
+// 昼夜模式 (XIUNO XW)：按时间段自动切换日间/夜间，未显式选择主题的访客生效
+!isset($conf['theme_auto_on']) AND $conf['theme_auto_on'] = 0;
+!isset($conf['theme_night_start']) AND $conf['theme_night_start'] = '19:00';
+!isset($conf['theme_night_end']) AND $conf['theme_night_end'] = '07:00';
+$conf['version'] = '1.8.5';		// 定义版本号！避免手工修改 conf/conf.php
 
 // 转换为绝对路径，防止被包含时出错。
 substr($conf['log_path'], 0, 2) == './' AND $conf['log_path'] = APP_PATH.$conf['log_path']; 
