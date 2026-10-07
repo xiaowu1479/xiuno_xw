@@ -97,6 +97,14 @@ function xw_localimg_optimize($path, $url, $cfg) {
 	return $ret;
 }
 
+// 判断二进制内容是不是 WebP（RIFF 头 + WEBP 标识）
+// 用途：客户端上传前已转好 WebP（见 huux_tinymce/tinymce/upload-prep.js），
+//       但文件名可能还带着 .png/.jpg —— 名字必须跟内容一致，否则浏览器/静态服务器
+//       会按扩展名给出错误的 Content-Type
+function xw_localimg_is_webp($data) {
+	return strlen($data) > 12 && substr($data, 0, 4) === 'RIFF' && substr($data, 8, 4) === 'WEBP';
+}
+
 // 抽样统计颜色数：颜色少判为"图形/截图类"（用高质量），否则按照片类处理
 function xw_localimg_is_graphic($im, $threshold) {
 	$w = imagesx($im);

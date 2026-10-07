@@ -2,7 +2,11 @@
 /* 网盘下载按钮 — 参照 pan-downloader-xiaowu 设计 */
 .pandown-download {
     display: inline-block;
-    margin: 1em 0;
+    /* 上下留 1em；右侧也留一点：连着点两次「添加网盘链接」时，两个 [pd url] 标签
+       是紧贴的（thread_info_end.php 直接 str_replace），渲染出来的按钮会挨在一起
+       —— 原来的 margin: 1em 0 只有上下没有左右，所以两个按钮之间没有间隙。
+       加上右间距后相邻按钮之间会有可见间隙；单个按钮或换行的按钮，右侧间距不可见，观感不变 */
+    margin: 1em 0.5em 1em 0;
 }
 .pandown-btn {
     display: inline-flex !important;
