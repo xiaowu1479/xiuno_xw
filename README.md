@@ -15,6 +15,30 @@
 
 ## 更新日志
 
+### v1.8.7 (2026-10-07)
+
+**图片本地化插件（till_thread_locallmage）· 修复不可用 + 图片自动瘦身：**
+
+- **修复「图片本地化毫无反应」**：插件注册路由时把目录名写成了 `till_thread_localImage`（大写 I），而磁盘上实际是 `till_thread_locallmage`，在区分大小写的系统 / 卷上 `include` 会直接失败 —— 表现为访问 `?iqismart_localimg-1.htm` 只返回**空白页（0 字节）**，页面与日志都没有任何报错，极难排查（本次是靠"未知路由返回首页 40KB、该路由返回 0 字节"的对照才定位到）。现改为先探测真实目录名再 include，两种写法都能命中
+- **新增图片自动瘦身（限宽 + 条件转 WebP）**，覆盖两条链路：
+  - **本地化通道**（`route/localimg.php`）：服务器下载远程图片后，落盘前先限宽再编码
+  - **核心上传通道**（新增钩子 `hook/attach_create_save_before.php`）：编辑器粘贴 / 拖拽 / 附件按钮传上来的图，写入 `upload/tmp/` 之前完成 —— **这条才是日常发帖真正走的路径**
+  - 两端共用公共库 `plugin/till_thread_locallmage/imagex.inc.php`，参数集中在此：`max_width=1200`、`q_photo=82`、`q_graphic=90`、`min_gain=0.9`、`max_side=4000`
+- **安全兜底（既不会把图搞坏，也不会让图变大）**：
+  - 转完**只有比原文件小 10% 以上才替换**，否则保留原文件 —— 颜色少、线条规整的 UI 截图 PNG 本身就压得极好，转 WebP 反而更大（实测 11KB 的截图转 WebP 后更大，被这条兜底拦下）
+  - 全部回退路径：GD 无 WebP / 动图 GIF（GD 只能取第一帧）/ 解码失败 / 边长超 4000px / 非图片 → 一律原样保留
+  - 顺带修掉原插件把扩展名**硬编码成 `.png`** 的问题（原图是 jpg 也存成 `.png`），现在扩展名跟随实际格式
+  - 转成 `.webp` 后附件删除链路照常工作（`attach_delete_by_pid()` 按数据库里的 `filename` unlink）
+- **实测**（本机 PHP 7.4.3 与 web 端 PHP 8.0.2 的 GD 均带 WebP）：
+  - 本地化路由（真实登录态 HTTP 请求）返回 `upload/tmp/1_XXXXXX.webp` ✓
+  - 核心上传：496KB 的 1672×940 PNG → 落盘 **261KB `.webp`、1200×675**（52%），附件记录的 `filesize/width/height` 同步更新 ✓
+  - 回退用例：UI 截图（11KB）、GIF 动图、200×200 小图按预期行为处理 ✓
+
+**升级提示：**
+
+- 插件路由与钩子都会被编译进 `tmp/`（如 `tmp/plugin_till_thread_locallmage_route_localimg.php`、`tmp/route_attach.php`），更新后请到「后台 → 其他 → 清理缓存」勾选**「清空临时文件」**提交，否则改动不生效（插件路由会继续执行旧的编译副本）
+- 本次无数据库改动，标签 / 附件等既有数据不受影响
+
 ### v1.8.6 (2026-10-07)
 
 **标签插件（xn_tag）· 修复标签没有外框（"圈"）：**

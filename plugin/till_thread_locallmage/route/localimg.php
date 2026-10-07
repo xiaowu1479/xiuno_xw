@@ -1,6 +1,11 @@
 <?php
 !defined('DEBUG') AND exit('Access Denied.');
 
+// 图片本地化：下载远程图片 → 「限宽 + 条件转 WebP」→ 存 upload/tmp/
+// （发帖时由核心 attach_assoc_post() 归档到 upload/attach/年月/）
+// 优化逻辑与参数在公共库 imagex.inc.php 里，上传通道 hook/attach_create_save_before.php 共用同一份
+include_once APP_PATH.'plugin/till_thread_locallmage/imagex.inc.php';
+
 $url = param('url');
 $message = param('message');
 
@@ -52,13 +57,18 @@ if ($filesize < 10) {
   die;
 }
 file_put_contents_try($tmpfile, $imgdata);
-list($width, $height) = getimagesize($tmpfile);
+
+// 限宽 + 条件转 WebP（不划算或命中回退条件时保持原文件）
+$img = xw_localimg_optimize($tmpfile, $tmpurl, xw_localimg_cfg());
+$destsize = filesize($img['path']);
+list($width, $height) = getimagesize($img['path']);
+
 $attach = array(
-  'url' => $tmpurl,
-  'path' => $tmpfile,
+  'url' => $img['url'],
+  'path' => $img['path'],
   'orgfilename' => file_name($url),
   'filetype' => 'image',
-  'filesize' => $filesize,
+  'filesize' => $destsize,
   'width' => $width,
   'height' => $height,
   'isimage' => 1,
