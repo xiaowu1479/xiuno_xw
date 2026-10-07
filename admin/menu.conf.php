@@ -33,6 +33,14 @@ return array(
 			'list'=>array('url'=>url('thread-list'), 'text'=>lang('admin_thread_batch')),
 		)
 	),
+	'attach' => array(
+		'url'=>url('attach-list'), 
+		'text'=>lang('admin_attach'), 
+		'icon'=>'icon-paperclip',
+		'tab'=> array (
+			'list'=>array('url'=>url('attach-list'), 'text'=>lang('admin_attach_list')),
+		)
+	),
 	'user' => array(
 		'url'=>url('user-list'), 
 		'text'=>lang('user'), 

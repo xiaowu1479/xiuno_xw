@@ -1,0 +1,164 @@
+<?php include _include(ADMIN_PATH.'view/htm/header.inc.htm');?>
+
+<!--{hook admin_attach_list_start.htm}-->
+
+<div class="row">
+	<div class="col-12">
+		<div class="btn-group mb-3" role="group">
+			<?php echo admin_tab_active($menu['attach']['tab'], 'list');?>
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-3 mb-3">
+		<div class="card">
+			<div class="card-body py-3">
+				<div class="text-muted small"><?php echo lang('admin_attach_total');?></div>
+				<div class="h5 mb-0"><?php echo intval($stat['c']); ?> <span class="text-muted small"><?php echo lang('admin_attach_items');?> / <?php echo humansize(intval($stat['s'])); ?></span></div>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-3 mb-3">
+		<div class="card">
+			<div class="card-body py-3">
+				<div class="text-muted small"><?php echo lang('admin_attach_orphan_here');?></div>
+				<div class="h5 mb-0 <?php echo $orphan_here > 0 ? 'text-danger' : ''; ?>"><?php echo intval($orphan_here); ?> <span class="text-muted small"><?php echo lang('admin_attach_in_this_page');?></span></div>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-3 mb-3">
+		<div class="card">
+			<div class="card-body py-3">
+				<div class="text-muted small"><?php echo lang('admin_attach_tmp');?></div>
+				<div class="h5 mb-0"><?php echo intval($tmpcount); ?> <span class="text-muted small"><?php echo humansize($tmpsize); ?></span></div>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-3 mb-3">
+		<div class="card">
+			<div class="card-body py-3">
+				<button class="btn btn-outline-danger btn-sm btn-block" id="clean_orphan"><?php echo lang('admin_attach_clean_orphan');?></button>
+				<div class="text-muted small mt-2 mb-0"><?php echo lang('admin_attach_clean_orphan_tips');?></div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<p class="text-muted small">
+	<?php echo lang('admin_attach_tmp_tips');?><br />
+	<?php echo lang('admin_attach_trash_tips');?>
+</p>
+
+<div class="row">
+	<div class="col-lg-12">
+		<div class="card">
+			<div class="card-body">
+				<div class="table-responsive">
+					<table class="table" style="min-width: 960px">
+						<thead>
+							<tr>
+								<th width="70" class="text-center"><?php echo lang('admin_attach_preview');?></th>
+								<th width="60">aid</th>
+								<th><?php echo lang('admin_attach_file');?></th>
+								<th width="90"><?php echo lang('admin_attach_size');?></th>
+								<th width="110"><?php echo lang('admin_attach_uploader');?></th>
+								<th width="220"><?php echo lang('admin_attach_thread');?></th>
+								<th width="130"><?php echo lang('admin_attach_time');?></th>
+								<th width="90"><?php echo lang('admin_attach_status');?></th>
+								<th width="60"><?php echo lang('operation');?></th>
+							</tr>
+						</thead>
+						<tbody id="attachlist">
+					<?php if($attachlist) { foreach($attachlist as $a) { ?>
+						<tr aid="<?php echo intval($a['aid']); ?>">
+							<td class="text-center">
+								<?php if($a['is_img']) { ?>
+									<a href="<?php echo admin_attach_abs_url($a['url']); ?>" target="_blank"><img src="<?php echo admin_attach_abs_url($a['url']); ?>" style="max-height:40px;max-width:60px;" /></a>
+								<?php } else { ?>
+									<i class="icon-file text-muted"></i>
+								<?php } ?>
+							</td>
+							<td><?php echo intval($a['aid']); ?></td>
+							<td class="text-break">
+								<a href="<?php echo admin_attach_abs_url($a['url']); ?>" target="_blank"><?php echo _e(basename($a['filename'])); ?></a>
+								<?php if(!empty($a['orgfilename'])) { ?><div class="text-muted small"><?php echo _e($a['orgfilename']); ?></div><?php } ?>
+							</td>
+							<td><?php echo $a['filesize_h']; ?></td>
+							<td><?php echo _e($a['username']); ?></td>
+							<td class="text-break">
+								<?php if($a['tid'] && $a['subject']) { ?>
+									<?php /* 后台在 /admin/ 下，跳前台帖子要补 ../（后台其他页面也是这么写的） */ ?>
+									<a href="../<?php echo url("thread-{$a['tid']}"); ?>" target="_blank"><?php echo _e($a['subject']); ?></a>
+								<?php } elseif($a['tid']) { ?>
+									<span class="text-muted">tid <?php echo intval($a['tid']); ?>（<?php echo lang('admin_attach_thread_missing');?>）</span>
+								<?php } else { ?>
+									<span class="text-muted"><?php echo lang('admin_attach_no_thread');?></span>
+								<?php } ?>
+							</td>
+							<td><?php echo $a['create_date_fmt']; ?></td>
+							<td>
+								<?php if($a['is_orphan']) { ?>
+									<span class="badge badge-danger"><?php echo lang('admin_attach_orphan');?></span>
+								<?php } else { ?>
+									<span class="badge badge-success"><?php echo lang('admin_attach_used');?></span>
+								<?php } ?>
+							</td>
+							<td>
+								<a href="javascript:void(0);" class="attach_delete" aid="<?php echo intval($a['aid']); ?>"><?php echo lang('delete');?></a>
+							</td>
+						</tr>
+					<?php } } else { ?>
+						<tr><td colspan="9" class="text-center text-muted py-4"><?php echo lang('admin_attach_empty');?></td></tr>
+					<?php } ?>
+						</tbody>
+					</table>
+				</div>
+				<nav><ul class="pagination justify-content-center"><?php echo $pagination; ?></ul></nav>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!--{hook admin_attach_list_end.htm}-->
+
+<?php include _include(ADMIN_PATH.'view/htm/footer.inc.htm');?>
+
+<script>
+// 删除单个附件
+$(document).on('click', '.attach_delete', function() {
+	var ja = $(this);
+	var tr = ja.parents('tr');
+	var aid = ja.attr('aid');
+	var is_orphan = tr.find('.badge-danger').length > 0;
+	var msg = is_orphan
+		? '<?php echo lang('admin_attach_delete_confirm_orphan');?>'
+		: '<?php echo lang('admin_attach_delete_confirm_used');?>';
+	if(!window.confirm(msg)) return false;
+	$.xpost(xn.url('attach-delete'), {aid:aid}, function(code, message) {
+		if(code != 0) return $.alert(message);
+		tr.fadeOut(200, function(){ $(this).remove(); });
+	});
+	return false;
+});
+
+// 一键清理未被引用的附件
+$('#clean_orphan').on('click', function() {
+	if(!window.confirm('<?php echo lang('admin_attach_clean_confirm');?>')) return false;
+	var jbtn = $(this);
+	jbtn.attr('disabled', true).text('<?php echo lang('admin_attach_cleaning');?>');
+	$.xpost(xn.url('attach-clean_orphan'), {}, function(code, message) {
+		if(code != 0) {
+			jbtn.attr('disabled', false).text('<?php echo lang('admin_attach_clean_orphan');?>');
+			return $.alert(message);
+		}
+		$.alert(message);
+		setTimeout(function(){ window.location.reload(); }, 1200);
+	});
+	return false;
+});
+
+$('#nav li.nav-item-attach').addClass('active');
+</script>
+
+<!--{hook admin_attach_list_js.htm}-->
