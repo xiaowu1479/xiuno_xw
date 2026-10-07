@@ -1,4 +1,23 @@
 <style>
+/* XIUNO XW 兼容兜底：下面用到的 --gray-100 ~ --gray-900 并非 Bootstrap 4 自带
+   （Bootstrap 4 只定义 --gray / --gray-dark）。若全站无人定义这些变量，
+   浏览器会把用到它们的声明整条丢弃，表现为「标签外面没有那个圈」、.tag_box 系列失去配色。
+   这里给出兜底值；本块位于所有 CSS 之前（header_bootstrap_before），
+   任何主题/核心若定义了同名变量，都会覆盖它，所以不会影响主题配色。 */
+:root {
+	--gray-100: #f3f4f6;
+	--gray-200: #e5e7eb;
+	--gray-300: #d1d5db;
+	--gray-400: #9ca3af;
+	--gray-500: #6b7280;
+	--gray-600: #4b5563;
+	--gray-700: #374151;
+	--gray-800: #1f2937;
+	--gray-900: #111827;
+	--primary-bg-opacity: rgba(0, 123, 255, 0.08);
+	--warning-dark: #d97706;
+}
+
 table.nav_tag_list {margin-bottom: 0.2rem;}
 table.nav_tag_list td {padding: 0.3rem;}
 table.nav_tag_list td a{margin-right: 0.2rem;}
