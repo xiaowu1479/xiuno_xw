@@ -15,6 +15,24 @@
 
 ## 更新日志
 
+### v1.8.10 (2026-10-07)
+
+**回退 v1.8.9 的「上传前转 WebP」（在实际服务器上反而变慢）：**
+
+- v1.8.9 让编辑器在**上传前**把图片再编码成 WebP：本机实测体积确实从 4711 KB 降到 433.6 KB、编码只花十几毫秒，但**在真实服务器环境下反而明显变慢**（用户实测：原本"秒发"的发帖变成要等很久）。"客户端再编码 + 绕开 `xn.upload_file` 自己 POST"这套做法在真实网络条件下不成立，**整套回退**
+- **回退内容**：
+  - 删除 `plugin/huux_tinymce/tinymce/upload-prep.js`
+  - `plugin/huux_tinymce/tinymce/init.js` 的上传钩子恢复为原来的 `xn.upload_file` 流程
+  - `plugin/huux_tinymce/hook/post_js.htm` 去掉对新文件的引用
+  - `plugin/till_thread_locallmage/hook/attach_create_save_before.php`、`plugin/till_thread_locallmage/imagex.inc.php` 恢复为 v1.8.8 状态（去掉 `.webp` 扩展名修正与 `xw_localimg_is_webp()`）
+- **保留** v1.8.9 中与图片无关的那项修复：连续添加网盘链接时按钮之间没有间隙（`pandown` 的 CSS）
+- 回退后上传链路与 v1.8.8 完全一致（原来的 PNG 流程）；v1.8.8 的**提交守卫**保留：图片还没上传完就点提交时会等上传完成再自动提交，既不会报「内容太长」，也不用手点第二次
+
+**升级提示：**
+
+- 本次修改了插件钩子与静态资源：升级后请到「后台 → 其他 → 清理缓存」勾选**清空临时文件**提交，否则旧的编译副本（含 v1.8.9 的 WebP 流程）可能继续生效
+- 本次无数据库改动
+
 ### v1.8.9 (2026-10-07)
 
 **编辑器 · 图片上传前先转 WebP（上传快约 10 倍，编辑帖子不用再干等）：**

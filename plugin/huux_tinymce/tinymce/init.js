@@ -69,12 +69,6 @@ tinymce.init({
     contextmenu: false, // 禁用编辑器的右键菜单@c
     external_plugins: t_external_plugins, // 附加插件
     images_upload_handler: function(blobInfo, success, failure) {
-        // 上传前先转成 WebP（见 upload-prep.js：xn.image_resize 固定输出 PNG，一张 1672×940
-        // 的图要 POST 4.7MB 的 base64，转 WebP 后只有 434KB）；失败会自动回退到下面的旧流程
-        if(window.xwUploadImage) {
-            xwUploadImage(blobInfo.blob(), blobInfo, success, failure);
-            return;
-        }
         // 此方法来自xiuno.js，图片粘贴上传使用
         xn.upload_file(blobInfo.blob(), xn.url('attach-create'), {
             is_image: 1

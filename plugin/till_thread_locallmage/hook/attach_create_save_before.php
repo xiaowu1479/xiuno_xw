@@ -28,21 +28,6 @@
 			$is_image = 1;
 			$sz = @getimagesize($tmpfile);
 			$sz AND list($width, $height) = $sz;
-		} elseif(xw_localimg_is_webp($data)) {
-			// 客户端已经转好 WebP 后上传（见 huux_tinymce/tinymce/upload-prep.js），
-			// 服务器这边通常"没占到便宜"（本来就是 WebP），于是会保留 .png/.jpg 的文件名，
-			// 内容却是 WebP —— 名字与内容不一致，静态服务器会按扩展名发错的 Content-Type。
-			// 这里统一改成 .webp；只需要改文件名/尺寸变量，核心随后会把 $data 写到 $tmpfile。
-			@unlink($scratch);
-			$newname = $uid.'_'.xn_rand(15).'.webp';
-			$ext = 'webp';
-			$tmpanme = $newname;
-			$tmpfile = $conf['upload_path'].'tmp/'.$newname;
-			$tmpurl = $conf['upload_url'].'tmp/'.$newname;
-			$filetype = 'image';
-			$is_image = 1;
-			$sz = function_exists('getimagesizefromstring') ? @getimagesizefromstring($data) : FALSE;
-			$sz AND list($width, $height) = $sz;
 		} else {
 			// 没占到便宜：删掉试写的文件，交回核心按原样写
 			@unlink($scratch);
