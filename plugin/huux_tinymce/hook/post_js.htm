@@ -6,6 +6,8 @@ var t_external_toolbar = [],
 <!--{hook huux_tinymce_post_js_before.htm}-->
 <script type="text/javascript" src="plugin/huux_tinymce/tinymce/tinymce.min.js?v5.2.0"></script>
 <script type="text/javascript" src="plugin/huux_tinymce/tinymce/init.js?v2.1.18"></script>
+<!-- 提交守卫：等粘贴的图片上传完再提交，避免正文里的 base64 撞上服务端长度上限（报「内容太长」、要点两次） -->
+<script type="text/javascript" src="plugin/huux_tinymce/tinymce/upload-guard.js?v1.8.8"></script>
 <script type="text/javascript">
 $.require_css('plugin/huux_tinymce/tinymce/style.css?v2.1.17');
 if (typeof jform != 'undefined') jform.find('[name="doctype"]').val(0);
