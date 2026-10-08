@@ -47,10 +47,13 @@
     border-radius: 8px;
 }
 /* 内容区铺灰后，原来的 bg-light 链接框会和底色几乎同色，换成白色小卡片把它衬出来
-   （bootstrap 的 .bg-light 自带 !important，所以这里也需要 !important） */
+   （bootstrap 的 .bg-light 自带 !important，所以这里也需要 !important）；
+   四个角明显加圆：bootstrap 的 .rounded 只有 4.8px，8px 看着还是偏"方"，
+   这里给 16px（框高约 37px，两端接近半圆），链接换行成两行时也不会变形 */
 #pandown_qr_modal #pandown_qr_url_display {
     background: #fff !important;
     border: 1px solid #ecedf1;
+    border-radius: 16px;
 }
 html[data-theme="dark"] #pandown_qr_modal .modal-body {
     background: #22262e;
