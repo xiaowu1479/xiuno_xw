@@ -32,4 +32,31 @@
 .pandown-btn .pandown-icon {
     flex-shrink: 0;
 }
+
+/* ── 网盘二维码弹窗：让二维码的白底不再和弹窗背景"糊成一片" ──
+   二维码是黑块 + 白底的 PNG，白底那圈静区是扫码必需的，不能去掉；所以这里不改结构、不改尺寸，
+   只把弹窗内容区铺一层极淡的底，让白色二维码成为一张有边界的卡片：
+   - 浅色：#f6f7f9 浅灰底 + 白色二维码卡片
+   - 夜间：#22262e 深灰底，白色二维码不再是生硬的一整块白方块
+   作用范围限定在 #pandown_qr_modal，不影响站内其它弹窗 */
+#pandown_qr_modal .modal-body {
+    background: #f6f7f9;
+    border-radius: 0 0 5px 5px;
+}
+#pandown_qr_modal #pandown_qr_image {
+    border-radius: 8px;
+}
+/* 内容区铺灰后，原来的 bg-light 链接框会和底色几乎同色，换成白色小卡片把它衬出来
+   （bootstrap 的 .bg-light 自带 !important，所以这里也需要 !important） */
+#pandown_qr_modal #pandown_qr_url_display {
+    background: #fff !important;
+    border: 1px solid #ecedf1;
+}
+html[data-theme="dark"] #pandown_qr_modal .modal-body {
+    background: #22262e;
+}
+html[data-theme="dark"] #pandown_qr_modal #pandown_qr_url_display {
+    background: #2a2f38 !important;
+    border-color: #363c46;
+}
 </style>

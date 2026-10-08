@@ -74,10 +74,14 @@ if(!empty($preg_pd) && !empty($matches[0])) {
         $url = pandown_extract_url($raw);
         $type_name = pandown_detect_type($url);
 
-        $hash = md5($url);
+        // 二维码边长倍率：原来用 4（生成出来只有 164×164px），放进 400px 宽的弹窗里显得很小、
+        // 左右空一大片；改成 8（约 328×328px）后能撑满弹窗。
+        // 注意：倍率写进缓存 key，否则改大以后还会继续用旧的、小的缓存图。
+        $qr_scale = 8;
+        $hash = md5($url.'|qr'.$qr_scale);
         $cache_file = $cache_dir . $hash . '.png';
         if(!is_file($cache_file)) {
-            QRcode::png($url, $cache_file, QR_ECLEVEL_L, 4);
+            QRcode::png($url, $cache_file, QR_ECLEVEL_L, $qr_scale);
         }
         $qr_url = 'plugin/pandown/cache/' . $hash . '.png';
 
