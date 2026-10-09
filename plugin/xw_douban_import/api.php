@@ -259,7 +259,18 @@ if ($action == 'submit') {
 	// ========== 第二步：查重 —— 同名帖子合并（优先级最高） ==========
 	$merge_same = empty($kv['merge_same']) ? 0 : 1;
 	if ($merge_same) {
-		$existing = xwdi_find_existing_thread($d_title);
+		// 计算本条目的主题标题与豆瓣ID，供任务记录被清理后按帖子反查兜底去重
+		$merge_subject = '';
+		$merge_sid = '';
+		try {
+			$merge_payload = xwdi_payload_from_api($data);
+			$merge_payload['subject'] = xwdi_payload_subject($merge_payload);
+			$merge_subject = (string) $merge_payload['subject'];
+			$merge_sid = (string) $merge_payload['id'];
+		} catch (Throwable $e) {
+			$merge_subject = '';
+		}
+		$existing = xwdi_find_existing_thread($d_title, $merge_subject, $merge_sid);
 		if (!empty($existing)) {
 			$prefix = empty($kv['link_prefix']) ? '下载链接：' : $kv['link_prefix'];
 			$r = xwdi_append_link_to_thread(intval($existing['tid']), $d_link, $prefix);

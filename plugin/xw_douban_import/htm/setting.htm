@@ -368,7 +368,19 @@ $(document).on('click', '.btn-reset', function() {
 
 $('[data-clear]').on('click', function() {
 	var mode = $(this).data('clear');
-	if (!confirm('确定清除该类记录？此操作不可恢复')) return;
+	// 成功记录是「查重账本」：删掉后重复推送只能靠帖子标题兜底反查，
+	// 若旧帖标题被改过或不是本插件发布的卡片帖，仍可能产生重复帖子。
+	var confirmText = {
+		done: '「清除成功记录」会删除查重账本。\n'
+			+ '删除后再次推送同一批影视，只能靠帖子标题反查去重；\n'
+			+ '若旧帖标题被改动过，可能生成重复帖子。\n\n'
+			+ '建议先用「导出记录」留底。确定继续？',
+		all: '「清空全部」会删除查重账本与全部导入历史！\n'
+			+ '删除后再次推送同一批影视，只能靠帖子标题反查去重；\n'
+			+ '若旧帖标题被改动过，可能生成重复帖子。\n\n'
+			+ '建议先用「导出记录」留底。确定继续？'
+	};
+	if (!confirm(confirmText[mode] || '确定清除该类记录？此操作不可恢复')) return;
 	$.xpost(AJAX_URL, 'action=clear&mode=' + mode + '&csrf_token=' + encodeURIComponent(CSRF_TOKEN), function(code, msg) {
 		$.alert(msg);
 		if (code === 0) setTimeout(function(){ location.reload(); }, 800);

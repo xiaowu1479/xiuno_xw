@@ -192,13 +192,37 @@ function xwdi_tasks_add($items, $fid, $uid, $tagids, $skip_dup = 1) {
 }
 
 // 查找同名影片已成功发布的旧帖（优先最近记录，且帖子仍存在）
-function xwdi_find_existing_thread($title) {
+// $subject: 由采集数据确定性生成的主题标题；$sid: 豆瓣条目 ID。两者用于任务记录被清理后的兜底反查。
+function xwdi_find_existing_thread($title, $subject = '', $sid = '') {
+	// ── 第一层：任务记录（正常路径） ──
 	$rows = db_find('xw_douban_import', array('title'=>$title, 'status'=>1), array('id'=>-1), 1, 20);
 	foreach ((array)$rows as $r) {
 		if (empty($r['tid'])) continue;
 		// 仅校验帖子存在性，不做展示格式化
 		$thread = db_find_one('thread', array('tid'=>intval($r['tid'])));
 		if (!empty($thread)) return $r;
+	}
+
+	// ── 第二层：按主题标题反查帖子（任务记录被后台「清空」后仍能去重） ──
+	// 主题标题由 payload 确定性生成（片名 + (年份)），同样的采集数据必然得到同样的标题。
+	if ($subject !== '') {
+		$thread = db_find_one('thread', array('subject'=>$subject));
+		if (!empty($thread)) {
+			$post = db_find_one('post', array('tid'=>intval($thread['tid']), 'isfirst'=>1));
+			// 只认本插件生成的豆瓣卡片帖，避免误合并用户手写的同名主题
+			if (!empty($post) && strpos((string)$post['message'], 'chuan-douban-card') !== false) {
+				// 有豆瓣 ID 时再核对一次，避免同名不同版本（如翻拍）被错误合并
+				if ($sid === '' || strpos((string)$post['message'], 'subject/' . $sid . '/') !== false) {
+					return array(
+						'id' => 0,
+						'tid' => intval($thread['tid']),
+						'fid' => intval($thread['fid']),
+						'uid' => intval($thread['uid']),
+						'title' => $title,
+					);
+				}
+			}
+		}
 	}
 	return FALSE;
 }
