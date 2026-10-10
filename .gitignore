@@ -69,6 +69,8 @@ plugin/zaesky_theme_light/
 /xwdi_client_*.zip
 # AI 工具目录（含内部开发文档；其 node_modules 由自身 .gitignore 处理）
 /.opencode/
+# AI 咨询方案的示例目录（仅本地参考，不推送）
+/_preview/
 # 导航页图标抓取缓存（运行时生成）
 upload/nav_icon/
 # 错误重定向产生的异常文件名
