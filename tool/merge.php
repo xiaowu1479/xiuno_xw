@@ -22,7 +22,13 @@ $s .= php_strip_whitespace($dir.'array.func.php');
 $s .= php_strip_whitespace($dir.'xn_encrypt.func.php');
 $s .= php_strip_whitespace($dir.'misc.func.php');
 
-$s = substr($s, 8, -2);
+// 去掉文件开头的 php 开放标记与末尾的 php 结束标记。
+// 原写法 substr($s, 8, -2) 依赖固定字节数，一旦首个被合并文件（db_mysql.class.php）头部的
+// 空行/注释排版变化，就会多切掉一个字符，把 if(...) 切成 f(...)，生成的文件直接语法错误。
+// 注意：注释里不能出现 php 结束标记，否则会提前结束代码块（本行已刻意避免）。
+$s = preg_replace('#^\s*<\?php#', '', $s);
+$s = preg_replace('#\?>\s*$#', '', $s);
+$s = trim($s);
 
 $xiunophp = file_get_contents($dir.'xiunophp.php');
 $before = '// hook xiunophp_include_before.php';

@@ -27,10 +27,10 @@ function admin_token_check() {
 		}
 		list($_ip, $_time) = explode("\t", $s);
 		
-		// 后台超过 3600 自动退出。
-		// Background / more than 3600 automatic withdrawal.
-		//if($_ip != $longip || $time - $_time > 3600) {
-		if((XN_ADMIN_BIND_IP && $_ip != $longip || !XN_ADMIN_BIND_IP) && $time - $_time > 3600) {
+		// 后台超过 3600 秒无操作自动退出；开启「后台绑定 IP」时 IP 不符同样退出。
+		// 原写法 (绑定IP && IP不符 || 未绑定) && 超时 受运算符优先级影响，实际等价于只看超时，
+		// IP 不符时不一定会退出（是否退出取决于解密结果），这里按注释里的原始意图改为显式分组。
+		if($time - $_time > 3600 || (XN_ADMIN_BIND_IP && $_ip != $longip)) {
 			setcookie('bbs_admin_token', '', 0, '', '', '', TRUE);
 			message(-1, lang('admin_token_expiry'));
 		}

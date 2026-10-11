@@ -114,12 +114,13 @@ return array (
 	'update_check_url' => 'https://api.github.com/repos/xiaowu1479/xiuno_xw/releases/latest',
 	
 	'admin_bind_ip' => 0,		// 后台是否绑定 IP
-	
-	'cdn_on' => 0,
+
+	'cdn_on' => 0,			// 站点在 CDN / 反向代理之后时设为 1，否则访客 IP 会取到节点 IP（后台「基本设置」可改）
+	'cdn_ip' => '',			// 可信代理白名单，逗号分隔，支持 1.2.3.4 / 1.2.3.* / 1.2.3.0/24；非空时最近的代理不可信则忽略转发头（防伪造）
 	
 	'loco_pass' => '',		// 火车头采集接口密码，留空则禁用 loco.php
-	'token_bind_ip' => 1,		// Token 是否绑定 IP（移动网络下可关闭）
-	'token_expire' => 604800,	// Token 有效期（秒），默认 7 天
+	'token_bind_ip' => 1,		// Token 绑定 IP：0 = 不校验；1 = 同 C 段（默认，容忍移动网络 IP 漂移）；2 = 严格（IP 完全相同）
+	'token_expire' => 604800,	// Token 有效期（秒），默认 7 天；过半有效期会自动换发新 token（滑动续期）
 	
 	/* 支持多种 URL 格式：
 		0: ?thread-create-1.htm

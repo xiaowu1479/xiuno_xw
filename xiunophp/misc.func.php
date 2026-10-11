@@ -521,56 +521,81 @@ function humansize($num) {
 	}
 }
 
-// 不安全的获取 IP 方式，在开启 CDN 的时候，如果被人猜到真实 IP，则可以伪造。
-function ip() {
-	$conf = _SERVER('conf');
-	$ip = '127.0.0.1';
-	if(empty($conf['cdn_on'])) {
-		$ip = _SERVER('REMOTE_ADDR');
-	} else {
-		if(isset($_SERVER['HTTP_CDN_SRC_IP'])) {
-			$ip = $_SERVER['HTTP_CDN_SRC_IP'];
-		} elseif(isset($_SERVER['HTTP_CLIENTIP'])) {
-			$ip = $_SERVER['HTTP_CLIENTIP'];
-		} elseif(isset($_SERVER['HTTP_CLIENT_IP'])) {
-			$ip = $_SERVER['HTTP_CLIENT_IP'];
-		} elseif(isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-			$ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
-			$arr = array_filter(explode(',', $ip));
-			$ip = trim(end($arr));
-		} else {
-			$ip = _SERVER('REMOTE_ADDR');
-		}
-	}
-	return long2ip(ip2long($ip));
-}
-
-// 安全获取用户IP，信任 CDN 发过来的 X-FORWARDED-FOR
-/*
+// 获取访客真实 IP
+// 「最近的代理」可信时才解析转发头，可信情形（任一成立）：
+//   ① conf.cdn_on = 1          站点在公网 CDN / 反向代理之后（常规做法）
+//   ② REMOTE_ADDR 是本机/内网   典型的 Nginx 本机反代，零配置即可拿到真实 IP
+//   ③ REMOTE_ADDR 命中 cdn_ip 白名单   最严格的做法（防绕过 CDN 直连伪造 IP）
+// 可信时按顺序取第一个合法 IPv4：CF-Connecting-IP → True-Client-IP → X-Real-IP → X-Forwarded-For 首跳。
+// 不再信任 CDN-SRC-IP / CLIENTIP / CLIENT_IP（这三个头客户端同样能伪造，参考 XiunoX 的做法）。
 function ip() {
 	global $conf;
-	$ip = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '127.0.0.1'; // 如果有 CDN 的时候，为离服务器最近的 IP
-	if(empty($conf['cdn_ip']) || empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-		return $ip;
-	} else {
-		// 判断 cdnip 合法性，严格过滤 HTTP_X_FORWARDED_FOR
-		// X-Forwarded-For: client1, proxy1, proxy2, ...
-		// 离服务器最最近的为最后一个 proxy2，应该在 $conf['cdn_ip'] 当中才安全可信
-		foreach($conf['cdn_ip'] as $cdnip) {
-			$pos1 = strrpos($cdnip, '.');
-			$pos2 = strrpos($ip, '.');
-			// 合法 CDN IP 段
-			if($ip == $cdnip || ($pos1 == $pos2 && substr($cdnip, $pos1) == '.*' && substr($cdnip, 0, $pos1) == substr($ip, 0, $pos2))) {
-				$userips = !empty($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['HTTP_X_REAL_IP'];
-				if(empty($userips)) return $ip; // 此处 CDN 未转发 userip，有错误，可能需要记录日志
-				$arr = array_values(array_filter(explode(',', $userips)));
-				return long2ip(ip2long(end($arr)));
-			}
-		}
-		return $ip;
-	}
+	empty($conf) AND $conf = _SERVER('conf');
+	$ip = _SERVER('REMOTE_ADDR');
+	empty($ip) AND $ip = '127.0.0.1';
+	if(!ip_proxy_trusted($ip)) return long2ip(ip2long($ip));
+	$client = ip_forwarded();
+	if($client == '' || !filter_var($client, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) return long2ip(ip2long($ip));
+	return long2ip(ip2long($client));
 }
-*/
+
+// 最近的代理是否可信（cdn_on 开启 / 本身是内网地址 / 命中白名单）
+function ip_proxy_trusted($ip) {
+	global $conf;
+	if(!empty($conf['cdn_on'])) return TRUE;
+	if(!empty($conf['cdn_ip']) && ip_trust_list($ip, $conf['cdn_ip'])) return TRUE;
+	return ip_is_private($ip);
+}
+
+// 是否本机 / 内网地址（IPv4 私网与保留段，外加 ::1）
+function ip_is_private($ip) {
+	if(in_array($ip, array('127.0.0.1', '::1', '0.0.0.0'))) return TRUE;
+	if(!filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) return FALSE;
+	return filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) === FALSE;
+}
+
+// 从代理转发头中取客户端 IP：优先"由代理自身设置的单值头"，最后才是 X-Forwarded-For 首跳。
+// 每个头里取第一个合法 IPv4；某个头不是合法 IP 就自动看下一个头，避免一个脏值导致整条链路失效。
+function ip_forwarded() {
+	$keys = array('HTTP_CF_CONNECTING_IP', 'HTTP_TRUE_CLIENT_IP', 'HTTP_X_REAL_IP', 'HTTP_X_FORWARDED_FOR');
+	foreach($keys as $key) {
+		if(empty($_SERVER[$key]) || !is_string($_SERVER[$key])) continue;
+		foreach(explode(',', $_SERVER[$key]) as $item) {
+			$item = trim($item);
+			if($item != '' && filter_var($item, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) return $item;
+		}
+	}
+	return '';
+}
+
+// IP 是否命中信任列表，支持 1.2.3.4 / 1.2.3.* / 1.2.3.0/24 三种写法
+// $list 可以是数组，也可以是逗号分隔的字符串（后台设置里填的就是字符串）
+function ip_trust_list($ip, $list) {
+	is_array($list) OR $list = explode(',', strval($list));
+	$long = ip2long($ip);
+	if($long === FALSE) return FALSE;
+	foreach($list as $item) {
+		is_string($item) OR $item = strval($item);
+		$item = trim($item);
+		if($item == '') continue;
+		if(strpos($item, '/') !== FALSE) {
+			list($net, $mask) = explode('/', $item, 2);
+			$mask = intval($mask);
+			$netlong = ip2long($net);
+			if($netlong === FALSE || $mask < 0 || $mask > 32) continue;
+			$masklong = $mask == 0 ? 0 : (-1 << (32 - $mask));
+			if(($long & $masklong) == ($netlong & $masklong)) return TRUE;
+		} elseif(substr($item, -1) == '*') {
+			$netlong = ip2long(substr($item, 0, -1).'0');
+			$masklong = -1 << 8;
+			if($netlong !== FALSE && ($long & $masklong) == ($netlong & $masklong)) return TRUE;
+		} else {
+			$itemlong = ip2long($item);
+			if($itemlong !== FALSE && $itemlong == $long) return TRUE;
+		}
+	}
+	return FALSE;
+}
 
 // 日志记录
 function xn_log($s, $file = 'error') {

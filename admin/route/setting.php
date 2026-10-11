@@ -29,6 +29,11 @@ if($action == 'base') {
 		$input['captcha_post_on'] = form_radio_yes_no('captcha_post_on', $conf['captcha_post_on']);
 		$input['cookie_secure'] = form_radio_yes_no('cookie_secure', $conf['cookie_secure'], lang('cookie_secure_tips'));
 		$input['online_hold_time'] = form_text('online_hold_time', $conf['online_hold_time'], 100);
+		// Token 绑定 IP / CDN（v1.8.17 新增：改这些配置不用再去动服务器上的 conf/conf.php）
+		$input['token_bind_ip'] = form_radio('token_bind_ip', array(1=>lang('token_bind_ip_1'), 2=>lang('token_bind_ip_2'), 0=>lang('token_bind_ip_0')), isset($conf['token_bind_ip']) ? intval($conf['token_bind_ip']) : 1);
+		$input['cdn_on'] = form_radio_yes_no('cdn_on', isset($conf['cdn_on']) ? $conf['cdn_on'] : 0);
+		$cdn_ip_str = isset($conf['cdn_ip']) ? (is_array($conf['cdn_ip']) ? implode(', ', $conf['cdn_ip']) : strval($conf['cdn_ip'])) : '';
+		$input['cdn_ip'] = form_text('cdn_ip', $cdn_ip_str, 420, '1.2.3.4, 1.2.3.0/24');
 		$input['lang'] = form_select('lang', array('zh-cn'=>lang('lang_zh_cn'), 'zh-tw'=>lang('lang_zh_tw'), 'en-us'=>lang('lang_en_us'), 'ru-ru'=>lang('lang_ru_ru'), 'th-th'=>lang('lang_th_th')), $conf['lang']);
 		$input['favicon_url'] = form_text('favicon_url', $conf['favicon_url']);
 		$input['statistic_code'] = form_textarea('statistic_code', $conf['statistic_code'], '100%', 150);
@@ -71,6 +76,25 @@ if($action == 'base') {
 		$captcha_post_on = param('captcha_post_on', 0);
 		$cookie_secure = param('cookie_secure', 0);
 		$online_hold_time = param('online_hold_time', 3600);
+		$token_bind_ip = intval(param('token_bind_ip', 1));
+		in_array($token_bind_ip, array(0, 1, 2)) OR $token_bind_ip = 1;	// 非法值回退到「同 C 段」
+		$cdn_on = param('cdn_on', 0) ? 1 : 0;
+		// CDN 白名单：允许逗号 / 空格 / 换行混用，统一存成 "a, b" 字符串；明显非法的条目直接丢弃
+		$cdn_ip_arr = array();
+		foreach(preg_split('#[\s,]+#', trim(strval(param('cdn_ip', '', FALSE)))) as $_ipitem) {
+			$_ipitem = trim($_ipitem);
+			if($_ipitem === '') continue;
+			if(strpos($_ipitem, '/') !== FALSE) {
+				list($_ipnet, $_ipmask) = explode('/', $_ipitem, 2);
+				if(ip2long($_ipnet) === FALSE || !ctype_digit($_ipmask) || intval($_ipmask) > 32) continue;
+			} elseif(substr($_ipitem, -1) == '*') {
+				if(ip2long(substr($_ipitem, 0, -1).'0') === FALSE) continue;
+			} else {
+				if(ip2long($_ipitem) === FALSE) continue;
+			}
+			$cdn_ip_arr[] = $_ipitem;
+		}
+		$cdn_ip = implode(', ', $cdn_ip_arr);
 		
 		$_lang = param('lang');
 		$favicon_url = param('favicon_url', '', FALSE);
@@ -104,6 +128,9 @@ if($action == 'base') {
 		$replace['captcha_post_on'] = $captcha_post_on;
 		$replace['cookie_secure'] = $cookie_secure;
 		$replace['online_hold_time'] = max(60, min(86400, intval($online_hold_time)));
+		$replace['token_bind_ip'] = $token_bind_ip;
+		$replace['cdn_on'] = $cdn_on;
+		$replace['cdn_ip'] = $cdn_ip;
 		$replace['lang'] = $_lang;
 		$replace['favicon_url'] = $favicon_url;
 		$replace['statistic_code'] = $statistic_code;

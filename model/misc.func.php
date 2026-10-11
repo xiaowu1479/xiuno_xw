@@ -3,6 +3,17 @@
 // hook model_misc_start.php
 
 
+// 判断两个 IP 是否属于同一网段（IPv4 按 /24 比较，非 IPv4 退回完全相同）
+// 用于 Token 绑定 IP 的宽松模式：容忍同一 C 段内的 IP 漂移（移动网络 / 多出口的出口 IP 会变）
+function ip_same_net($ip1, $ip2, $mask = 24) {
+	$l1 = ip2long($ip1);
+	$l2 = ip2long($ip2);
+	if($l1 === FALSE || $l2 === FALSE) return $ip1 == $ip2;
+	$masklong = $mask <= 0 ? 0 : (-1 << (32 - $mask));
+	return ($l1 & $masklong) == ($l2 & $masklong);
+}
+
+
 /*
 	url("thread-create-1.htm");
 	根据 $conf['url_rewrite_on'] 设置，返回以下四种格式：

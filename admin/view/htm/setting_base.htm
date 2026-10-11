@@ -157,6 +157,34 @@
 						</div>
 					</div>
 					
+					<!--{hook admin_setting_token_bind_before.htm}-->
+					
+					<div class="form-group row">
+						<label class="col-sm-2 form-control-label"><?php echo lang('token_bind_ip');?>：</label>
+						<div class="col-sm-10">
+							<?php echo $input['token_bind_ip'];?>
+							<p class="mt-2 text-grey small"><?php echo lang('token_bind_ip_tips');?></p>
+						</div>
+					</div>
+					
+					<div class="form-group row">
+						<label class="col-sm-2 form-control-label"><?php echo lang('cdn_on');?>：</label>
+						<div class="col-sm-10">
+							<?php echo $input['cdn_on'];?>
+							<p class="mt-2 text-grey small mb-0"><?php echo lang('cdn_on_tips');?></p>
+						</div>
+					</div>
+					
+					<div class="form-group row">
+						<label class="col-sm-2 form-control-label"><?php echo lang('cdn_ip');?>：</label>
+						<div class="col-sm-10">
+							<?php echo $input['cdn_ip'];?>
+							<p class="mt-2 text-grey small"><?php echo lang('cdn_ip_tips');?></p>
+						</div>
+					</div>
+					
+					<!--{hook admin_setting_cdn_after.htm}-->
+					
 					<!--{hook admin_setting_runlevel_after.htm}-->
 					
 					<div class="form-group row">

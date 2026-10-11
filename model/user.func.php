@@ -329,8 +329,16 @@ function user_token_get_do() {
 	$arr = explode("\t", $s);
 	if(count($arr) != 4) return FALSE;
 	list($_ip, $_time, $_uid, $_pwd) = $arr;
-	// 绑定 IP，防止 token 被盗用后异地登录（可在后台关闭，移动网络下 IP 会变化）
-	if(!empty($conf['token_bind_ip']) && $ip != $_ip) return FALSE;
+	// 绑定 IP，防止 token 被盗用后异地登录
+	// token_bind_ip：0 = 不校验；1 = 同 C 段（默认，容忍移动网络 / 换 Wi-Fi 的 IP 漂移）；2 = 严格（IP 完全相同）
+	// 老版配置里 1 代表"是否绑定 IP"的开关，这里沿用 1 表示"绑定但允许同 C 段漂移"，
+	// 这样升级后无需手改服务器上的 conf/conf.php（一键更新不会覆盖 conf 目录）即可生效。
+	$bind = isset($conf['token_bind_ip']) ? intval($conf['token_bind_ip']) : 1;
+	if($bind == 2) {
+		if($ip != $_ip) return FALSE;
+	} elseif($bind == 1) {
+		if(!ip_same_net($ip, $_ip, 24)) return FALSE;
+	}
 	// token 过期时间，默认 7 天
 	$token_expire = empty($conf['token_expire']) ? 604800 : $conf['token_expire'];
 	if($time - $_time > $token_expire) return FALSE;
@@ -342,11 +350,14 @@ function user_token_get_do() {
 			return 0;
 		}
 	}
-	
-	
+	// 滑动续期：超过一半有效期（默认 7 天 → 3.5 天）自动换发新 token，
+	// 避免"到期当天必定掉登录"；顺带把当前 IP 重新写进 token，缓解 IP 漂移
+	if($token_expire > 0 && $time - $_time > $token_expire / 2) {
+		user_token_set($_uid);
+	}
 	
 	// hook model_user_token_get_do_end.php
-	
+
 	return $_uid;	
 }
 
@@ -357,7 +368,10 @@ function user_token_set($uid) {
 	$token = user_token_gen($uid);
 	$token_expire = empty($conf['token_expire']) ? 604800 : $conf['token_expire'];
 	$secure = !empty($conf['cookie_secure']);
-	setcookie('bbs_token', $token, $time + $token_expire, $conf['cookie_path'], '', $secure, TRUE);
+	// cookie 路径未配置时固定为 '/'：否则 PHP 会取「当前请求目录」作默认路径，
+	// 在子目录（/admin/、插件接口）下会写出同名不同路径的 cookie，互相遮蔽导致退出登录清不掉
+	$path = empty($conf['cookie_path']) ? '/' : $conf['cookie_path'];
+	setcookie('bbs_token', $token, $time + $token_expire, $path, '', $secure, TRUE);
 	
 	// hook model_user_token_set_end.php
 }
@@ -365,7 +379,8 @@ function user_token_set($uid) {
 function user_token_clear() {
 	global $time, $conf;
 	$secure = !empty($conf['cookie_secure']);
-	setcookie('bbs_token', '', $time - 8640000, $conf['cookie_path'], '', $secure, TRUE);
+	$path = empty($conf['cookie_path']) ? '/' : $conf['cookie_path'];
+	setcookie('bbs_token', '', $time - 8640000, $path, '', $secure, TRUE);
 	
 	// hook model_user_token_clear_end.php
 }
@@ -466,7 +481,8 @@ function csrf_token() {
         $token = _COOKIE('csrf_token');
         if(empty($token) || strlen($token) != 32) {
             $token = xn_rand(32);
-            setcookie('csrf_token', $token, $time + 86400 * 30, '', '', 0, TRUE);
+            // 路径固定 '/'：避免前台与后台在各自目录下各写一份同名 cookie，交叉提交表单时报 CSRF 校验失败
+            setcookie('csrf_token', $token, $time + 86400 * 30, '/', '', 0, TRUE);
         }
     }
     return $token;
