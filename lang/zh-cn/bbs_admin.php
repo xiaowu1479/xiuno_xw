@@ -18,7 +18,12 @@ return array(
 	'admin_index_page'=>'后台',
 	'front_index_page'=>'前台',
 	'admin_site_setting'=>'站点设置',
-	'admin_setting_base'=>'基本设置',
+	'admin_setting_base'=>'站点设置',
+	'admin_setting_user'=>'注册与验证',
+	'admin_setting_security'=>'登录与安全',
+	'admin_bind_ip'=>'后台绑定 IP',
+	'admin_bind_ip_tips'=>'开启后，后台令牌与登录时的 IP 绑定：换网络（手机切 Wi-Fi、宽带重拨）需要重新登录后台。用手机管理后台建议保持「否」。',
+	'user_create_email_on_tips'=>'开启后，新用户注册必须填写邮箱并通过验证邮件才能激活账号（需先在「邮件设置」里配置好 SMTP）。',
 	'admin_setting_smtp'=>'SMTP 设置',
 	
 	// 检测更新 (XIUNO XW)

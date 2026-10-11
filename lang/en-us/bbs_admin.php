@@ -21,7 +21,12 @@ return array(
 	'online_hold_time'=>'Online Hold Time (seconds)',
 	'online_hold_time_tips'=>'Time range for online count: visitors active within this period are counted as online. Default 3600 (1 hour); 600 (10 min) recommended for small sites',
 	'admin_site_setting'=>'Site Setting',
-	'admin_setting_base'=>'Base Setting',
+	'admin_setting_base'=>'Site Settings',
+	'admin_setting_user'=>'Registration',
+	'admin_setting_security'=>'Login & Security',
+	'admin_bind_ip'=>'Bind Admin Panel to IP',
+	'admin_bind_ip_tips'=>'When enabled, the admin token is bound to the IP you logged in from: changing networks (mobile to Wi-Fi, reconnecting broadband) requires logging in again. Keep it disabled if you manage the site from a phone.',
+	'user_create_email_on_tips'=>'When enabled, new users must verify their email before the account is activated (configure SMTP on the Mail tab first).',
 	'admin_setting_smtp'=>'SMTP Setting',
 	
 	// 检测更新 (XIUNO XW)

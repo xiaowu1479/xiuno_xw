@@ -7,6 +7,8 @@ return array(
 		'icon'=>'icon-cog', 
 		'tab'=> array (
 			'base'=>array('url'=>url('setting-base'), 'text'=>lang('admin_setting_base')),
+			'user'=>array('url'=>url('setting-user'), 'text'=>lang('admin_setting_user')),
+			'security'=>array('url'=>url('setting-security'), 'text'=>lang('admin_setting_security')),
 			'smtp'=>array('url'=>url('setting-smtp'), 'text'=>lang('admin_setting_smtp')),
 		)
 	),

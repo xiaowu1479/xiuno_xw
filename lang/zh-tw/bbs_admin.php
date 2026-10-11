@@ -21,7 +21,12 @@ return array(
 	'online_hold_time'=>'在線保持時間（秒）',
 	'online_hold_time_tips'=>'在線人數統計的時間範圍：在此時間內活躍過的訪客計入在線，預設 3600（1小時），小站建議 600（10分鐘）',
 	'admin_site_setting'=>'站點設置',
-	'admin_setting_base'=>'基本設置',
+	'admin_setting_base'=>'站點設置',
+	'admin_setting_user'=>'註冊與驗證',
+	'admin_setting_security'=>'登入與安全',
+	'admin_bind_ip'=>'後台綁定 IP',
+	'admin_bind_ip_tips'=>'開啟後，後台令牌與登入時的 IP 綁定：換網路（手機切 Wi-Fi、寬頻重撥）需要重新登入後台。用手機管理後台建議保持「否」。',
+	'user_create_email_on_tips'=>'開啟後，新用戶註冊必須填寫信箱並通過驗證郵件才能啟用帳號（需先在「郵件設定」裡配置好 SMTP）。',
 	'admin_setting_smtp'=>'SMTP 設置',
 	
 	// 检测更新 (XIUNO XW)

@@ -20,20 +20,6 @@ if($action == 'base') {
 		$input['sitename'] = form_text('sitename', $conf['sitename']);
 		$input['sitebrief'] = form_textarea('sitebrief', $conf['sitebrief'], '100%', 100);
 		$input['runlevel'] = form_radio('runlevel', array(0=>lang('runlevel_0'), 1=>lang('runlevel_1'), 2=>lang('runlevel_2'), 3=>lang('runlevel_3'), 4=>lang('runlevel_4'), 5=>lang('runlevel_5')), $conf['runlevel']);
-		$input['user_create_on'] = form_radio_yes_no('user_create_on', $conf['user_create_on']);
-		$input['user_create_email_on'] = form_radio_yes_no('user_create_email_on', $conf['user_create_email_on']);
-		$input['user_resetpw_on'] = form_radio_yes_no('user_resetpw_on', $conf['user_resetpw_on']);
-		$input['captcha_on'] = form_radio_yes_no('captcha_on', $conf['captcha_on'], lang('captcha_tips'));
-		$input['captcha_login_on'] = form_radio_yes_no('captcha_login_on', $conf['captcha_login_on']);
-		$input['captcha_reg_on'] = form_radio_yes_no('captcha_reg_on', $conf['captcha_reg_on']);
-		$input['captcha_post_on'] = form_radio_yes_no('captcha_post_on', $conf['captcha_post_on']);
-		$input['cookie_secure'] = form_radio_yes_no('cookie_secure', $conf['cookie_secure'], lang('cookie_secure_tips'));
-		$input['online_hold_time'] = form_text('online_hold_time', $conf['online_hold_time'], 100);
-		// Token 绑定 IP / CDN（v1.8.17 新增：改这些配置不用再去动服务器上的 conf/conf.php）
-		$input['token_bind_ip'] = form_radio('token_bind_ip', array(1=>lang('token_bind_ip_1'), 2=>lang('token_bind_ip_2'), 0=>lang('token_bind_ip_0')), isset($conf['token_bind_ip']) ? intval($conf['token_bind_ip']) : 1);
-		$input['cdn_on'] = form_radio_yes_no('cdn_on', isset($conf['cdn_on']) ? $conf['cdn_on'] : 0);
-		$cdn_ip_str = isset($conf['cdn_ip']) ? (is_array($conf['cdn_ip']) ? implode(', ', $conf['cdn_ip']) : strval($conf['cdn_ip'])) : '';
-		$input['cdn_ip'] = form_text('cdn_ip', $cdn_ip_str, 420, '1.2.3.4, 1.2.3.0/24');
 		$input['lang'] = form_select('lang', array('zh-cn'=>lang('lang_zh_cn'), 'zh-tw'=>lang('lang_zh_tw'), 'en-us'=>lang('lang_en_us'), 'ru-ru'=>lang('lang_ru_ru'), 'th-th'=>lang('lang_th_th')), $conf['lang']);
 		$input['favicon_url'] = form_text('favicon_url', $conf['favicon_url']);
 		$input['statistic_code'] = form_textarea('statistic_code', $conf['statistic_code'], '100%', 150);
@@ -67,35 +53,6 @@ if($action == 'base') {
 		$sitebrief = param('sitebrief', '', FALSE);
 		$sitename = param('sitename', '', FALSE);
 		$runlevel = param('runlevel', 0);
-		$user_create_on = param('user_create_on', 0);
-		$user_create_email_on = param('user_create_email_on', 0);
-		$user_resetpw_on = param('user_resetpw_on', 0);
-		$captcha_on = param('captcha_on', 0);
-		$captcha_login_on = param('captcha_login_on', 0);
-		$captcha_reg_on = param('captcha_reg_on', 0);
-		$captcha_post_on = param('captcha_post_on', 0);
-		$cookie_secure = param('cookie_secure', 0);
-		$online_hold_time = param('online_hold_time', 3600);
-		$token_bind_ip = intval(param('token_bind_ip', 1));
-		in_array($token_bind_ip, array(0, 1, 2)) OR $token_bind_ip = 1;	// 非法值回退到「同 C 段」
-		$cdn_on = param('cdn_on', 0) ? 1 : 0;
-		// CDN 白名单：允许逗号 / 空格 / 换行混用，统一存成 "a, b" 字符串；明显非法的条目直接丢弃
-		$cdn_ip_arr = array();
-		foreach(preg_split('#[\s,]+#', trim(strval(param('cdn_ip', '', FALSE)))) as $_ipitem) {
-			$_ipitem = trim($_ipitem);
-			if($_ipitem === '') continue;
-			if(strpos($_ipitem, '/') !== FALSE) {
-				list($_ipnet, $_ipmask) = explode('/', $_ipitem, 2);
-				if(ip2long($_ipnet) === FALSE || !ctype_digit($_ipmask) || intval($_ipmask) > 32) continue;
-			} elseif(substr($_ipitem, -1) == '*') {
-				if(ip2long(substr($_ipitem, 0, -1).'0') === FALSE) continue;
-			} else {
-				if(ip2long($_ipitem) === FALSE) continue;
-			}
-			$cdn_ip_arr[] = $_ipitem;
-		}
-		$cdn_ip = implode(', ', $cdn_ip_arr);
-		
 		$_lang = param('lang');
 		$favicon_url = param('favicon_url', '', FALSE);
 		$statistic_code = param('statistic_code', '', FALSE);
@@ -119,18 +76,6 @@ if($action == 'base') {
 		$replace['sitename'] = $sitename;
 		$replace['sitebrief'] = $sitebrief;
 		$replace['runlevel'] = $runlevel;
-		$replace['user_create_on'] = $user_create_on;
-		$replace['user_create_email_on'] = $user_create_email_on;
-		$replace['user_resetpw_on'] = $user_resetpw_on;
-		$replace['captcha_on'] = $captcha_on;
-		$replace['captcha_login_on'] = $captcha_login_on;
-		$replace['captcha_reg_on'] = $captcha_reg_on;
-		$replace['captcha_post_on'] = $captcha_post_on;
-		$replace['cookie_secure'] = $cookie_secure;
-		$replace['online_hold_time'] = max(60, min(86400, intval($online_hold_time)));
-		$replace['token_bind_ip'] = $token_bind_ip;
-		$replace['cdn_on'] = $cdn_on;
-		$replace['cdn_ip'] = $cdn_ip;
 		$replace['lang'] = $_lang;
 		$replace['favicon_url'] = $favicon_url;
 		$replace['statistic_code'] = $statistic_code;
@@ -145,6 +90,125 @@ if($action == 'base') {
 		message(0, lang('modify_successfully'));
 	}
 
+} elseif($action == 'user') {
+	
+	// hook admin_setting_user_get_post.php
+	
+	if($method == 'GET') {
+		
+		// hook admin_setting_user_get_start.php
+		
+		$input = array();
+		$input['user_create_on'] = form_radio_yes_no('user_create_on', $conf['user_create_on']);
+		$input['user_create_email_on'] = form_radio_yes_no('user_create_email_on', $conf['user_create_email_on']);
+		$input['user_resetpw_on'] = form_radio_yes_no('user_resetpw_on', $conf['user_resetpw_on']);
+		$input['captcha_on'] = form_radio_yes_no('captcha_on', $conf['captcha_on']);
+		$input['captcha_login_on'] = form_radio_yes_no('captcha_login_on', $conf['captcha_login_on']);
+		$input['captcha_reg_on'] = form_radio_yes_no('captcha_reg_on', $conf['captcha_reg_on']);
+		$input['captcha_post_on'] = form_radio_yes_no('captcha_post_on', $conf['captcha_post_on']);
+		
+		$header['title'] = lang('admin_setting_user');
+		$header['mobile_title'] = lang('admin_setting_user');
+		
+		// hook admin_setting_user_get_end.php
+		
+		include _include(ADMIN_PATH.'view/htm/setting_user.htm');
+		
+	} else {
+		
+		$user_create_on = param('user_create_on', 0) ? 1 : 0;
+		$user_create_email_on = param('user_create_email_on', 0) ? 1 : 0;
+		$user_resetpw_on = param('user_resetpw_on', 0) ? 1 : 0;
+		$captcha_on = param('captcha_on', 0) ? 1 : 0;
+		$captcha_login_on = param('captcha_login_on', 0) ? 1 : 0;
+		$captcha_reg_on = param('captcha_reg_on', 0) ? 1 : 0;
+		$captcha_post_on = param('captcha_post_on', 0) ? 1 : 0;
+		
+		// hook admin_setting_user_post_start.php
+		
+		$replace = array();
+		$replace['user_create_on'] = $user_create_on;
+		$replace['user_create_email_on'] = $user_create_email_on;
+		$replace['user_resetpw_on'] = $user_resetpw_on;
+		$replace['captcha_on'] = $captcha_on;
+		$replace['captcha_login_on'] = $captcha_login_on;
+		$replace['captcha_reg_on'] = $captcha_reg_on;
+		$replace['captcha_post_on'] = $captcha_post_on;
+		
+		file_replace_var(APP_PATH.'conf/conf.php', $replace);
+		
+		// hook admin_setting_user_post_end.php
+		
+		message(0, lang('modify_successfully'));
+	}
+	
+} elseif($action == 'security') {
+	
+	// hook admin_setting_security_get_post.php
+	
+	if($method == 'GET') {
+		
+		// hook admin_setting_security_get_start.php
+		
+		$input = array();
+		// Token 绑定 IP / 后台绑定 IP / Cookie Secure / CDN（改这些配置不用再去动服务器上的 conf/conf.php）
+		$input['token_bind_ip'] = form_radio('token_bind_ip', array(1=>lang('token_bind_ip_1'), 2=>lang('token_bind_ip_2'), 0=>lang('token_bind_ip_0')), isset($conf['token_bind_ip']) ? intval($conf['token_bind_ip']) : 1);
+		$input['cookie_secure'] = form_radio_yes_no('cookie_secure', isset($conf['cookie_secure']) ? $conf['cookie_secure'] : 0);
+		$input['online_hold_time'] = form_text('online_hold_time', $conf['online_hold_time'], 100);
+		$input['admin_bind_ip'] = form_radio_yes_no('admin_bind_ip', isset($conf['admin_bind_ip']) ? $conf['admin_bind_ip'] : 0);
+		$input['cdn_on'] = form_radio_yes_no('cdn_on', isset($conf['cdn_on']) ? $conf['cdn_on'] : 0);
+		$cdn_ip_str = isset($conf['cdn_ip']) ? (is_array($conf['cdn_ip']) ? implode(', ', $conf['cdn_ip']) : strval($conf['cdn_ip'])) : '';
+		$input['cdn_ip'] = form_text('cdn_ip', $cdn_ip_str, 420, '1.2.3.4, 1.2.3.0/24');
+		
+		$header['title'] = lang('admin_setting_security');
+		$header['mobile_title'] = lang('admin_setting_security');
+		
+		// hook admin_setting_security_get_end.php
+		
+		include _include(ADMIN_PATH.'view/htm/setting_security.htm');
+		
+	} else {
+		
+		$token_bind_ip = intval(param('token_bind_ip', 1));
+		in_array($token_bind_ip, array(0, 1, 2)) OR $token_bind_ip = 1;	// 非法值回退到「同 C 段」
+		$cookie_secure = param('cookie_secure', 0) ? 1 : 0;
+		$online_hold_time = max(60, min(86400, intval(param('online_hold_time', 3600))));
+		$admin_bind_ip = param('admin_bind_ip', 0) ? 1 : 0;
+		$cdn_on = param('cdn_on', 0) ? 1 : 0;
+		// CDN 白名单：允许逗号 / 空格 / 换行混用，统一存成 "a, b" 字符串；明显非法的条目直接丢弃
+		$cdn_ip_arr = array();
+		foreach(preg_split('#[\s,]+#', trim(strval(param('cdn_ip', '', FALSE)))) as $_ipitem) {
+			$_ipitem = trim($_ipitem);
+			if($_ipitem === '') continue;
+			if(strpos($_ipitem, '/') !== FALSE) {
+				list($_ipnet, $_ipmask) = explode('/', $_ipitem, 2);
+				if(ip2long($_ipnet) === FALSE || !ctype_digit($_ipmask) || intval($_ipmask) > 32) continue;
+			} elseif(substr($_ipitem, -1) == '*') {
+				if(ip2long(substr($_ipitem, 0, -1).'0') === FALSE) continue;
+			} else {
+				if(ip2long($_ipitem) === FALSE) continue;
+			}
+			$cdn_ip_arr[] = $_ipitem;
+		}
+		$cdn_ip = implode(', ', $cdn_ip_arr);
+		
+		// hook admin_setting_security_post_start.php
+		
+		$replace = array();
+		$replace['token_bind_ip'] = $token_bind_ip;
+		$replace['cookie_secure'] = $cookie_secure;
+		$replace['online_hold_time'] = $online_hold_time;
+		$replace['admin_bind_ip'] = $admin_bind_ip;
+		$replace['cdn_on'] = $cdn_on;
+		$replace['cdn_ip'] = $cdn_ip;
+		
+		file_replace_var(APP_PATH.'conf/conf.php', $replace);
+		
+		// hook admin_setting_security_post_end.php
+		
+		message(0, lang('modify_successfully'));
+	}
+	
 } elseif($action == 'smtp') {
 
 	// hook admin_setting_smtp_get_post.php

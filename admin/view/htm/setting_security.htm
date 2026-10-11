@@ -1,0 +1,113 @@
+<?php include _include(ADMIN_PATH.'view/htm/header.inc.htm');?>
+
+<!--{hook admin_setting_security_start.htm}-->
+
+<div class="row">
+	<div class="col-lg-12">
+		<div class="btn-group mb-3" role="group">
+			<?php echo admin_tab_active($menu['setting']['tab'], 'security');?>
+		</div>
+		<div class="card">
+			<div class="card-body">
+				<!--
+				<h4 class="card-title"><?php echo lang('admin_setting_security');?></h4>
+				-->
+				<form action="<?php echo url('setting-security');?>" method="post" id="form">
+				
+					<!--{hook admin_setting_token_bind_before.htm}-->
+					
+					<div class="form-group row">
+						<label class="col-sm-2 form-control-label"><?php echo lang('token_bind_ip');?>：</label>
+						<div class="col-sm-10">
+							<?php echo $input['token_bind_ip'];?>
+							<p class="mt-2 text-grey small"><?php echo lang('token_bind_ip_tips');?></p>
+						</div>
+					</div>
+					
+					<div class="form-group row">
+						<label class="col-sm-2 form-control-label"><?php echo lang('admin_bind_ip');?>：</label>
+						<div class="col-sm-10">
+							<?php echo $input['admin_bind_ip'];?>
+							<p class="mt-2 text-grey small"><?php echo lang('admin_bind_ip_tips');?></p>
+						</div>
+					</div>
+					
+					<div class="form-group row">
+						<label class="col-sm-2 form-control-label"><?php echo lang('cookie_secure');?>：</label>
+						<div class="col-sm-10">
+							<?php echo $input['cookie_secure'];?>
+							<p class="mt-2 text-grey small"><?php echo lang('cookie_secure_tips');?></p>
+						</div>
+					</div>
+					
+					<div class="form-group row">
+						<label class="col-sm-2 form-control-label"><?php echo lang('online_hold_time');?>：</label>
+						<div class="col-sm-10">
+							<?php echo $input['online_hold_time'];?>
+							<p class="mt-2 text-grey small"><?php echo lang('online_hold_time_tips');?></p>
+						</div>
+					</div>
+					
+					<!--{hook admin_setting_security_cdn_before.htm}-->
+					
+					<div class="form-group row">
+						<label class="col-sm-2 form-control-label"><?php echo lang('cdn_on');?>：</label>
+						<div class="col-sm-10">
+							<?php echo $input['cdn_on'];?>
+							<p class="mt-2 text-grey small mb-0"><?php echo lang('cdn_on_tips');?></p>
+						</div>
+					</div>
+					
+					<div class="form-group row">
+						<label class="col-sm-2 form-control-label"><?php echo lang('cdn_ip');?>：</label>
+						<div class="col-sm-10">
+							<?php echo $input['cdn_ip'];?>
+							<p class="mt-2 text-grey small"><?php echo lang('cdn_ip_tips');?></p>
+						</div>
+					</div>
+					
+					<!--{hook admin_setting_cdn_after.htm}-->
+					
+					<div class="form-group row">
+						<label for="inputPassword3" class="col-sm-2 form-control-label"></label>
+						<div class="col-sm-10">
+							<button type="submit" class="btn btn-primary btn-block" id="submit" data-loading-text="<?php echo lang('submiting');?>..."><?php echo lang('confirm');?></button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!--{hook admin_setting_security_end.htm}-->
+	
+<?php include _include(ADMIN_PATH.'view/htm/footer.inc.htm');?>
+
+<script>
+var jform = $('#form');
+var jsubmit = $('#submit');
+jform.on('submit', function() {
+	jform.reset();
+	jsubmit.button('loading');
+	var postdata = jform.serialize();
+	$.xpost(jform.attr('action'), postdata, function(code, message) {
+		if(code == 0) {
+			$.alert(message);
+			jsubmit.text(message).delay(1000).button('reset');
+		} else if(xn.is_number(code)) {
+			alert(message);
+			jsubmit.button('reset');
+		} else {
+			jform.find('[name="'+code+'"]').alert(message).focus();
+			jsubmit.button('reset');
+		}
+	});
+	return false;
+});
+
+$('#nav li.nav-item-setting').addClass('active');
+
+</script>
+
+<!--{hook admin_setting_security_js.htm}-->
