@@ -26,7 +26,7 @@
 					<div class="input-group-prepend">
 						<span class="input-group-text">友情提醒：</span>
 					</div>
-					<div class="form-control text-info">支持百度网盘、夸克网盘、UC网盘、迅雷网盘、阿里云盘、光鸭网盘等链接。</div>
+					<div class="form-control text-info" style="height:auto;white-space:normal;">支持百度网盘、夸克网盘、UC网盘、迅雷网盘、阿里云盘、光鸭网盘等链接。</div>
 				</div>
 			</div>
 			<div class="modal-footer">
