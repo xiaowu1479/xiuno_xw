@@ -31,7 +31,7 @@ $king_player_kv = kv_cache_get('king_player');
 					<div class="input-group-prepend">
 						<span class="input-group-text">友情提醒：</span>
 					</div>
-					<div class="form-control text-info">输入框为二选一，按您的需求在对应框中输入内容。</div>
+					<div class="form-control text-info" style="height:auto;white-space:normal;">输入框为二选一，按您的需求在对应框中输入内容。</div>
 				</div>
 			</div>
 			<div class="modal-footer">
