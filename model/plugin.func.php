@@ -14,6 +14,9 @@ define('PLUGIN_OFFICIAL_URL', DEBUG == 4 ? 'http://plugin.x.com/' : 'http://plug
 $g_include_slot_kv = array();
 function _include($srcfile) {
 	global $conf;
+	// 编译产物防护头：正常入口（index.php / admin/index.php / loco.php）均已定义 DEBUG，
+	// 直接经 URL 访问 tmp/ 下的产物时（未定义 DEBUG）拒绝执行，避免泄露源码与服务器路径
+	static $tmp_header = "<?php\r\n!defined('DEBUG') AND http_response_code(403) AND exit('Forbidden');\r\n?>\r\n";
 	// 合并插件，存入 tmp_path
 	$len = strlen(APP_PATH);
 	$tmpfile = $conf['tmp_path'].substr(str_replace('/', '_', $srcfile), $len);
@@ -27,11 +30,11 @@ function _include($srcfile) {
 			$s = preg_replace_callback('#<template\sinclude="(.*?)">(.*?)</template>#is', '_include_callback_1', $s);
 			if(strpos($s, '<template') === FALSE) break;
 		}
-		file_put_contents_try($tmpfile, $s);
-		
+		file_put_contents_try($tmpfile, $tmp_header.$s);
+
 		$s = plugin_compile_srcfile($tmpfile);
 		file_put_contents_try($tmpfile, $s);
-		
+
 	}
 	return $tmpfile;
 }

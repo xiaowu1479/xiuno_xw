@@ -56,6 +56,8 @@ if(DEBUG) {
 			$s .= "<?php\r\n".$t."\r\n?>";
 
 		}
+		// 安全：禁止直接经 URL 访问 model.min.php（未定义 DEBUG 时返回 403）
+		$s = "<?php\r\n!defined('DEBUG') AND http_response_code(403) AND exit('Forbidden');\r\n?>\r\n".$s;
 		$r = file_put_contents($model_min_file, $s);
 		unset($s);
 	}

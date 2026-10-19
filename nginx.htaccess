@@ -1,1 +1,7 @@
+# 安全：禁止通过 URL 直接访问运行时目录（conf/log/tmp/install）
+# - 静态文件（如 tmp/ 下编译出的 .htm 模板、log/php_error.log）由本条直接返回 403
+# - .php 文件（如 tmp/model.min.php）由编译产物自带的 !defined('DEBUG') 防护头拦截
+# - PHP 代码读取这些目录走文件系统，不受影响；upload/ 附件下载不受影响
+if ($request_uri ~* "^/(conf|log|tmp|install)/") { return 403; }
+
 try_files $uri $uri/ /index.php?$query_string;
