@@ -98,6 +98,7 @@ function admin_update_check($force = FALSE) {
 		'zipball_url' => '',
 		'download_url' => '',	// 实际更新下载地址：附件优先，源码包兜底
 		'asset_name' => '',		// 命中的附件名（附件优先时非空）
+		'asset_size' => 0,		// 附件字节数（用于下载后完整性校验）
 	);
 	$url = empty($conf['update_check_url']) ? 'https://api.github.com/repos/xiaowu1479/xiuno_xw/releases/latest' : $conf['update_check_url'];
 	$opts = array(
@@ -143,6 +144,7 @@ function admin_update_check($force = FALSE) {
 					if(preg_match('#\.(zip|tar\.gz|tgz)$#i', $_name) && !empty($_asset['browser_download_url'])) {
 						$result['download_url'] = $_asset['browser_download_url'];
 						$result['asset_name'] = $_name;
+						$result['asset_size'] = empty($_asset['size']) ? 0 : intval($_asset['size']);
 						break;
 					}
 				}
@@ -191,6 +193,16 @@ function admin_update_do() {
 	file_put_contents($tmpfile, $s);
 	unset($s);
 
+	// 2.5 完整性校验：比对 GitHub 返回的附件字节数，防止半包/损坏包被装上站点
+	if(!empty($upinfo['asset_size'])) {
+		$got = filesize($tmpfile);
+		if($got != $upinfo['asset_size']) {
+			xn_lock_end('admin_update');
+			@xn_unlink($tmpfile);
+			message(-1, lang('admin_update_package_incomplete', array('got'=>$got, 'expect'=>$upinfo['asset_size'])));
+		}
+	}
+
 	// 3. 判断压缩格式：zip / tar.gz / tgz
 	$isfile = file_get_contents($tmpfile, FALSE, NULL, 0, 2);
 	$is_zip = $isfile == 'PK';
@@ -236,7 +248,18 @@ function admin_update_do() {
 	if(!is_dir($_src_plugin) || empty(glob($_src_plugin.'*'))) {
 		$skip_dirs[] = 'plugin';
 	}
-	admin_update_cover($srcdir, APP_PATH, $skip_dirs);
+	$cover_stat = admin_update_cover($srcdir, APP_PATH, $skip_dirs);
+	// 7.1 有文件写入失败：自动回滚到更新前的备份，绝不把站点留在半新半旧的状态
+	if(!empty($cover_stat['failed'])) {
+		admin_update_auto_rollback($backupdir, $cover_stat['added']);
+		@xn_unlink($tmpfile);
+		@rmdir_recusive($extdir, 1);
+		xn_lock_end('admin_update');
+		message(-1, lang('admin_update_cover_failed', array(
+			'count' => count($cover_stat['failed']),
+			'files' => implode('<br>', array_slice($cover_stat['failed'], 0, 20)).(count($cover_stat['failed']) > 20 ? '<br>……' : ''),
+		)));
+	}
 
 	// 7.5 执行数据库升级脚本
 	$db_upgrade = admin_update_run_db_upgrade($srcdir);
@@ -250,6 +273,9 @@ function admin_update_do() {
 	@rmdir_recusive($extdir, 1);
 	rmdir_recusive($conf['tmp_path'], 1);		// 清编译缓存
 	cache_truncate();							// 清缓存
+	// 重置 OPcache 字节码缓存：线上开了 OPcache 时，只删磁盘文件不够，
+	// 内存里的旧编译结果仍会被命中，表现为"更新了但不生效"（未启用时函数不存在，自动跳过）
+	function_exists('opcache_reset') AND @opcache_reset();
 	admin_update_backup_rotate();				// 只保留最近 2 份备份
 
 	xn_lock_end('admin_update');
@@ -257,6 +283,7 @@ function admin_update_do() {
 	$msg = lang('admin_update_success', array('version'=>$upinfo['tag']));
 	$backupshown = str_replace(APP_PATH, '', $backupdir);
 	$msg .= '<br>'.lang('admin_update_backup_done', array('dir'=>$backupshown));
+	$msg .= '<br>'.lang('admin_update_cover_stat', array('count'=>count($cover_stat['copied']) + count($cover_stat['added']), 'added'=>count($cover_stat['added'])));
 	if(isset($db_upgrade['msg'])) $msg .= '<br>'.$db_upgrade['msg'];
 	message(0, $msg);
 }
@@ -478,24 +505,56 @@ function admin_update_run_db_upgrade($srcdir) {
 	return array('ok' => empty($errors), 'msg' => $msg, 'executed' => $executed, 'skipped' => $skipped, 'errors' => $errors, 'details' => $details);
 }
 
-// 递归覆盖目录：$srcdir 下的文件合并到 $dstdir，跳过 $skip 目录
+// 递归覆盖目录：$srcdir 下的文件合并到 $dstdir，跳过 $skip 目录（名）
+// 返回 array('copied'=>被覆盖的文件, 'added'=>新增的文件, 'failed'=>写入失败的文件)
+// failed 为空表示全部成功；调用方应据此判断是否需要回滚
 function admin_update_cover($srcdir, $dstdir, $skip = array()) {
+	$stat = array('copied' => array(), 'added' => array(), 'failed' => array());
 	substr($srcdir, -1) != '/' AND $srcdir .= '/';
 	substr($dstdir, -1) != '/' AND $dstdir .= '/';
-	$dir = opendir($srcdir);
+	$dir = @opendir($srcdir);
+	if(!$dir) return $stat;
 	while(FALSE !== ($file = readdir($dir))) {
 		if($file == '.' || $file == '..') continue;
 		if(in_array($file, $skip)) continue;
 		$src = $srcdir.$file;
 		$dst = $dstdir.$file;
 		if(is_dir($src)) {
-			!is_dir($dst) AND mkdir($dst, 0777, TRUE);
-			admin_update_cover($src, $dst, $skip);
+			if(!is_dir($dst) && !@mkdir($dst, 0777, TRUE)) {
+				$stat['failed'][] = $dst.'/';
+				continue;
+			}
+			$sub = admin_update_cover($src, $dst, $skip);
+			foreach($sub as $k => $v) $stat[$k] = array_merge($stat[$k], $v);
 		} else {
-			xn_copy($src, $dst);
+			$isnew = !is_file($dst);
+			// 抑制 copy() 原生 Warning：失败会记入 failed 并由调用方统一上报/回滚
+			if(@xn_copy($src, $dst)) {
+				$isnew ? ($stat['added'][] = $dst) : ($stat['copied'][] = $dst);
+			} else {
+				$stat['failed'][] = $dst;
+			}
 		}
 	}
 	closedir($dir);
+	return $stat;
+}
+
+// 更新失败时自动回滚：用 $backupdir 恢复主程序，删掉本次新增的文件（备份里没有、无法靠覆盖恢复），并清缓存
+function admin_update_auto_rollback($backupdir, $added = array()) {
+	global $conf;
+	if(empty($backupdir) || !is_dir($backupdir)) return FALSE;
+	substr($backupdir, -1) != '/' AND $backupdir .= '/';
+	// 备份目录自身不应包含这些条目，防御性跳过
+	$skip = array('conf', 'upload', 'log', 'tmp', 'backup', 'update_info.txt', 'index.html', '.htaccess');
+	admin_update_cover($backupdir, APP_PATH, $skip);
+	foreach($added as $f) {
+		is_file($f) AND @xn_unlink($f);
+	}
+	rmdir_recusive($conf['tmp_path'], 1);
+	cache_truncate();
+	function_exists('opcache_reset') AND @opcache_reset();
+	return TRUE;
 }
 
 // ==================== 更新备份 / 回滚 (XIUNO XW) ====================
@@ -590,14 +649,21 @@ function admin_update_rollback($dirname) {
 
 	// 恢复备份：跳过数据/缓存/备份目录，防止覆盖用户数据
 	$skip = array('upload', 'log', 'tmp', 'backup');
-	admin_update_cover($backupdir, APP_PATH, $skip);
+	$rollback_stat = admin_update_cover($backupdir, APP_PATH, $skip);
 
-	// 清编译缓存 + 缓存
+	// 清编译缓存 + 缓存 + OPcache
 	rmdir_recusive($conf['tmp_path'], 1);
 	cache_truncate();
+	function_exists('opcache_reset') AND @opcache_reset();
 	admin_update_backup_rotate();
 
 	$msg = lang('admin_update_rollback_success', array('dir'=>$dirname));
+	if(!empty($rollback_stat['failed'])) {
+		$msg .= '<br>'.lang('admin_update_cover_failed', array(
+			'count' => count($rollback_stat['failed']),
+			'files' => implode('<br>', array_slice($rollback_stat['failed'], 0, 20)),
+		));
+	}
 	message(0, $msg);
 }
 

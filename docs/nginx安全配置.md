@@ -1,7 +1,7 @@
 # Nginx 安全配置（可选加固）
 
 > 本文是**可选**加固项。v1.8.21 起，`nginx.htaccess` 已随发行版自动提供基础防护
-> （`conf/log/tmp/install` 目录 403 + 编译产物防护头），**不需要任何服务器改动**。
+> （`conf/log/tmp/install/backup` 目录 403 + 编译产物防护头），**不需要任何服务器改动**。
 > 下面这些规则做的是 nginx.htaccess 做不到的部分，愿意手改服务器的用户可以加上。
 
 ## 1. 基础防护（v1.8.21 已自动提供，无需手工配置）
@@ -40,7 +40,13 @@ location ^~ /conf/    { deny all; }
 location ^~ /log/     { deny all; }
 location ^~ /tmp/     { deny all; }
 location ^~ /install/ { deny all; }
+location ^~ /backup/  { deny all; }
 ```
+
+> **为什么 `backup/` 最好手改**：`nginx.htaccess` 的 `if` 只能拦静态请求，而 `.php`
+> 会命中 `location ~ \.php` 正则、根本不进 `location /`。所以自动生效的规则挡住了
+> 备份里的 `.sql`/`.md`/`.htm`/`.js`（这些才是真正有价值的），但备份里的 `.php`
+> 仍会被执行（输出错误信息，不泄露源码）。加这一条 `location ^~ /backup/` 才能连执行一起堵死。
 
 ## 4. 验证命令
 
