@@ -46,9 +46,11 @@ function user_create($arr) {
 	}
 	$r = user__create($arr);
 	
-	// 全站统计
-	runtime_set('users+', 1);
-	runtime_set('todayusers+', 1);
+	// 全站统计（只有写入成功才计数，避免注册失败导致用户数虚高）
+	if($r !== FALSE) {
+		runtime_set('users+', 1);
+		runtime_set('todayusers+', 1);
+	}
 	
 	// hook model_user_create_end.php
 	return $r;
@@ -131,8 +133,10 @@ function user_delete($uid) {
 	!in_array($conf['cache']['type'], array('mysql', 'pdo_mysql')) AND cache_delete("user-$uid");
 	if(isset($g_static_users[$uid])) unset($g_static_users[$uid]);
 	
-	// 全站统计
-	runtime_set('users-', 1);
+	// 全站统计（只有删除成功才计数）
+	if($r !== FALSE) {
+		runtime_set('users-', 1);
+	}
 	
 	// hook model_user_delete_end.php
 	return $r;

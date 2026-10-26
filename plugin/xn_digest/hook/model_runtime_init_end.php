@@ -1,4 +1,3 @@
-if($runtime === NULL || !isset($runtime['digests'])) {
-	$runtime['digests'] = thread_digest_count();
-	cache_set('runtime', $runtime);
+if(!isset($runtime['digests'])) {
+	runtime_set('digests', thread_digest_count());
 }

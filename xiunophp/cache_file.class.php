@@ -67,12 +67,69 @@ class cache_file {
 			'expiry' => $expiry,
 		);
 		$s = "<?php exit;?>\t" . xn_json_encode($data);
-		$r = @file_put_contents($file, $s, LOCK_EX);
-		if($r === FALSE) {
+		// 防止并发读取到写了一半的缓存文件：
+		// 类 Unix 用“临时文件 + 原子 rename”，读取端无需加锁；
+		// Windows 的 rename 不能覆盖已被打开的文件，改用共享文件锁串行化读写。
+		if(DIRECTORY_SEPARATOR === '\\') {
+			return $this->write_locked($file, $s);
+		}
+		$tmp = $file . '.' . getmypid() . '.' . mt_rand(100000, 999999) . '.tmp';
+		$r = @file_put_contents($tmp, $s, LOCK_EX);
+		if($r === FALSE || $r !== strlen($s)) {
+			@unlink($tmp);
 			$this->error(-1, '写入缓存文件失败: ' . $file);
 			return FALSE;
 		}
+		if(!@rename($tmp, $file)) {
+			@unlink($tmp);
+			$this->error(-1, '重命名缓存文件失败: ' . $file);
+			return FALSE;
+		}
+		@clearstatcache(TRUE, $file);
 		return TRUE;
+	}
+	
+	// Windows 专用：加排他锁后原地覆盖写
+	private function write_locked($file, $s) {
+		$fp = @fopen($file, 'cb');
+		if(!$fp) {
+			$this->error(-1, '打开缓存文件失败: ' . $file);
+			return FALSE;
+		}
+		if(!@flock($fp, LOCK_EX)) {
+			@fclose($fp);
+			$this->error(-1, '锁定缓存文件失败: ' . $file);
+			return FALSE;
+		}
+		@ftruncate($fp, 0);
+		@rewind($fp);
+		$len = strlen($s);
+		$written = 0;
+		while($written < $len) {
+			$n = @fwrite($fp, substr($s, $written));
+			if($n === FALSE || $n === 0) break;
+			$written += $n;
+		}
+		@fflush($fp);
+		@flock($fp, LOCK_UN);
+		@fclose($fp);
+		if($written !== $len) {
+			$this->error(-1, '写入缓存文件失败: ' . $file);
+			return FALSE;
+		}
+		@clearstatcache(TRUE, $file);
+		return TRUE;
+	}
+	
+	// Windows 专用：加共享锁读取，等待写操作完成
+	private function read_locked($file) {
+		$fp = @fopen($file, 'rb');
+		if(!$fp) return FALSE;
+		@flock($fp, LOCK_SH);
+		$s = @stream_get_contents($fp);
+		@flock($fp, LOCK_UN);
+		@fclose($fp);
+		return $s;
 	}
 	
 	public function get($k) {
@@ -80,12 +137,17 @@ class cache_file {
 		if(!is_file($file)) {
 			return NULL;
 		}
-		$s = @file_get_contents($file);
+		$s = DIRECTORY_SEPARATOR === '\\' ? $this->read_locked($file) : @file_get_contents($file);
 		if($s === FALSE) {
 			return NULL;
 		}
-	// 跳过 PHP exit 头
-	$pos = strpos($s, "\t");
+		// 空文件说明写入中断（或磁盘异常），清理后让上层重建
+		if($s === '') {
+			@unlink($file);
+			return NULL;
+		}
+		// 跳过 PHP exit 头
+		$pos = strpos($s, "\t");
 		if($pos === FALSE) {
 			@unlink($file);
 			return NULL;

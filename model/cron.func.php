@@ -19,7 +19,7 @@ function cron_run($force = 0) {
 			
 			sess_gc($conf['online_hold_time']);
 			
-			$runtime['onlines'] = max(1, online_count());
+			runtime_set('onlines', max(1, online_count()));
 			
 			runtime_set('cron_1_last_date', $time);
 			
