@@ -20,6 +20,8 @@ if(!isset($_GET['token']) || $_GET['token'] !== $TOKEN) {
 	exit('Forbidden');
 }
 
+error_reporting(E_ALL);
+ini_set('display_errors', '1');
 header('Content-Type: text/plain; charset=utf-8');
 
 $root = is_dir(__DIR__.'/conf') ? __DIR__.'/' : dirname(__DIR__).'/';
@@ -198,6 +200,70 @@ if(is_file($min)) {
 	line('  含新版并发合并代码', (strpos($s, 'runtime_lock') !== FALSE) ? '是' : '否（编译缓存是旧的，需清空 tmp）');
 }
 line('tmp 目录可写', is_writable($root.'tmp/') ? '是' : '否');
+if(is_file($min)) {
+	$s = @file_get_contents($min);
+	if(preg_match('/function\s+user_count\s*\(.*?\n\}/s', $s, $mm)) {
+		line('编译后的 user_count', preg_replace('/\s+/', ' ', $mm[0]));
+	}
+}
+
+// ---------- 已启用插件 + 相关 hook ----------
+$plugins = array();
+foreach((array)glob($root.'plugin/*/conf.json') as $f) {
+	$j = @json_decode(@file_get_contents($f), TRUE);
+	if(!empty($j['enable'])) $plugins[] = basename(dirname($f));
+}
+line('已启用插件', $plugins ? implode(', ', $plugins) : '无');
+
+$hookfiles = array();
+foreach((array)glob($root.'plugin/*/hook/*.php') as $f) {
+	$bn = basename($f);
+	if(strpos($bn, 'model_user_count') === 0 || strpos($bn, 'model_runtime') === 0 || strpos($bn, 'model_inc') === 0) {
+		$hookfiles[] = str_replace($root, '', $f);
+	}
+}
+line('相关 hook 文件', $hookfiles ? implode(', ', $hookfiles) : '无');
+
+// ---------- 直接调用框架函数核对（排除并发干扰） ----------
+echo "\n---- 直接调用框架函数 ----\n";
+$model_ok = FALSE;
+if(function_exists('db_new')) {
+	$gdb = @db_new($conf['db']);
+	if($gdb) {
+		$_SERVER['db'] = $gdb;
+		try {
+			if(!function_exists('_include') && is_file($root.'model/plugin.func.php')) {
+				@include $root.'model/plugin.func.php';
+			}
+			if(function_exists('_include')) {
+				@include _include($root.'model.inc.php');
+			} else {
+				@include $root.'model.inc.php';
+			}
+			$model_ok = function_exists('user_count');
+		} catch(Throwable $e) {
+			line('model.inc.php 异常', $e->getMessage());
+		}
+	}
+}
+line('model.inc.php 加载', $model_ok ? '成功' : '失败');
+if($model_ok) {
+	try {
+		line('user_count() 返回', user_count());
+	} catch(Throwable $e) {
+		line('user_count() 异常', $e->getMessage());
+	}
+	if(function_exists('runtime_truncate') && function_exists('runtime_init')) {
+		try {
+			runtime_truncate();
+			$rt3 = runtime_init();
+			line('runtime_init() 重算 users', isset($rt3['users']) ? $rt3['users'] : '(无)');
+			line('runtime_init() 重算 threads/posts', (isset($rt3['threads']) ? $rt3['threads'] : '?').' / '.(isset($rt3['posts']) ? $rt3['posts'] : '?'));
+		} catch(Throwable $e) {
+			line('runtime_init() 异常', $e->getMessage());
+		}
+	}
+}
 
 // ---------- 抓取首页（本机 + 公网） ----------
 $host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '';
