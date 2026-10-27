@@ -95,21 +95,24 @@ function runtime_save() {
 	$lock = runtime_lock();
 	$latest = cache_get('runtime');
 	if(!is_array($latest) || !isset($latest['users'])) {
-		// 缓存已丢失，以本次请求的完整快照为准
-		$latest = is_array($runtime) ? $runtime : array();
-	} else {
-		foreach($ops as $op) {
-			list($k, $o, $v) = $op;
-			if($o == '+') {
-				!isset($latest[$k]) AND $latest[$k] = 0;
-				$latest[$k] += $v;
-			} else {
-				$latest[$k] = $v;
-			}
+		// 缓存已丢失（例如后台刚清过缓存）：
+		// 本次请求对数据库的改动已经落库，下一个请求重建时会重新 COUNT(*) 统计到，
+		// 这里绝不能把本请求内存里的旧快照写回去，否则会把并发重建出来的新计数
+		// 又覆盖成过期值（表现为"清了缓存还是旧数字"）。
+		runtime_unlock($lock);
+		return;
+	}
+	foreach($ops as $op) {
+		list($k, $o, $v) = $op;
+		if($o == '+') {
+			!isset($latest[$k]) AND $latest[$k] = 0;
+			$latest[$k] += $v;
+		} else {
+			$latest[$k] = $v;
 		}
-		foreach($deletes as $k) {
-			unset($latest[$k]);
-		}
+	}
+	foreach($deletes as $k) {
+		unset($latest[$k]);
 	}
 	$runtime = $latest;
 	cache_set('runtime', $runtime);

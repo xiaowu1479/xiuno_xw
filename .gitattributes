@@ -1,0 +1,2 @@
+# 临时诊断脚本不随发行版打包（仍可通过 GitHub raw 下载）
+tool/stat_diag.php export-ignore
