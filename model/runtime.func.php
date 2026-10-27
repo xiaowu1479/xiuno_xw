@@ -9,8 +9,12 @@ $g_runtime_deletes = array();	// 本次请求待删除的键
 function runtime_init() {
 	// hook model_runtime_init_start.php
 	global $conf;
+	$ver = isset($conf['version']) ? $conf['version'] : '';
 	$runtime = cache_get('runtime'); // 实时运行的数据，初始化！
-	if(!is_array($runtime) || !isset($runtime['users'])) {
+	// 缓存里带上版本号：升级后（或老缓存里没有版本号）自动按数据库重算一次，
+	// 避免"程序升级了，首页却还是旧数字，必须手动清缓存"的情况。
+	$cache_ver = (is_array($runtime) && isset($runtime['ver'])) ? $runtime['ver'] : NULL;
+	if(!is_array($runtime) || !isset($runtime['users']) || $cache_ver !== $ver) {
 		$runtime = array();
 		$runtime['users'] = user_count();
 		$runtime['posts'] = post_count(['pid' => ['>' => 0]]); // 强制精确 COUNT(*)
@@ -22,11 +26,12 @@ function runtime_init() {
 		$runtime['onlines'] = max(1, online_count());
 		$runtime['cron_1_last_date'] = 0;
 		$runtime['cron_2_last_date'] = 0;
+		$runtime['ver'] = $ver;
 		
 		// 并发重建时加锁，避免用旧快照覆盖其他请求刚写入的计数
 		$lock = runtime_lock();
 		$latest = cache_get('runtime');
-		if(is_array($latest) && isset($latest['users'])) {
+		if(is_array($latest) && isset($latest['users']) && (isset($latest['ver']) ? $latest['ver'] : NULL) === $ver) {
 			$runtime = $latest;
 		} else {
 			cache_set('runtime', $runtime);

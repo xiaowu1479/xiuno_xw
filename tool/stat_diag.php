@@ -85,7 +85,9 @@ if(function_exists('posix_geteuid') && function_exists('posix_getpwuid')) {
 
 // ---------- 版本 ----------
 $index = @file_get_contents($root.'index.php');
+$ver_diag = '';
 if(preg_match("/\\\$conf\['version'\]\s*=\s*'([^']+)'/", $index, $m)) {
+	$ver_diag = $m[1];
 	line('程序版本', $m[1]);
 } else {
 	line('程序版本', '读取失败');
@@ -97,6 +99,7 @@ if(!is_array($conf)) {
 	echo "conf/conf.php 读取失败，无法继续\n";
 	exit;
 }
+$conf['version'] = $ver_diag;	// 让框架里的 runtime_init() 用真实版本号
 $dbtype = $conf['db']['type'];
 $d = $conf['db'][$dbtype]['master'];
 line('数据库类型', $dbtype);
@@ -149,6 +152,7 @@ if($cachetype === 'file') {
 			if(isset($data['v']['users'])) {
 				line('  缓存内 users', $data['v']['users']);
 				line('  缓存内 threads/posts', $data['v']['threads'].' / '.$data['v']['posts']);
+				line('  缓存内 ver', isset($data['v']['ver']) ? $data['v']['ver'] : '(无，老缓存)');
 			} else {
 				line('  缓存内容', '无法解析');
 			}
@@ -205,6 +209,12 @@ if(is_file($min)) {
 	if(preg_match('/function\s+user_count\s*\(.*?\n\}/s', $s, $mm)) {
 		line('编译后的 user_count', preg_replace('/\s+/', ' ', $mm[0]));
 	}
+	$fixed = preg_match('/runtime_unlock\(\$lock\);\s*\n\s*return;/', $s);
+	line('含 v1.8.24 修复', $fixed ? '是' : '否（正在运行旧代码！需删除 tmp/model.min.php 和 tmp/model_runtime.func.php）');
+}
+if(is_file($root.'tmp/model_runtime.func.php')) {
+	$s2 = @file_get_contents($root.'tmp/model_runtime.func.php');
+	line('tmp/model_runtime.func.php', preg_match('/runtime_unlock\(\$lock\);\s*\n\s*return;/', $s2) ? '含 v1.8.24 修复' : '仍是旧代码（需删除）');
 }
 
 // ---------- 已启用插件 + 相关 hook ----------
@@ -262,6 +272,45 @@ if($model_ok) {
 		} catch(Throwable $e) {
 			line('runtime_init() 异常', $e->getMessage());
 		}
+	}
+}
+
+// ---------- fix=2：锁内强制重算（确定性修复，不受并发影响） ----------
+if(isset($_GET['fix']) && $_GET['fix'] == '2') {
+	echo "\n---- 执行修复：锁内强制重算（fix=2） ----\n";
+	if(!$model_ok || !function_exists('runtime_lock') || !function_exists('cache_set')) {
+		line('结果', '框架函数不可用，无法执行（请先用 fix=1 或手动清缓存）');
+	} else {
+		$lock = runtime_lock();
+		line('已获得 runtime 写锁', $lock ? '是' : '否（tmp/ 不可写，仍会尝试）');
+		$old = cache_get('runtime');
+		cache_delete('runtime');
+		line('删除旧 runtime 缓存', '完成');
+		$fresh = array(
+			'users'   => user_count(),
+			'posts'   => post_count(array('pid' => array('>' => 0))),
+			'threads' => thread_count(array('tid' => array('>' => 0))),
+			'todayusers' => 0, 'todayposts' => 0, 'todaythreads' => 0,
+			'onlines' => function_exists('online_count') ? max(1, online_count()) : 1,
+			'cron_1_last_date' => 0, 'cron_2_last_date' => 0,
+		);
+		$fresh['posts'] -= $fresh['threads'];	// 减去首帖，与 runtime_init() 一致
+		if(is_array($old)) {
+			foreach(array('todayusers', 'todayposts', 'todaythreads', 'digests', 'cron_1_last_date', 'cron_2_last_date') as $k) {
+				if(isset($old[$k])) $fresh[$k] = $old[$k];
+			}
+		}
+		if(function_exists('thread_digest_count')) $fresh['digests'] = thread_digest_count();
+		$fresh['ver'] = isset($conf['version']) ? $conf['version'] : '';
+		cache_set('runtime', $fresh);
+		runtime_unlock($lock);
+		$runtime = $fresh;
+		line('重算结果 users', $fresh['users']);
+		line('重算结果 threads/posts', $fresh['threads'].' / '.$fresh['posts']);
+		line('数据库 user 行数', $db_users === NULL ? '未知' : $db_users);
+		line('是否一致', ($db_users !== NULL && $fresh['users'] == $db_users) ? '一致（已修复）' : '不一致（请把完整输出发给开发者）');
+		$back = cache_get('runtime');
+		line('回读缓存 users', is_array($back) && isset($back['users']) ? $back['users'] : '(空)');
 	}
 }
 
