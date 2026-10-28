@@ -196,16 +196,12 @@ class db_mysql {
 		return $query;
 	}
 	
-	// 如果为 innodb，条件为空，并且有权限读取 information_schema
+	// 统计必须准确：旧实现用 information_schema.TABLE_ROWS（InnoDB 估算值），
+	// 插入/删除后不会及时更新，会出现「数据库 15 个用户，页面显示 10」这类问题。
 	public function count($table, $cond = array()) {
 		$this->connect_slave();
-		if(empty($cond) && $this->rconf['engine'] == 'innodb') {
-			$dbname = $this->rconf['name'];
-			$sql = "SELECT TABLE_ROWS as num FROM information_schema.tables WHERE TABLE_SCHEMA='$dbname' AND TABLE_NAME='$table'";
-		} else {
-			$cond = db_cond_to_sqladd($cond);
-			$sql = "SELECT COUNT(*) AS num FROM `$table` $cond";
-		}
+		$cond = db_cond_to_sqladd($cond);
+		$sql = "SELECT COUNT(*) AS num FROM `$table` $cond";
 		$arr = $this->sql_find_one($sql);
 		return !empty($arr) ? intval($arr['num']) : $arr;
 	}

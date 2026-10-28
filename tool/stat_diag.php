@@ -113,9 +113,14 @@ try {
 	$dsn = "mysql:host={$d['host']};dbname={$d['name']};charset=utf8mb4";
 	$pdo = new PDO($dsn, $d['user'], $d['password'], array(PDO::ATTR_TIMEOUT => 5, PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
 	foreach(array('user', 'thread', 'post') as $t) {
-		$n = $pdo->query("SELECT COUNT(*) FROM `{$d['tablepre']}$t`")->fetchColumn();
+		$tbl = $d['tablepre'].$t;
+		$n = $pdo->query("SELECT COUNT(*) FROM `$tbl`")->fetchColumn();
 		if($t === 'user') $db_users = $n;
-		line("数据库 $t 行数", $n);
+		$est = NULL;
+		try {
+			$est = $pdo->query("SELECT TABLE_ROWS FROM information_schema.tables WHERE TABLE_SCHEMA='{$d['name']}' AND TABLE_NAME='$tbl'")->fetchColumn();
+		} catch(Exception $e) {}
+		line("数据库 $t 行数", $n.'（information_schema 估算: '.($est === NULL ? '?' : $est).'）');
 	}
 } catch(Exception $e) {
 	line('数据库连接', '失败: '.$e->getMessage());
@@ -259,7 +264,11 @@ if(function_exists('db_new')) {
 line('model.inc.php 加载', $model_ok ? '成功' : '失败');
 if($model_ok) {
 	try {
-		line('user_count() 返回', user_count());
+		$uc = user_count();
+		line('user_count() 返回', $uc);
+		if($db_users !== NULL) {
+			line('user_count() 与数据库', $uc == $db_users ? '一致' : '不一致！说明 count() 取的不是真实行数（旧版用 information_schema 估算）');
+		}
 	} catch(Throwable $e) {
 		line('user_count() 异常', $e->getMessage());
 	}
