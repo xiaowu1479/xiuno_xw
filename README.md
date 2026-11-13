@@ -1,6 +1,6 @@
 # XIUNO XW
 
-基于 [Xiuno BBS 4.1.1](https://bbs.xiuno.com/) 二次开发的开源轻量论坛程序，MIT 协议。
+基于 [Xiuno BBS 4.0.4](https://bbs.xiuno.com/) 二次开发的开源轻量论坛程序，MIT 协议。
 
 - **后端**：PHP 7.2+（推荐 7.4 / 8.x）+ MySQL 5.7+，使用 Xiuno 自研的轻量框架 `xiunophp`（路由 / 模型 / 模板 / 插件 hook）
 - **前端**：Bootstrap 4.5 + jQuery 3.5.1，响应式，自适应手机 / 平板 / PC
@@ -58,6 +58,6 @@
 
 ## 授权
 
-MIT 协议。基于 Xiuno BBS 4.1.1（MIT）二次开发，保留原作者版权信息。
+MIT 协议。基于 Xiuno BBS 4.0.4（MIT）二次开发，保留原作者版权信息。
 
 上游作者：axiuno@gmail.com · [bbs.xiuno.com](https://bbs.xiuno.com/)
