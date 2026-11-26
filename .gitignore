@@ -69,6 +69,9 @@ plugin/zaesky_theme_light/
 /xwdi_client_*.zip
 # AI 工具目录（含内部开发文档；其 node_modules 由自身 .gitignore 处理）
 /.opencode/
+# AI 工具目录（本地记忆与工作产物）
+/.workbuddy/
+/.trae-html-share-packages/
 # AI 咨询方案的示例目录（仅本地参考，不推送）
 /_preview/
 # 导航页图标抓取缓存（运行时生成）
