@@ -14,9 +14,70 @@
 	?>
 	
 	<!--{hook header_nav_start.htm}-->
+	<style>
+	/* 移动端：版块菜单改为左侧抽屉（替代原来的展开式下拉） */
+	@media (max-width: 991.98px) {
+		#nav.navbar-collapse {
+			display: block !important;
+			position: fixed;
+			top: 0;
+			left: 0;
+			bottom: 0;
+			width: 78%;
+			max-width: 300px;
+			height: auto !important;
+			margin: 0;
+			padding: 0 0 1rem;
+			background: var(--xc-card, #fff);
+			box-shadow: 2px 0 20px rgba(0, 0, 0, .18);
+			transform: translateX(-105%);
+			transition: transform .25s ease;
+			overflow-x: hidden;
+			overflow-y: auto;
+			-webkit-overflow-scrolling: touch;
+			z-index: 1080;
+		}
+		body.xw-nav-open #nav.navbar-collapse { transform: translateX(0); }
+		body.xw-nav-open { overflow: hidden; }
+		#nav.navbar-collapse .navbar-nav { padding-left: .5rem; padding-right: .5rem; }
+		.xw-nav-backdrop {
+			position: fixed;
+			top: 0;
+			right: 0;
+			bottom: 0;
+			left: 0;
+			background: rgba(0, 0, 0, .45);
+			opacity: 0;
+			visibility: hidden;
+			transition: opacity .25s ease;
+			z-index: 1070;
+		}
+		body.xw-nav-open .xw-nav-backdrop { opacity: 1; visibility: visible; }
+		.xw-drawer-head {
+			position: sticky;
+			top: 0;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			padding: .8rem 1rem;
+			background: var(--xc-card, #fff);
+			border-bottom: 1px solid var(--xc-border-light, #eee);
+			z-index: 1;
+		}
+		.xw-drawer-title { font-weight: 600; color: var(--xc-text, #333); }
+		.xw-drawer-close {
+			border: 0;
+			background: transparent;
+			padding: 0 .25rem;
+			font-size: 1.5rem;
+			line-height: 1;
+			color: var(--xc-text-2, #666);
+		}
+	}
+	</style>
 	<header class="navbar navbar-expand-lg navbar-light bg-white" id="header">
 		<div class="container">
-			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#nav" aria-controls="navbar_collapse" aria-expanded="false" aria-label="<?php echo lang('toggler_menu');?>">
+			<button class="navbar-toggler" type="button" id="xw-nav-toggle" aria-controls="nav" aria-expanded="false" aria-label="<?php echo lang('toggler_menu');?>">
 				<span class="navbar-toggler-icon"></span>
 			</button>
 			
@@ -43,6 +104,11 @@
 			<a class="navbar-brand hidden-lg xw-theme-toggle" href="javascript:;" role="button" title="<?php echo $theme_toggle_title;?>" aria-label="<?php echo $theme_toggle_title;?>"><i class="icon-moon-o"></i><i class="icon-sun-o"></i></a>
 			
 			<div class="collapse navbar-collapse" id="nav">
+				<!-- 抽屉头部（仅移动端） -->
+				<div class="xw-drawer-head d-lg-none">
+					<span class="xw-drawer-title"><?php echo htmlspecialchars($conf['sitename'], ENT_QUOTES);?></span>
+					<button class="xw-drawer-close" type="button" aria-label="<?php echo lang('close');?>">&times;</button>
+				</div>
 				<!-- 左侧：版块 -->
 				<ul class="navbar-nav mr-auto">
 					<!--{hook header_nav_forum_start.htm}-->
@@ -94,8 +160,48 @@
 				</ul>
 			</div>
 		</div>
+		<!-- 抽屉遮罩（仅移动端） -->
+		<div class="xw-nav-backdrop d-lg-none"></div>
 	</header>
 	<!--{hook header_nav_end.htm}-->
+	<script>
+	/* 移动端抽屉菜单：点三条杠打开左侧版块菜单，点遮罩 / 关闭按钮 / 链接 / ESC 关闭 */
+	(function () {
+		var body = document.body;
+		var toggle = document.getElementById('xw-nav-toggle');
+		var nav = document.getElementById('nav');
+		if (!toggle || !nav) return;
+		function setOpen(open) {
+			if (open) {
+				body.classList.add('xw-nav-open');
+			} else {
+				body.classList.remove('xw-nav-open');
+			}
+			toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+		}
+		toggle.addEventListener('click', function (e) {
+			e.preventDefault();
+			setOpen(!body.classList.contains('xw-nav-open'));
+		});
+		var backdrop = document.querySelector('.xw-nav-backdrop');
+		if (backdrop) backdrop.addEventListener('click', function () { setOpen(false); });
+		var closeBtn = document.querySelector('.xw-drawer-close');
+		if (closeBtn) closeBtn.addEventListener('click', function () { setOpen(false); });
+		document.addEventListener('keydown', function (e) {
+			if (e.key === 'Escape' || e.keyCode === 27) setOpen(false);
+		});
+		nav.addEventListener('click', function (e) {
+			var el = e.target;
+			while (el && el !== nav) {
+				if (el.tagName === 'A') { setOpen(false); break; }
+				el = el.parentNode;
+			}
+		});
+		window.addEventListener('resize', function () {
+			if (window.innerWidth >= 992) setOpen(false);
+		});
+	})();
+	</script>
 	
 	<!-- 夜间模式切换：点一下必定在 日间 / 夜间 之间翻转（不再有"点了没反应"的那一下）
 	     访客的手动选择只在「站点时段没翻篇」时有效，时段翻篇后自动回到跟随时段
