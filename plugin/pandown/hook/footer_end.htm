@@ -16,6 +16,7 @@ $full_display = $is_mobile || !empty($pandown_setting['pc_full']);
 				</button>
 			</div>
 			<div class="modal-body text-center">
+				<div id="pandown_qr_loading" class="text-muted small mb-2" style="display:none;">正在获取最新链接…</div>
 				<img id="pandown_qr_image" src="" alt="二维码" style="max-width:280px;width:100%;height:auto;" />
 				<?php if($full_display): ?>
 				<div id="pandown_qr_url_display" class="mt-2 p-2 bg-light rounded text-break small text-muted"></div>
@@ -32,11 +33,16 @@ $full_display = $is_mobile || !empty($pandown_setting['pc_full']);
 </div>
 
 <script>
+var pandownReqSeq = 0;
 $(document).on('click', '.pandown-btn', function() {
-	var url = $(this).data('url');
-	var qr = $(this).data('qr');
+	var $btn = $(this);
+	var url = $btn.data('url');
+	var qr = $btn.data('qr');
+	var pid = $btn.data('pid');
+	var idx = $btn.data('idx');
 	if(!url) return;
-	$('#pandown_qr_image').attr('src', qr);
+	$('#pandown_qr_loading').hide();
+	$('#pandown_qr_image').attr('src', qr).show();
 	$('#pandown_qr_link').attr('href', url);
 	<?php if($full_display): ?>
 	$('#pandown_qr_url_display').text(url);
@@ -54,6 +60,35 @@ $(document).on('click', '.pandown-btn', function() {
 			$('<div class="modal-backdrop fade show"></div>').appendTo(document.body);
 		}
 	}
+
+	// 服务端异步转存：成功则换成新链接并静默替换，失败则保留原来的二维码。
+	// 转存期间不要藏起原二维码，否则慢的时候用户会长时间看到空白。
+	if(!pid) return false;
+	var seq = ++pandownReqSeq;
+	$('#pandown_qr_loading').show();
+	$.ajax({
+		url: '<?php echo url('pandown-resolve');?>',
+		type: 'POST',
+		dataType: 'json',
+		timeout: 40000,
+		data: {
+			pid: pid,
+			idx: idx
+		}
+	}).done(function(res) {
+		if(seq !== pandownReqSeq) return;
+		if(res && res.resolved && res.url && res.qr) {
+			$('#pandown_qr_image').attr('src', res.qr);
+			$('#pandown_qr_link').attr('href', res.url);
+			<?php if($full_display): ?>
+			$('#pandown_qr_url_display').text(res.url);
+			<?php endif; ?>
+		}
+	}).always(function() {
+		if(seq !== pandownReqSeq) return;
+		$('#pandown_qr_loading').hide();
+		// 未转存成功时保持原链接（弹窗打开时已经设置好了），无需任何回退动作
+	});
 	return false;
 });
 

@@ -26,6 +26,22 @@
 							</td>
 						</tr>
 						<tr>
+							<th>对接网盘搜索系统</th>
+							<td>
+								<label class="checkbox-inline">
+									<input type="checkbox" name="xinyue_enable" value="1" <?php echo !empty($setting['xinyue_enable']) ? 'checked' : '';?>>
+									启用（点击网盘按钮时，服务端先转存原链接，再返回转存后的分享链接与二维码）
+								</label>
+								<p class="text-muted small mb-1 mt-2">系统地址（结尾不要带斜杠），例如：http://xinyue:779</p>
+								<input type="text" class="form-control" name="xinyue_url" value="<?php echo htmlspecialchars(isset($setting['xinyue_url']) ? $setting['xinyue_url'] : '', ENT_QUOTES);?>" placeholder="http://xinyue:779">
+								<p class="text-muted small mb-1 mt-2">开放接口密钥（网盘系统后台 → 搜索设置 → api_key）</p>
+								<input type="text" class="form-control" name="xinyue_key" value="<?php echo htmlspecialchars(isset($setting['xinyue_key']) ? $setting['xinyue_key'] : '', ENT_QUOTES);?>" placeholder="X-Api-Key">
+								<p class="text-muted small mb-1 mt-2">请求超时（秒，5-60）</p>
+								<input type="number" class="form-control" name="xinyue_timeout" min="5" max="60" value="<?php echo intval(isset($setting['xinyue_timeout']) ? $setting['xinyue_timeout'] : 30);?>">
+								<p class="text-muted small mb-0 mt-2">说明：仅对有权查看该板块的访客生效，且只作用于首帖；同一 IP 每分钟最多 30 次；成功后同一链接 10 分钟内复用结果；转存失败（网盘容量不足、cookie/token 失效等）直接返回原链接，不提示用户。</p>
+							</td>
+						</tr>
+						<tr>
 							<th>二维码缓存</th>
 							<td>
 								<button type="button" class="btn btn-danger" id="btn_clear">立即清除所有二维码缓存</button>

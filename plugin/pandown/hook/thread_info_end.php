@@ -3,87 +3,27 @@ if($page != 1) return;
 
 if(empty($first) || empty($first['message_fmt'])) return;
 
-function pandown_extract_url($text) {
-    $url_pattern = '#https?://[^\s<>"\'\x{4e00}-\x{9fa5}]+#u';
-    if(preg_match($url_pattern, $text, $matches)) {
-        return $matches[0];
-    }
-    $patterns = array(
-        '#pan\.baidu\.com/s/[a-zA-Z0-9\-]+#i',
-        '#yun\.baidu\.com/s/[a-zA-Z0-9\-]+#i',
-        '#pan\.quark\.cn/s/[a-zA-Z0-9]+#i',
-        '#kuake\.com/s/[a-zA-Z0-9]+#i',
-        '#drive\.uc\.cn/s/[a-zA-Z0-9]+#i',
-        '#uc\.cn/s/[a-zA-Z0-9]+#i',
-        '#pan\.xunlei\.cn/s/[a-zA-Z0-9]+#i',
-        '#xunlei\.com/s/[a-zA-Z0-9]+#i',
-        '#aliyundrive\.com/s/[a-zA-Z0-9]+#i',
-        '#aliyundrive\.net/s/[a-zA-Z0-9]+#i',
-        '#guangyapan\.com/s/[a-zA-Z0-9_]+#i',
-    );
-    foreach($patterns as $pattern) {
-        if(preg_match($pattern, $text, $matches)) {
-            $url = $matches[0];
-            if(!preg_match('#^https?://#i', $url)) {
-                $url = 'https://'.$url;
-            }
-            return $url;
-        }
-    }
-    return $text;
-}
+include_once APP_PATH.'plugin/pandown/func.php';
 
-function pandown_detect_type($url) {
-    $url_lower = strtolower($url);
-    $types = array(
-        '百度网盘' => array('pan.baidu.com', 'yun.baidu.com'),
-        '夸克网盘' => array('pan.quark.cn', 'kuake.com'),
-        'UC网盘'   => array('drive.uc.cn', 'uc.cn', 'www.uc.cn'),
-        '迅雷网盘' => array('pan.xunlei.cn', 'xunlei.com'),
-        '阿里云盘' => array('aliyundrive.com', 'aliyundrive.net'),
-        '光鸭网盘' => array('guangyapan.com'),
-    );
-    foreach($types as $name => $domains) {
-        foreach($domains as $domain) {
-            if(strpos($url_lower, $domain) !== false) {
-                return $name;
-            }
-        }
-    }
-    return '网盘';
-}
-
-$first['message_fmt'] = htmlspecialchars_decode($first['message_fmt']);
-
-$preg_pd = preg_match_all('/\[pd\s+url="(.*?)"\]/i', $first['message_fmt'], $matches);
+// 不能对整篇 message_fmt 做 htmlspecialchars_decode()：那会把用户正文里转义过的
+// &lt;script&gt; 还原成真标签，输出到页面就是存储型 XSS。
+// 帖子里的 [pd url="..."] 引号一般是原样，少数编辑器会输出 &quot;，正则两种都兼容，
+// 只对捕获到的 URL 单独解码。
+$preg_pd = preg_match_all('/\[pd\s+url=(?:"|&quot;)(.*?)(?:"|&quot;)\]/iu', $first['message_fmt'], $matches);
 if(!empty($preg_pd) && !empty($matches[0])) {
-    $GLOBALS['has_pandown'] = true;
-
-    $qrlib = APP_PATH.'plugin/pandown/includes/phpqrcode/qrlib.php';
-    if(!is_file($qrlib)) return;
-    include_once $qrlib;
-
-    $cache_dir = APP_PATH.'plugin/pandown/cache/';
-    if(!is_dir($cache_dir)) {
-        mkdir($cache_dir, 0777, TRUE);
-    }
+    $pandown_built = 0;
 
     for($i = 0; $i < count($matches[0]); $i++) {
         $tag = $matches[0][$i];
-        $raw = $matches[1][$i];
+        $raw = htmlspecialchars_decode($matches[1][$i]);
         $url = pandown_extract_url($raw);
         $type_name = pandown_detect_type($url);
 
         // 二维码边长倍率：原来用 4（生成出来只有 164×164px），放进 400px 宽的弹窗里显得很小、
         // 左右空一大片；改成 8（约 328×328px）后能撑满弹窗。
         // 注意：倍率写进缓存 key，否则改大以后还会继续用旧的、小的缓存图。
-        $qr_scale = 8;
-        $hash = md5($url.'|qr'.$qr_scale);
-        $cache_file = $cache_dir . $hash . '.png';
-        if(!is_file($cache_file)) {
-            QRcode::png($url, $cache_file, QR_ECLEVEL_L, $qr_scale);
-        }
-        $qr_url = 'plugin/pandown/cache/' . $hash . '.png';
+        $qr_url = pandown_qr_url($url, 8);
+        if($qr_url === '') continue; // 单张二维码失败不影响其他链接（原来 return 会让后面的按钮全部消失）
 
         $safe_url = htmlspecialchars($url, ENT_QUOTES);
 
@@ -128,13 +68,17 @@ if(!empty($preg_pd) && !empty($matches[0])) {
         $ps = isset($pan_styles[$type_name]) ? $pan_styles[$type_name] : $pan_styles['网盘'];
 
         $html = '<div class="pandown-download">'
-            . '<a href="javascript:void(0)" class="pandown-btn '.$ps['class'].'" data-url="'.$safe_url.'" data-qr="'.$qr_url.'" style="'.$ps['styles'].'">'
+            . '<a href="javascript:void(0)" class="pandown-btn '.$ps['class'].'" data-url="'.$safe_url.'" data-qr="'.$qr_url.'" data-pid="'.(isset($first['pid']) ? intval($first['pid']) : 0).'" data-idx="'.$i.'" style="'.$ps['styles'].'">'
             . $ps['svg']
             . '<span class="pandown-text">'.$type_name.'</span>'
             . '</a>'
             . '</div>';
 
         $first['message_fmt'] = str_replace($tag, $html, $first['message_fmt']);
+        $pandown_built++;
     }
+
+    // 只有真的渲染出按钮才加载底部弹窗脚本，避免二维码库缺失时弹窗空挂
+    if($pandown_built > 0) $GLOBALS['has_pandown'] = true;
 }
 ?>

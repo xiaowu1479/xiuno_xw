@@ -11,5 +11,9 @@ setting_set('pandown_setting', array(
     'error_level' => 'L',
     'clear_qrcode' => 0,
     'pc_full' => 0,
+    'xinyue_enable' => 0,
+    'xinyue_url' => '',
+    'xinyue_key' => '',
+    'xinyue_timeout' => 30,
 ));
 ?>
