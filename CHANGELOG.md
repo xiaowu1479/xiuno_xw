@@ -1,5 +1,19 @@
 # 更新日志
 
+### v1.8.28 (2026-11-26)
+
+**pandown 插件升级 1.4.0：接入网盘搜索系统实时转存，修复存储型 XSS 与权限绕过；移动端改为抽屉导航**
+
+- **新增 实时转存**：新增 `func.php`、`route/resolve.php`、`hook/index_route_case_end.php`。点击网盘按钮时，前端只提交 `pid + idx`，服务端从帖子正文取原链，异步请求心悦 `/api/open/transfer` 转存为本站分享后再返回，前端静默替换二维码；转存失败或未配置时保持原链接，不提示用户
+- **新增 后台设置**：`xinyue_enable / xinyue_url / xinyue_key / xinyue_timeout`（旧装需在设置页保存一次才会写入）
+- **修复 存储型 XSS**：`hook/thread_info_end.php` 原先无条件对 `message_fmt` 做 `htmlspecialchars_decode()`，用户正文里转义过的 `&lt;script&gt;` 会被还原成真标签执行；现改为不解码全文，正则 `/\[pd\s+url=(?:"|&quot;)(.*?)(?:"|&quot;)\]/iu` 兼容实体引号，只对捕获到的 URL 单独解码
+- **修复 权限绕过**：`route/resolve.php` 增加首帖（`isfirst`）限制与 `forum_access_user(..., 'allowread')` 校验，避免用 `pid + idx` 直接取到受限帖 / 出售帖里的原链接
+- **加固 转存接口**：只允许白名单网盘域名（后缀精确匹配，`pan.baidu.com.evil.com` 之类会被拒），防止被当作内网探测跳板；限流 30 次 / 分钟 / IP；curl 扩展缺失保护；失败写 `log/pandown_resolve.log`（超过 1M 自动重建）
+- **优化 体验**：同一原链 10 分钟内复用转存结果，减少网盘重复副本；弹窗不再先隐藏原二维码，成功后才静默替换，避免转存慢时长时间空白；单张二维码失败不再中断后续按钮（`return` 改 `continue`）
+- **优化 缓存**：二维码缓存增加 7 天回收（`cache/.gc` 标记，每小时最多扫一次）；设置页「清除缓存」顺带清理限流记录
+- **前台 移动端导航**：版块菜单由展开式下拉改为左侧抽屉，带遮罩、ESC 关闭、点击链接自动收起、resize 复位
+- **升级提示**：本次改动涉及 hook 与模板，升级后需删除 `tmp/route_thread.php`、`tmp/view_htm_footer.inc.htm`、`tmp/view_htm_header_nav.inc.htm`，或在后台「清理缓存」后再访问
+
 ### v1.8.27 (2026-11-12)
 
 **前台导航「后台管理」改为新标签页打开，前后台可同时操作**
