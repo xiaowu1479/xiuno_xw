@@ -73,6 +73,8 @@ if(!is_array($setting)) $setting = array();
 $xinyue_url = trim((string)(isset($setting['xinyue_url']) ? $setting['xinyue_url'] : ''));
 $xinyue_key = trim((string)(isset($setting['xinyue_key']) ? $setting['xinyue_key'] : ''));
 $xinyue_on = !empty($setting['xinyue_enable']);
+// 回源地址：域名走 CDN 但本机访问 CDN 不通时，把 TCP 连接直连到内网地址（域名/证书不变）
+$xinyue_host = trim((string)(isset($setting['xinyue_host']) ? $setting['xinyue_host'] : ''));
 
 if(!$xinyue_on || $xinyue_url === '' || $xinyue_key === '') {
     pandown_route_json($fallback);
@@ -115,21 +117,37 @@ if($resolved === '') {
     $timeout = $timeout >= 5 && $timeout <= 60 ? $timeout : 30;
 
     $ch = curl_init($api);
-    curl_setopt_array($ch, array(
+    $curl_opts = array(
         CURLOPT_POST => TRUE,
         CURLOPT_POSTFIELDS => $postdata,
         CURLOPT_RETURNTRANSFER => TRUE,
         CURLOPT_CONNECTTIMEOUT => 5,
         CURLOPT_TIMEOUT => $timeout,
         CURLOPT_HTTPHEADER => array('X-Api-Key: '.$xinyue_key),
-    ));
+    );
+
+    // 回源直连：只改 TCP 目标地址，Host 头与 TLS SNI 仍是原域名，证书校验照常。
+    // 适用于「域名被 CDN 代理、服务器访问该 CDN 超时（errno=28）」的场景。
+    if($xinyue_host !== '') {
+        $api_host = (string)parse_url($api, PHP_URL_HOST);
+        // 系统地址本身写的就是 IP 时无需回源
+        if($api_host !== '' && !preg_match('#^\d{1,3}(\.\d{1,3}){3}$#', $api_host)) {
+            $api_port = (int)parse_url($api, PHP_URL_PORT);
+            if($api_port <= 0) {
+                $api_port = strtolower((string)parse_url($api, PHP_URL_SCHEME)) === 'https' ? 443 : 80;
+            }
+            $curl_opts[CURLOPT_RESOLVE] = array($api_host.':'.$api_port.':'.$xinyue_host);
+        }
+    }
+
+    curl_setopt_array($ch, $curl_opts);
     $resp = curl_exec($ch);
     $errno = curl_errno($ch);
     $errmsg = curl_error($ch);
     curl_close($ch);
 
     if($errno || !$resp) {
-        pandown_log('转存请求失败 errno='.$errno.' '.$errmsg.' url='.$original);
+        pandown_log('转存请求失败 errno='.$errno.' '.$errmsg.' api='.$api.($xinyue_host !== '' ? ' via='.$xinyue_host : '').' url='.$original);
         pandown_route_json($fallback);
     }
 

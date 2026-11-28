@@ -17,6 +17,8 @@ if ($method == 'GET') {
         $setting['xinyue_url'] = trim((string)param('xinyue_url', '', FALSE));
         $setting['xinyue_key'] = trim((string)param('xinyue_key', '', FALSE));
         $setting['xinyue_timeout'] = intval(param('xinyue_timeout', 30));
+        // 回源地址（可选）：域名被 CDN 代理且本机访问 CDN 不通时，把 TCP 连接直连到内网地址
+        $setting['xinyue_host'] = trim((string)param('xinyue_host', '', FALSE));
         setting_set('pandown_setting', $setting);
         message(0, '设置保存成功');
     } elseif ($op == 'clear') {

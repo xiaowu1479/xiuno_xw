@@ -38,6 +38,9 @@
 								<input type="text" class="form-control" name="xinyue_key" value="<?php echo htmlspecialchars(isset($setting['xinyue_key']) ? $setting['xinyue_key'] : '', ENT_QUOTES);?>" placeholder="X-Api-Key">
 								<p class="text-muted small mb-1 mt-2">请求超时（秒，5-60）</p>
 								<input type="number" class="form-control" name="xinyue_timeout" min="5" max="60" value="<?php echo intval(isset($setting['xinyue_timeout']) ? $setting['xinyue_timeout'] : 30);?>">
+								<p class="text-muted small mb-1 mt-2">回源地址（可选，留空则按 DNS 正常访问）</p>
+								<input type="text" class="form-control" name="xinyue_host" value="<?php echo htmlspecialchars(isset($setting['xinyue_host']) ? $setting['xinyue_host'] : '', ENT_QUOTES);?>" placeholder="例如 172.18.0.1">
+								<p class="text-muted small mb-0 mt-1">当系统地址被 CDN 加速、而本服务器访问该 CDN 超时（日志出现 errno=28）时填这里：域名与证书保持不变，仅把连接直连到该地址。同机部署且 PHP 在 Docker 中时，一般填容器网关（如 172.18.0.1）。</p>
 								<p class="text-muted small mb-0 mt-2">说明：仅对有权查看该板块的访客生效，且只作用于首帖；同一 IP 每分钟最多 30 次；成功后同一链接 10 分钟内复用结果；转存失败（网盘容量不足、cookie/token 失效等）直接返回原链接，不提示用户。</p>
 							</td>
 						</tr>
