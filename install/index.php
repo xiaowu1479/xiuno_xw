@@ -212,7 +212,27 @@ if(empty($action)) {
 		xn_mkdir(APP_PATH.'upload/avatar', 0777);
 		xn_mkdir(APP_PATH.'upload/forum', 0777);
 
-		message(0, jump(lang('conguralation_installed'), '../'));
+		// 重置插件的安装状态 (XIUNO XW)
+		// 发行包里的 plugin/*/conf.json 带的是打包机器上的状态（installed=1、enable=1），
+		// 而刚建好的数据库是空的，两者并不一致。若不重置，后台会认定插件“已安装”，
+		// install.php 永远不会执行，插件的表 / 字段 / 初始配置就全部缺失
+		// （典型表现：数据库检查页显示 xn_friendlink、xn_tag 表缺失）。
+		// 这里统一改回未安装，由管理员在 后台 → 插件 → 本地插件 里按需安装或批量安装。
+		$plugin_reset_failed = 0;
+		$plugin_conf_files = glob(APP_PATH.'plugin/*/conf.json');
+		if($plugin_conf_files) {
+			foreach($plugin_conf_files as $plugin_conf_file) {
+				$r = file_replace_var($plugin_conf_file, array('installed'=>0, 'enable'=>0), TRUE);
+				$r === FALSE AND $plugin_reset_failed++;
+			}
+		}
+
+		$msg = lang('conguralation_installed');
+		if($plugin_reset_failed) {
+			$msg .= '<br><span style="color:#c00">有 '.$plugin_reset_failed.' 个插件配置文件写入失败，未能重置为「未安装」，请检查 plugin 目录是否可写（0777）。</span>';
+		}
+
+		message(0, jump($msg, '../'));
 	}
 }
 
