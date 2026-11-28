@@ -14,7 +14,7 @@ $sql = "CREATE TABLE IF NOT EXISTS {$tablepre}tag_cate (
 	cateid int(11) unsigned NOT NULL AUTO_INCREMENT,
 	fid int(11) unsigned NOT NULL DEFAULT '0',		# 属于哪个版块
 	name char(32) NOT NULL DEFAULT '',			
-	rank int(11) unsigned NOT NULL DEFAULT '0',		# 排序，倒序
+	`rank` int(11) unsigned NOT NULL DEFAULT '0',		# 排序，倒序
 	enable int(11) unsigned NOT NULL DEFAULT '0',		# 是否启用
 	defaulttagid int(11) unsigned NOT NULL DEFAULT '0', 	# 默认 tagid
 	isforce int(11) unsigned NOT NULL DEFAULT '0', 		# 是否强制
@@ -27,7 +27,7 @@ $sql = "CREATE TABLE IF NOT EXISTS {$tablepre}tag (
 	tagid int(11) unsigned NOT NULL AUTO_INCREMENT,
 	cateid int(11) unsigned NOT NULL DEFAULT '0',
 	name char(32) NOT NULL DEFAULT '',
-	rank int(11) unsigned NOT NULL DEFAULT '0',
+	`rank` int(11) unsigned NOT NULL DEFAULT '0',
 	enable int(11) unsigned NOT NULL DEFAULT '0',
 	style char(32) NOT NULL DEFAULT '', # primary|secondary|success|danger|warning|info|dark|light|white  默认 badge badge-pill badge-secondary
 	PRIMARY KEY (tagid),

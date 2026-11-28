@@ -1,5 +1,16 @@
 # 更新日志
 
+### v1.8.30 (2026-11-28)
+
+**修复 MySQL 8 下 xn_friendlink / xn_tag 建表失败（`rank` 保留字），导致新装站点插件表缺失**
+
+- **现象**：1panel（MySQL 8.x）全新安装后，后台 → 其他 → 数据库检查 显示 `插件 xn_friendlink 表 friendlink`、`插件 xn_tag 表 tag_cate`、`插件 xn_tag 表 tag` 三项「✗ 需修复 · 表缺失」；在插件页反复卸载重装依然如此
+- **根因**：MySQL 8.0 起 `RANK` 是窗口函数保留字，不能直接作为列名，而两个插件的 `install.php` 建表语句里写的是裸 `rank`，执行时报 `1064 You have an error in your SQL syntax ... near 'rank'`。又因为 `install.php` 只执行不检查返回值（官方原版如此，结尾的报错检查被注释掉），错误被静默吞掉，后台仍提示“安装成功”
+- **判断依据**：同一插件里 `tag_thread` 表正常、`tag_cate` 与 `tag` 缺表，区别正是前者没有 `rank` 列；主程序 `install/install.sql` 一直正常，因为它写的是 `` `rank` ``（带反引号）
+- **修复**：`plugin/xn_friendlink/install.php`（1 处）、`plugin/xn_tag/install.php`（2 处）的 `rank` 改为 `` `rank` ``。反引号在 MySQL 5.x / MariaDB 同样合法，向下兼容，不改列名也不影响任何已有数据
+- **影响范围**：仅新建表时生效；已有站点表已存在，升级无副作用，不需要执行任何 SQL
+- **新装提示**：全新安装（数据库为空）后，请在 后台 → 插件 → 本地插件 全选后点「批量安装」，让所有插件的 `install.php` 完整跑一遍（建表 + 补字段 + 写初始配置），最后到数据库检查页确认全绿
+
 ### v1.8.29 (2026-11-28)
 
 **pandown 插件升级 1.4.1：新增「回源地址」，解决服务器访问自家域名被 CDN 拦截导致转存一直超时**
